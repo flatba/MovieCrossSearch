@@ -21,10 +21,7 @@ import org.jsoup.nodes.Document;
  */
 public class ContentsCrawler {
 
-
-//	static private String user_agent = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3"; // iOS
 	static private String user_agent = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3"; // iOS
-
 	private String charset;
 	public String html;
 
@@ -61,15 +58,13 @@ public class ContentsCrawler {
 		CrawlController controller;
 
 		try {
-
-			controller = new CrawlController(config, pageFecher, robotstxtServer);
-			// クロールを開始するURLを指定
-			controller.addSeed(url);
-			// クロールを開始
-			controller.start(myWebCrawler.class, numberOfCrawlers);
-
+                    controller = new CrawlController(config, pageFecher, robotstxtServer);
+                    // クロールを開始するURLを指定
+                    controller.addSeed(url);
+                    // クロールを開始
+                    controller.start(myWebCrawler.class, numberOfCrawlers);
 		} catch (Exception ex) {
-			//Logger.getLogger(Crawler4j.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(Crawler4j.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
