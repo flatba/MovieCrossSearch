@@ -33,7 +33,8 @@ public class Scrape {
 		// 各映画から取得する情報をモデルにセットする
 		ContentInformationModel cim = new ContentInformationModel();
 
-		String title = doc.select("a.entry-title-link").text();
+//		String title = doc.select("a.entry-title-link").text();
+                String title = "";
 		cim.setTitle(title);			// 映画タイトル
 
 		String originalTitle = doc.title();
@@ -51,7 +52,7 @@ public class Scrape {
 		String director = doc.title();
 		cim.setDirector(director);		// 監督
 
-		String summary = doc.title();
+		String summary = doc.select("body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-detail-info02__summary.vod-utl-brief-target.is-brief-opened > div > div.vod-mod-detail-info02__program-description.is-truncated > p").text();
 		cim.setSummary(summary);		// あらすじ
 
 		// 取得したデータを保存する

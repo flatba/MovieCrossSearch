@@ -46,10 +46,10 @@ public class ContentsCrawler {
 		config.setCrawlStorageFolder(crawlStorageFolder);
 
 		// ユーザエージェントの指定
-		//config.setUserAgentString(user_agent);
+		config.setUserAgentString(user_agent);
 
 		// リクエストの間隔を指定（ミリ秒）
-		config.setPolitenessDelay(1000);
+		//config.setPolitenessDelay(1000);
 
 		// CrawlControllerを準備する
 		PageFetcher pageFecher = new PageFetcher(config);

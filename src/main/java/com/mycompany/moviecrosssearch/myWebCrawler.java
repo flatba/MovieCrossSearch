@@ -18,21 +18,22 @@ import org.jsoup.nodes.Document;
  */
 public class myWebCrawler extends WebCrawler  {
 
-	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) {
-
-		// 各記事のURLのみクロール対象とする
-		String href  = url.getURL();
-		return href.startsWith("http://takezoe.hatenablog.com./entry/"); // URLの頭を指定する
-
-	}
+//	@Override
+//	public boolean shouldVisit(Page referringPage, WebURL url) {
+//
+//		// 各記事のURLのみクロール対象とする
+//		String href  = url.getURL();
+//		//return href.startsWith("http://takezoe.hatenablog.com./entry/"); // URLの頭を指定する
+//                return href.startsWith("https://s.yimg.jp"); // URLの頭を指定する
+//
+//	}
 
 	@Override
 	 public void visit( Page page ) {
 
 		String url = page.getWebURL().getURL();
 		// 各記事のページの場合のみ処理する
-		if ( url.startsWith("http://takezou.hatenablog.com./entry/") ) {
+		if ( url.startsWith("https://www.yahoo.co.jp/") ) {
 			HtmlParseData data = (HtmlParseData) page.getParseData();
 
 			// ページのHTMLをJsoupでパース

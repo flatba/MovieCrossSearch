@@ -24,14 +24,15 @@ public class SaveDBTask {
     SaveDBTask(ContentInformationModel model) {
             cim = new ContentInformationModel();
             cim = model;
+            saveDBSqlite();
     }
 
     private static Connection conn;
     private static Statement stmt;
 //    private static ResultSet rs;
 
-//	private void saveDBSqlite() { // ファイル単体のデバッグ中なのでコメントアウト
-    public static void main(String[] args) {
+	private void saveDBSqlite() { // ファイル単体のデバッグ中なのでコメントアウト
+//    public static void main(String[] args) {
 
 	String outputDBDir = "jdbc:sqlite:" + "/Users/flatba/dev/output/testdatabase/sample.db";
 
@@ -54,8 +55,23 @@ public class SaveDBTask {
                             + ")"
             );
 
+
+
             //値を入力する
-            stmt.execute( "insert into test1 values ( 'テストタイトル', '原題', 2017, 'ジャンル', '上映時間', '監督', 'これはあらすじです。' )" );
+//            stmt.execute( "insert into test1 values ( 'テストタイトル', '原題', 2017, 'ジャンル', '上映時間', '監督1,監督2', 'これはあらすじです。' )" );
+
+            stmt.execute(
+                "insert into test1 values ("
+                + cim.getTitle()
+                + cim.getOriginalTitle()
+                + cim.getRereaseDate()
+                + cim.getGenre()
+                + cim.getRunningTime()
+                + cim.getDirector()
+                + cim.getSummary()
+                + ")"
+            );
+
 
             //結果を表示する
 //            rs = stmt.executeQuery("select * from test1");

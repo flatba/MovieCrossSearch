@@ -11,7 +11,10 @@ package com.mycompany.moviecrosssearch;
  */
 public class MovieCrossSearch {
 
-	static private String url = "http://takezoe.hatenablog.com/";
+    // 映画タイトル一個
+    //static private String url = "https://www.happyon.jp/captain-america-the-winter-soldier";
+    static private String url = "https://www.yahoo.co.jp/";
+
 
     /**
      * @param args the command line arguments
