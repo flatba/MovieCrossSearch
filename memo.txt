@@ -47,3 +47,27 @@ ContentInformationModel.class
 DB保存クラス
 ・スクレイプクラスから受け取った配列Bを展開して、
 ・DBデータとして保存する（暫定DB:sqlite）
+
+
+------------------------
+
+WebElement mouseTarget = driver.findElement(:css, 'body > div.vod-mod-content > section > header > div > ul > li > a')
+
+    driver.findElement(By.id("hoge_button")).click();
+
+    WebElement mouseTarget = driver.find_elements(:class_name => "vod-mod-tray__thumbnail::before").first
+    mouseTargets.move_to(mouseTarget).perform
+    mouseTarget.click
+    
+    element = driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
+    element.click
+    
+    # mouseTargets.each do |mouseTarget|
+    #   # puts element
+    #   driver.move_to(mouseTarget).perform
+    #   driver.manage.timeouts.implicit_wait = 30
+    #   mouseTarget.click
+    # end
+
+ 
+    # mouseTarget.click

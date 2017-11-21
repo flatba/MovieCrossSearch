@@ -5,40 +5,38 @@ require 'sqlite3'
 require "selenium-webdriver"
 
 
-
   # アクセス先メインURL
   main_url = "https://www.happyon.jp/"
+  # main_url = "https://www.yahoo.co.jp/"
 
   robotex = Robotex.new
   p robotex.allowed?(main_url)
 
-
   def openURL(url)
-    @charset = nil
-    @user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36' # GoogleChrome
-    @html = open(url, "User-Agent" => @user_agent) do |f|
-      @charset = f.charset
+    charset = nil
+    html = nil
+    # user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36' # GoogleChrome
+    #html = open(url, "User-Agent" => user_agent) do |f|
+    html = open(url) do |f|
+      charset = f.charset
       f.read
     end
-  end
-
-  def parseHTML()
-    doc = Nokogiri::HTML.parse(@html, nil, @charset)
+    doc = nil
+    doc = Nokogiri::HTML.parse(html, nil, charset)
     return doc
   end
 
   # メインページにアクセスする
-  openURL(main_url)
-  main_doc = parseHTML()
+  main_doc = openURL(main_url)
 
   # メインページから動画一覧のurlを取得する
   category_url_arr = []
-  main_doc.css('div.vod-frm--user01 > header > div > div > nav > ul > li > a').each { |a_tag| 
+  main_doc.css('div.vod-frm--user01 > header > div > div > nav > ul > li > a').each { |a_tag|
     # puts a_tag.text.strip   # カテゴリ名称
     # puts a_tag.attr('href') # カテゴリURL
     category_url_arr << a_tag.attr('href')
   }
-  puts category_url_arr
+  # puts category_url_arr
 
   # 各カテゴリページにアクセスする
   category_url_arr.each do |category_url|
@@ -48,23 +46,59 @@ require "selenium-webdriver"
     # urlにアクセス（動画をクリックして各動画コンテンツの中に入る）
     driver.get(category_url)
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
-    driver.manage.timeouts.implicit_wait = 1000
+    # driver.manage.timeouts.implicit_wait = 1000
+    sleep 10
+    # ターゲットの要素
+    driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
+
+    # element = driver.find_element :class_name, "vod-mod-tray__thumbnail"
+    # element.click
+
+    driver.quit # ブラウザ終了
+
+
+    # puts category_url
+    # category_doc = openURL(category_url)
+    # category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div')
+
+  #   category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div').each { |hogehoge|
+  #     puts hogehoge
+  # }
+
+  
+
+    # # ブラウザ起動
+    # driver = Selenium::WebDriver.for :chrome 
+    # # urlにアクセス（動画をクリックして各動画コンテンツの中に入る）
+    # driver.get(category_url)
+    # # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
+    # driver.manage.timeouts.implicit_wait = 1000
 
     # マウスオーバーさせるターゲットの要素
     # WebElement mouseTarget = driver.findElements(:css, "body > div.vod-frm--user01 > main > div.vod-mod-content > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div > div.vod-mod-tray__column.slick-slide.slick-current.slick-active > div:nth-child(1) > a > div.vod-mod-tray__thumbnail > img")
 
-    WebElement mouseTarget = driver.findElement(:css, 'a')
-
+    # WebElement mouseTarget = driver.findElement(:css, 'a')
 
   # マウスオーバー操作&クリック
-    driver.move_to(mouseTarget).perform
-    driver.manage.timeouts.implicit_wait = 30
-    mouseTarget.click
+    # driver.move_to(mouseTarget).perform
+    # driver.manage.timeouts.implicit_wait = 30
+    # mouseTarget.click
 
 
     # driver.find_element(:css, "body > div.vod-frm--user01 > main > div.vod-mod-content > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div > div.vod-mod-tray__column.slick-slide.slick-current.slick-active > div:nth-child(1) > a > div.vod-mod-tray__thumbnail > img").click.build().perform()
 
-    driver.quit # ブラウザ終了
+
+    # driver.quit # ブラウザ終了
+
+    # # 各動画の項目の取得
+    # content = Content.new
+    # content.setTitle()
+    # content.setOriginalTitle()
+    # content.setReleaseYear()
+    # content.setGenre()
+    # content.setRunningTime()
+    # content.setDirector()
+    # content.setSummary()
 
 
 
@@ -83,9 +117,6 @@ require "selenium-webdriver"
 
   end
 
-
-# 動画一覧ページから各動画へのリンクを取得する
-# content_url = ""
 
 
 
