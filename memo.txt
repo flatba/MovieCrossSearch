@@ -1,0 +1,49 @@
+
+ContentInformationModel.class						
+	title				  タイトル	String
+	originalTitle	原題	String
+	rereaseYear		公開年	String
+	genre				  ジャンル	String
+	runningTime		時間	String
+	director			監督	String
+	summary				あらすじ	String
+
+
+収集先候補
+# hulu
+# Netflix 会員ID必要
+# Amazon Prime
+# Amazon
+# GYAO
+# dTV
+# U-NEXT
+# apple iTunes
+# Microsoft
+# GooglePlay
+# MUBI
+
+実装手順
+
+クロールクラス
+・トップページ（URL）にアクセスする
+・ログインが必要な場合、seleniumでログインする
+・動的なページの場合は、PahantomJSを使う
+・動画一覧にアクセスする
+  ・各動画にアクセスする
+
+スクレイプクラス
+・各動画の必要情報を取得する
+  title				  タイトル	String
+	originalTitle	原題	String
+	rereaseYear		公開年	String
+	genre				  ジャンル	String
+	runningTime		時間	String
+	director			監督	String
+	summary				あらすじ	String
+・取得した情報を配列Aに格納する
+・アクセスしたサイトの全ての映画情報を格納する配列Bに配列Aを格納する
+・配列BをDBクラスに渡す
+
+DB保存クラス
+・スクレイプクラスから受け取った配列Bを展開して、
+・DBデータとして保存する（暫定DB:sqlite）
