@@ -4,6 +4,10 @@ require 'robotex'
 require 'sqlite3'
 require "selenium-webdriver"
 
+# import classfile
+require './Content.rb'
+require './HashSelector.rb'
+require './SaveDBTask.rb'
 
   # アクセス先メインURL
   main_url = "https://www.happyon.jp/"
@@ -23,11 +27,16 @@ require "selenium-webdriver"
     end
     doc = nil
     doc = Nokogiri::HTML.parse(html, nil, charset)
+
     return doc
+
   end
 
   # メインページにアクセスする
   main_doc = openURL(main_url)
+
+  # ここでURLに応じて読み込むセレクターのインスタンスを切り替える
+  hash_selector = HashSelector.new
 
   # メインページから動画一覧のurlを取得する
   category_url_arr = []
@@ -38,74 +47,77 @@ require "selenium-webdriver"
   }
   # puts category_url_arr
 
+
   # 各カテゴリページにアクセスする
   category_url_arr.each do |category_url|
 
     # ブラウザ起動
-    driver = Selenium::WebDriver.for :chrome 
+    driver = Selenium::WebDriver.for :chrome
     # urlにアクセス（動画をクリックして各動画コンテンツの中に入る）
     driver.get(category_url)
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
     # driver.manage.timeouts.implicit_wait = 1000
     sleep 10
     # ターゲットの要素
-    driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
+    # driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
 
+    # ここは、elementsとして複数取ってきて、ページ全体のを取得してく感じかも
+    driver.find_elements(:class_name, "vod-mod-tray__thumbnail").each{ |element|
+
+      # 動画個別ページを開く
+      element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
+
+      # 各動画ページのパースデータを取得する
+      content_url = driver.current_url
+      content_doc = openURL(content_url)
+
+      # パースデータから動画の情報を取得する
+      thumbnail = content_doc.css(hash_selector.huluSelector[:thumbnail])
+      title = content_doc.css(hash_selector.huluSelector[:title])
+      # original_title = content_doc.css(hash_selector.huluSelector[:original_title])
+      release_year = content_doc.css(hash_selector.huluSelector[:release_year])
+      genre = content_doc.css(hash_selector.huluSelector[:genre1]).attr('href')
+      # genre2 = content_doc.css(hash_selector.huluSelector[:genre2]).attr('href')
+      # genre3 = content_doc.css(hash_selector.huluSelector[:genre3).attr('href')
+      running_time = content_doc.css(hash_selector.huluSelector[:rrunning_time])
+      director = content_doc.css(hash_selector.huluSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
+      summary = content_doc.css(hash_selector.huluSelector[:summary])
+
+      # モデルに値をセット
+      content = Content.new
+      content.setThunmbnail(thumbnail)
+      content.setTitle(title)
+      content.setOriginalTitle(original_title)
+      content.setReleaseYear(release_year)
+      content.setGenre(genre)
+      content.setRunningTime(running_time)
+      content.setDirector(director)
+      content.setSummary(summary)
+      p content
+
+      # DBに保存する
+      # 一旦はsqliteで保存する（.db形式）
+      db = SaveDBTask.new
+      db.saveDBTask(content)
+
+
+      driver.quit # ブラウザ終了
+
+      # 動画個別の収集が終わったら次の
+      # driver.get(category_url)
+
+    }
+
+    # これだとだめだった。
     # element = driver.find_element :class_name, "vod-mod-tray__thumbnail"
     # element.click
-
-    driver.quit # ブラウザ終了
-
-
-    # puts category_url
-    # category_doc = openURL(category_url)
-    # category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div')
-
-  #   category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div').each { |hogehoge|
-  #     puts hogehoge
-  # }
-
-  
-
-    # # ブラウザ起動
-    # driver = Selenium::WebDriver.for :chrome 
-    # # urlにアクセス（動画をクリックして各動画コンテンツの中に入る）
-    # driver.get(category_url)
-    # # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
-    # driver.manage.timeouts.implicit_wait = 1000
-
-    # マウスオーバーさせるターゲットの要素
-    # WebElement mouseTarget = driver.findElements(:css, "body > div.vod-frm--user01 > main > div.vod-mod-content > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div > div.vod-mod-tray__column.slick-slide.slick-current.slick-active > div:nth-child(1) > a > div.vod-mod-tray__thumbnail > img")
-
-    # WebElement mouseTarget = driver.findElement(:css, 'a')
-
-  # マウスオーバー操作&クリック
-    # driver.move_to(mouseTarget).perform
-    # driver.manage.timeouts.implicit_wait = 30
-    # mouseTarget.click
-
-
-    # driver.find_element(:css, "body > div.vod-frm--user01 > main > div.vod-mod-content > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div > div.vod-mod-tray__column.slick-slide.slick-current.slick-active > div:nth-child(1) > a > div.vod-mod-tray__thumbnail > img").click.build().perform()
-
-
-    # driver.quit # ブラウザ終了
-
-    # # 各動画の項目の取得
-    # content = Content.new
-    # content.setTitle()
-    # content.setOriginalTitle()
-    # content.setReleaseYear()
-    # content.setGenre()
-    # content.setRunningTime()
-    # content.setDirector()
-    # content.setSummary()
 
 
 
     # user_agent = 'Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1' # GoogleChrome
     # category_doc = openURL(category_url, user_agent)
-    
-    
+
+
 
     # どうやら、各動画ページに入っていくには、jsを突破する必要がありそう。
     # 映画の画像をマウスオーバーすると詳細が出てきてそれをクリックすれば、

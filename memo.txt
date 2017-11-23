@@ -1,5 +1,6 @@
 
-ContentInformationModel.class						
+ContentInformationModel.class
+  thumbnail     サムネイル画像
 	title				  タイトル	String
 	originalTitle	原題	String
 	rereaseYear		公開年	String
@@ -58,10 +59,10 @@ WebElement mouseTarget = driver.findElement(:css, 'body > div.vod-mod-content > 
     WebElement mouseTarget = driver.find_elements(:class_name => "vod-mod-tray__thumbnail::before").first
     mouseTargets.move_to(mouseTarget).perform
     mouseTarget.click
-    
+
     element = driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
     element.click
-    
+
     # mouseTargets.each do |mouseTarget|
     #   # puts element
     #   driver.move_to(mouseTarget).perform
@@ -69,5 +70,16 @@ WebElement mouseTarget = driver.findElement(:css, 'body > div.vod-mod-content > 
     #   mouseTarget.click
     # end
 
- 
+
     # mouseTarget.click
+
+
+
+    # puts category_url
+    # category_doc = openURL(category_url)
+    # category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div')
+
+  #   category_doc.css('body > div.vod-frm--user01 > main > div > section:nth-child(1) > div > div > div.vod-mod-tray__slider.slick-initialized.slick-slider > div > div').each { |hogehoge|
+  #     puts hogehoge
+  # }
+

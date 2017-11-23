@@ -1,5 +1,15 @@
 class Content
 
+  def initialize() # クラスからオブジェクトを作るときに必ず実行される初期化処理
+    # @name = name # @から始まる変数はインスタンス変数という
+  end
+
+  # サムネイル画像
+  def setThumbnail(thumbnail)
+    puts "1"
+    @thumbnail = thumbnail
+  end
+
   # タイトル
   def setTitle(title)
     @title = title
