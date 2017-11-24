@@ -5,9 +5,11 @@ require './Contents.rb'
 
 class SaveDBTask
 
-  def initialize()
-    # DBを初期化してテーブルを作成
-    @db = SQLite3::Database.new('hulu.db')
+  def initialize(site_name)
+
+    db_name = site_name + '.db'
+
+    @db = SQLite3::Database.new(db_name)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS seminars (
       thumbnail varchar(200),
@@ -20,6 +22,7 @@ class SaveDBTask
       summary varchar(200)
       );'
     )
+
   end
 
   def saveDBTask(contents)

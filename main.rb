@@ -6,15 +6,8 @@ require "selenium-webdriver"
 
 # import classfile
 require './Contents.rb'
-require './HashSelector.rb'
+require './Selector.rb'
 require './SaveDBTask.rb'
-
-  # アクセス先メインURL
-  main_url = "https://www.happyon.jp/"
-  # main_url = "https://www.yahoo.co.jp/"
-
-  robotex = Robotex.new
-  p robotex.allowed?(main_url)
 
   def openURL(url)
     charset = nil
@@ -27,23 +20,61 @@ require './SaveDBTask.rb'
     end
     doc = nil
     doc = Nokogiri::HTML.parse(html, nil, charset)
-
     return doc
-
   end
 
-  # メインページにアクセスする
+  def checkSiteName(url)
+    if url.include?('happyon')
+      @site_name = 'hulu'
+    elsif url.include?('netflix')
+      @site_name ='netflix'
+    elsif url.include?('Prime-Video')
+      @site_name = 'amazon_prime'
+    elsif url.include?('Amazon')
+      @site_name = 'amazon_video'
+    elsif url.include?('gyao')
+      @site_name = 'gyao'
+    elsif url.include?('dmkt')
+      @site_name = 'dtv'
+    elsif url.include?('unext')
+      @site_name = 'unext'
+    elsif url.include?('apple iTunes')
+      @site_name = 'apple_itunes'
+    elsif url.include?('Microsoft')
+      @site_name = 'ms_video'
+    elsif url.include?('GooglePlay')
+      @site_name = 'googleplay'
+    elsif url.include?('mubi')
+      @site_name = 'mubi'
+    else
+      @site_name = 'none' # 指定されたURLは取得先として読み込めない
+    end
+  end
+
+  # アクセス先メインURL
+  main_url = "https://www.happyon.jp/"
+
+  robotex = Robotex.new
+  p robotex.allowed?(main_url)
+
+  # サイト名称の識別
+  checkSiteName(main_url)
+
+  # メインページにアクセスしてパースデータを取得する
   main_doc = openURL(main_url)
 
   # ここでURLに応じて読み込むセレクターのインスタンスを切り替える
-  hash_selector = HashSelector.new
+  selector = Selector.new(@site_name)
 
-  # メインページから動画一覧のurlを取得する
+  # アクセスするURLごとにDBのインスタンスを生成する
+  db = SaveDBTask.new(@site_name)
+
+  # メインページから動画カテゴリ一覧のurlを取得する
   category_url_arr = []
-  main_doc.css('div.vod-frm--user01 > header > div > div > nav > ul > li > a').each { |a_tag|
+  main_doc.css(selector.selectSelector[:category_selector]).each { |element|
     # puts a_tag.text.strip   # カテゴリ名称
     # puts a_tag.attr('href') # カテゴリURL
-    category_url_arr << a_tag.attr('href')
+    category_url_arr << element.attr('href')
   }
   # puts category_url_arr
 
@@ -60,7 +91,7 @@ require './SaveDBTask.rb'
     sleep 1
 
     # 動画一覧からコンテンツをポチポチクリックしていく
-    driver.find_elements(:class_name, hash_selector.huluSelector[:thumbnail_click]).each{ |element|
+    driver.find_elements(:class_name, selector.selectSelector[:thumbnail_click]).each{ |element|
 
       # 動画個別ページを開く
       element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
@@ -72,17 +103,17 @@ require './SaveDBTask.rb'
       if content_url.include?("happyon") then
         # パースデータから動画の情報を取得する
         puts "1"
-        puts thumbnail = content_doc.css(hash_selector.huluSelector[:thumbnail]).attr('src').to_s
+        puts thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
         puts "2"
-        puts title = content_doc.css(hash_selector.huluSelector[:title]).text
-        # original_title = content_doc.css(hash_selector.huluSelector[:original_title])
-        # release_year = content_doc.css(hash_selector.huluSelector[:release_year])
-        # genre = content_doc.css(hash_selector.huluSelector[:genre1]).attr('href')
-        # genre2 = content_doc.css(hash_selector.huluSelector[:genre2]).attr('href')
-        # genre3 = content_doc.css(hash_selector.huluSelector[:genre3).attr('href')
-        # running_time = content_doc.css(hash_selector.huluSelector[:rrunning_time])
-        # director = content_doc.css(hash_selector.huluSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
-        # summary = content_doc.css(hash_selector.huluSelector[:summary])
+        puts title = content_doc.css(selector.selectSelector[:title]).text
+        # original_title = content_doc.css(selector.selectSelector[:original_title])
+        # release_year = content_doc.css(selector.selectSelector[:release_year])
+        # genre = content_doc.css(selector.selectSelector[:genre1]).attr('href')
+        # genre2 = content_doc.css(selector.selectSelector[:genre2]).attr('href')
+        # genre3 = content_doc.css(selector.selectSelector[:genre3).attr('href')
+        # running_time = content_doc.css(selector.selectSelector[:rrunning_time])
+        # director = content_doc.css(selector.selectSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
+        # summary = content_doc.css(selector.selectSelector[:summary])
 
       end
 
@@ -100,7 +131,7 @@ require './SaveDBTask.rb'
 
       # DBに保存する
       # 一旦はsqliteで保存する（.db形式）
-      db = SaveDBTask.new
+      # 保存するタイミングはここで良いと思う
       db.saveDBTask(contents)
 
       # 動画個別の収集が終わったら次の
