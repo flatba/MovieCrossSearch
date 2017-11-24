@@ -5,7 +5,7 @@ require 'sqlite3'
 require "selenium-webdriver"
 
 # import classfile
-require './Content.rb'
+require './Contents.rb'
 require './HashSelector.rb'
 require './SaveDBTask.rb'
 
@@ -57,12 +57,10 @@ require './SaveDBTask.rb'
     driver.get(category_url)
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
     # driver.manage.timeouts.implicit_wait = 1000
-    sleep 10
-    # ターゲットの要素
-    # driver.find_element(:class_name, "vod-mod-tray__thumbnail").click
+    sleep 1
 
-    # ここは、elementsとして複数取ってきて、ページ全体のを取得してく感じかも
-    driver.find_elements(:class_name, "vod-mod-tray__thumbnail").each{ |element|
+    # 動画一覧からコンテンツをポチポチクリックしていく
+    driver.find_elements(:class_name, hash_selector.huluSelector[:thumbnail_click]).each{ |element|
 
       # 動画個別ページを開く
       element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
@@ -71,42 +69,46 @@ require './SaveDBTask.rb'
       content_url = driver.current_url
       content_doc = openURL(content_url)
 
-      # パースデータから動画の情報を取得する
-      thumbnail = content_doc.css(hash_selector.huluSelector[:thumbnail])
-      title = content_doc.css(hash_selector.huluSelector[:title])
-      # original_title = content_doc.css(hash_selector.huluSelector[:original_title])
-      release_year = content_doc.css(hash_selector.huluSelector[:release_year])
-      genre = content_doc.css(hash_selector.huluSelector[:genre1]).attr('href')
-      # genre2 = content_doc.css(hash_selector.huluSelector[:genre2]).attr('href')
-      # genre3 = content_doc.css(hash_selector.huluSelector[:genre3).attr('href')
-      running_time = content_doc.css(hash_selector.huluSelector[:rrunning_time])
-      director = content_doc.css(hash_selector.huluSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
-      summary = content_doc.css(hash_selector.huluSelector[:summary])
+      if content_url.include?("happyon") then
+        # パースデータから動画の情報を取得する
+        puts "1"
+        puts thumbnail = content_doc.css(hash_selector.huluSelector[:thumbnail]).attr('src').to_s
+        puts "2"
+        puts title = content_doc.css(hash_selector.huluSelector[:title]).text
+        # original_title = content_doc.css(hash_selector.huluSelector[:original_title])
+        # release_year = content_doc.css(hash_selector.huluSelector[:release_year])
+        # genre = content_doc.css(hash_selector.huluSelector[:genre1]).attr('href')
+        # genre2 = content_doc.css(hash_selector.huluSelector[:genre2]).attr('href')
+        # genre3 = content_doc.css(hash_selector.huluSelector[:genre3).attr('href')
+        # running_time = content_doc.css(hash_selector.huluSelector[:rrunning_time])
+        # director = content_doc.css(hash_selector.huluSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
+        # summary = content_doc.css(hash_selector.huluSelector[:summary])
+
+      end
 
       # モデルに値をセット
-      content = Content.new
-      content.setThunmbnail(thumbnail)
-      content.setTitle(title)
-      content.setOriginalTitle(original_title)
-      content.setReleaseYear(release_year)
-      content.setGenre(genre)
-      content.setRunningTime(running_time)
-      content.setDirector(director)
-      content.setSummary(summary)
-      p content
+      contents = Contents.new
+      contents.setThumbnail(thumbnail)
+      contents.setTitle(title)
+      contents.setOriginalTitle("original_title")
+      contents.setReleaseYear("release_year")
+      contents.setGenre("genre")
+      contents.setRunningTime("running_time")
+      contents.setDirector("director")
+      contents.setSummary("summary")
+      p contents
 
       # DBに保存する
       # 一旦はsqliteで保存する（.db形式）
       db = SaveDBTask.new
-      db.saveDBTask(content)
-
-
-      driver.quit # ブラウザ終了
+      db.saveDBTask(contents)
 
       # 動画個別の収集が終わったら次の
-      # driver.get(category_url)
+      driver.get(category_url)
 
     }
+
+    driver.quit # ブラウザ終了
 
     # これだとだめだった。
     # element = driver.find_element :class_name, "vod-mod-tray__thumbnail"

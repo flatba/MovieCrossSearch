@@ -1,8 +1,10 @@
 class HashSelector
 
   def huluSelector
+    puts "1-1"
     return @huluSelector = {
-      :thumbnail => '',
+      :thumbnail_click => 'vod-mod-tray__thumbnail',
+      :thumbnail => 'body > div.vod-frm--user01 > main > div.vod-mod-key-visual > div > img',
       :title => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > h2',
       :original_title => '',
       :release_year => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > p > small',
