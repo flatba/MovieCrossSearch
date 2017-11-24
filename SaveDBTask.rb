@@ -6,12 +6,13 @@ require './Contents.rb'
 class SaveDBTask
 
   def initialize(site_name)
-
-    db_name = site_name + '.db'
-
-    @db = SQLite3::Database.new(db_name)
+    # DB生成
+    # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
+    # 'CREATE TABLE IF NOT EXISTS contents_master (
+    output_directory = 'output/' + site_name + '.db'
+    @db = SQLite3::Database.new(output_directory)
     @db.execute(
-      'CREATE TABLE IF NOT EXISTS seminars (
+      'CREATE TABLE contents_master (
       thumbnail varchar(200),
       title varchar(200),
       original_title varchar(200),
@@ -22,27 +23,20 @@ class SaveDBTask
       summary varchar(200)
       );'
     )
-
   end
 
   def saveDBTask(contents)
     # contens.each { |content|
     # ここで詰まってる。複数代入の方法が合っていない。
-      @db.execute 'INSERT INTO seminars values ( ?, ?, ?, ?, ?, ?, ?, ? );',
-        [
-          "#{contents['thumnail']}",
-          "#{contents.title}",
-          "#{contents.original_title}",
-          "#{contents.release_year}",
-          "#{contents.genre1}",
-          "#{contents.running_time}",
-          "#{contents.director}",
-          "#{contents.summary}"
-        ]
-    # }
-
+    @db.execute("insert into contents_master (thumbnail, title, original_title, release_year, genre1, running_time, director, summary) values(
+      '#{contents.getThumbnail}',
+      '#{contents.getTitle}',
+      '#{contents.getOriginalTitle}',
+      '#{contents.getReleaseYear}',
+      '#{contents.getGenre}',
+      '#{contents.getRunningTime}',
+      '#{contents.getDirector}',
+      '#{contents.getSummary}'
+    )")
   end
-
-
-
 end
