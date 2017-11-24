@@ -1,8 +1,6 @@
-class Contents
+# Javaで言うところのモデルデータ（正式名称わからない）
 
-  def initialize() # クラスからオブジェクトを作るときに必ず実行される初期化処理
-    # @name = name # @から始まる変数はインスタンス変数という
-  end
+class Contents
 
   # サムネイル画像
   def setThumbnail(thumbnail)

@@ -67,6 +67,8 @@ main_doc = openURL(main_url)
 selector = Selector.new(@site_name)
 
 # サイト名称に応じてDBのインスタンスを生成する
+# 今後定期で回すとき、ファイルが存在している場合は新たに生成しない処理にする
+# 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
 db = SaveDBTask.new(@site_name)
 
 # メインページから動画カテゴリ一覧のurlを取得する
@@ -102,29 +104,29 @@ category_url_arr.each do |category_url|
     puts thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
     puts title = content_doc.css(selector.selectSelector[:title]).text
     # original_title = content_doc.css(selector.selectSelector[:original_title])
-    # release_year = content_doc.css(selector.selectSelector[:release_year])
-    # genre = content_doc.css(selector.selectSelector[:genre1]).attr('href')
-    # genre2 = content_doc.css(selector.selectSelector[:genre2]).attr('href')
-    # genre3 = content_doc.css(selector.selectSelector[:genre3).attr('href')
-    # running_time = content_doc.css(selector.selectSelector[:rrunning_time])
-    # director = content_doc.css(selector.selectSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
-    # summary = content_doc.css(selector.selectSelector[:summary])
+    release_year = content_doc.css(selector.selectSelector[:release_year]).text
+    tail_num = release_year.rindex('年')
+    puts release_year = release_year[tail_num-4..tail_num-1]
+    puts  genre = content_doc.css(selector.selectSelector[:genre1]).attr('href')
+    #puts genre2 = content_doc.css(selector.selectSelector[:genre2]).attr('href')
+    #puts  genre3 = content_doc.css(selector.selectSelector[:genre3).attr('href')
+    #puts  running_time = content_doc.css(selector.selectSelector[:rrunning_time])
+    #puts  director = content_doc.css(selector.selectSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
+    #puts  summary = content_doc.css(selector.selectSelector[:summary])
 
     # モデルに値をセット
     contents = Contents.new
     contents.setThumbnail(thumbnail)
     contents.setTitle(title)
     contents.setOriginalTitle("original_title")
-    contents.setReleaseYear("release_year")
+    contents.setReleaseYear(release_year)
     contents.setGenre("genre")
     contents.setRunningTime("running_time")
     contents.setDirector("director")
     contents.setSummary("summary")
     p contents
 
-    # DBに保存する
-    # 一旦はsqliteで保存する（.db形式）
-    # 保存するタイミングはここで良いと思う
+    # DBに保存する（一旦はsqliteで保存する（.db形式））
     db.saveDBTask(contents)
 
     # 動画個別の収集が終わったら一覧に戻る
@@ -132,7 +134,7 @@ category_url_arr.each do |category_url|
 
   }
 
-  db.close
+
   driver.quit # ブラウザ終了
 
 end

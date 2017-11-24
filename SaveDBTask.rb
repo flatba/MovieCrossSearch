@@ -6,13 +6,11 @@ require './Contents.rb'
 class SaveDBTask
 
   def initialize(site_name)
-    # DB生成
-    # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
-    # 'CREATE TABLE IF NOT EXISTS contents_master (
+    # DB生成（CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。）
     output_directory = 'output/' + site_name + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
-      'CREATE TABLE contents_master (
+      'CREATE TABLE IF NOT EXISTS contents_master (
       thumbnail varchar(200),
       title varchar(200),
       original_title varchar(200),
@@ -26,9 +24,10 @@ class SaveDBTask
   end
 
   def saveDBTask(contents)
-    # contens.each { |content|
-    # ここで詰まってる。複数代入の方法が合っていない。
-    @db.execute("insert into contents_master (thumbnail, title, original_title, release_year, genre1, running_time, director, summary) values(
+    @db.execute(
+      "insert into contents_master (
+      thumbnail, title, original_title, release_year, genre, running_time, director, summary
+      ) values(
       '#{contents.getThumbnail}',
       '#{contents.getTitle}',
       '#{contents.getOriginalTitle}',
@@ -38,5 +37,6 @@ class SaveDBTask
       '#{contents.getDirector}',
       '#{contents.getSummary}'
     )")
+    @db.close
   end
 end
