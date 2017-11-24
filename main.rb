@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'open-uri'
 require 'nokogiri'
 require 'robotex'
@@ -91,7 +92,14 @@ category_url_arr.each do |category_url|
   sleep 1
 
   # 動画一覧からコンテンツをポチポチクリックしていく
-  driver.find_elements(:class_name, selector.selectSelector[:thumbnail_click]).each{ |element|
+  driver.find_elements(:class_name, selector.selectSelector[:thumbnail_click]).each do |element|
+  # driver.find_elements(:class_name, 'body > div.vod-frm--user01 > main > div > section > div > div > div > div > div > div > div').each do |element|
+
+    puts element.text
+    # unless element.text.include?("http://")
+    #   puts "URLエラー"
+    #   next
+    # end
 
     # 動画個別ページを開く
     element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
@@ -101,30 +109,68 @@ category_url_arr.each do |category_url|
     content_doc = openURL(content_url)
 
     # パースデータから動画の情報を取得する
-    puts thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
-    puts title = content_doc.css(selector.selectSelector[:title]).text
+    thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+
+    title = content_doc.css(selector.selectSelector[:title]).text
+
     # original_title = content_doc.css(selector.selectSelector[:original_title])
+
     release_year = content_doc.css(selector.selectSelector[:release_year]).text
     tail_num = release_year.rindex('年')
-    puts release_year = release_year[tail_num-4..tail_num-1]
-    puts  genre = content_doc.css(selector.selectSelector[:genre1]).attr('href')
-    #puts genre2 = content_doc.css(selector.selectSelector[:genre2]).attr('href')
-    #puts  genre3 = content_doc.css(selector.selectSelector[:genre3).attr('href')
-    #puts  running_time = content_doc.css(selector.selectSelector[:rrunning_time])
-    #puts  director = content_doc.css(selector.selectSelector[:director]) # 監督情報一発で取れないので特殊な取り方しないといけないかも
-    #puts  summary = content_doc.css(selector.selectSelector[:summary])
+    release_year = release_year[tail_num-4..tail_num-1]
+
+    genres = []
+    content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
+      genres.push(genre.text)
+    end
+
+
+    running_time = content_doc.css(selector.selectSelector[:running_time]).text
+    head_num = running_time.rindex('/')
+    tail_num = running_time.rindex('分')
+    running_time = running_time[head_num+1..tail_num].strip
+
+    # casts = []
+    # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
+    #   casts.push(cast.text)
+    # end
+    # puts casts
+
+    # directors = []
+    puts directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
+    # .text
+    # .each do |director|
+    #   directors.push(director.text)
+    # end
+
+    summary = content_doc.css(selector.selectSelector[:summary]).text
+
+    # 構造体に書き直し
+    Contents_Struct = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+    contents = Contents_Struct.new(thumbnail, title, "original_title", release_year, genres, running_time, directors, summary)
+    puts contents
+
+    # contents.thumbnail
+    # contents.title          = title
+    # contents.original_title = "原題"
+    # contents.release_year   = release_year
+    # contents.genre          = genres
+    # contents.running_time   = "時間"
+    # contents.director       = "監督"
+    # contents.summary        = "あらすじ"
+
 
     # モデルに値をセット
-    contents = Contents.new
-    contents.setThumbnail(thumbnail)
-    contents.setTitle(title)
-    contents.setOriginalTitle("original_title")
-    contents.setReleaseYear(release_year)
-    contents.setGenre("genre")
-    contents.setRunningTime("running_time")
-    contents.setDirector("director")
-    contents.setSummary("summary")
-    p contents
+    # contents = Contents.new
+    # contents.setThumbnail(thumbnail)
+    # contents.setTitle(title)
+    # contents.setOriginalTitle("original_title")
+    # contents.setReleaseYear(release_year)
+    # contents.setGenre("genre")
+    # contents.setRunningTime("running_time")
+    # contents.setDirector("director")
+    # contents.setSummary("summary")
+    # p contents
 
     # DBに保存する（一旦はsqliteで保存する（.db形式））
     db.saveDBTask(contents)
@@ -132,8 +178,7 @@ category_url_arr.each do |category_url|
     # 動画個別の収集が終わったら一覧に戻る
     driver.get(category_url)
 
-  }
-
+  end
 
   driver.quit # ブラウザ終了
 

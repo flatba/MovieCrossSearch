@@ -15,7 +15,7 @@ class SaveDBTask
       title varchar(200),
       original_title varchar(200),
       release_year varchar(200),
-      genre1 varchar(200),
+      genres varchar(200),
       running_time varchar(200),
       director varchar(200),
       summary varchar(200)
@@ -26,16 +26,16 @@ class SaveDBTask
   def saveDBTask(contents)
     @db.execute(
       "insert into contents_master (
-      thumbnail, title, original_title, release_year, genre, running_time, director, summary
+      thumbnail, title, original_title, release_year, genres, running_time, director, summary
       ) values(
-      '#{contents.getThumbnail}',
-      '#{contents.getTitle}',
-      '#{contents.getOriginalTitle}',
-      '#{contents.getReleaseYear}',
-      '#{contents.getGenre}',
-      '#{contents.getRunningTime}',
-      '#{contents.getDirector}',
-      '#{contents.getSummary}'
+      '#{contents.thumbnail}',
+      '#{contents.title}',
+      '#{contents.original_title}',
+      '#{contents.release_year}',
+      '#{contents.genres}',
+      '#{contents.running_time}',
+      '#{contents.director}',
+      '#{contents.summary}'
     )")
     @db.close
   end

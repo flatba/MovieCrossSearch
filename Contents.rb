@@ -36,7 +36,7 @@ class Contents
 
   # ジャンル
   def setGenre(genre)
-    @genre = genre
+    @genre.push(genre)
   end
   def getGenre()
     @genre
