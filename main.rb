@@ -122,6 +122,8 @@ require './SaveDBTask.rb'
         next
       end
 
+#github to Slackテスト
+
       # 動画一覧からコンテンツ内にクリックで入っていく
       driver.find_elements(:class, selector.selectSelector[:content_click]).each do |element|
 
