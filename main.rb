@@ -22,7 +22,7 @@ require './SaveDBTask.rb'
     charset = nil
     html = nil
     # user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36' # GoogleChrome
-    #html = open(url, "User-Agent" => user_agent) do |f|
+    # html = open(url, "User-Agent" => user_agent) do |f|
     html = open(url) do |f|
       charset = f.charset
       f.read
@@ -92,10 +92,10 @@ require './SaveDBTask.rb'
 
     # [DONE]1: webdriver起動
     # [DONE]2: カテゴリトップページ①にアクセス
-    # []3: "もっと見る"をクリックして、カテゴリ動画一覧ページへアクセス
+    # [DONE]3: "もっと見る"をクリックして、カテゴリ動画一覧ページへアクセス
       # [DONE]3-1:"もっと見る"のCSSセレクターを取得する
       # [DONE]3-2:カテゴリ動画一覧ページへアクセスする
-    # [DOING]4: 動画情報を一個一個収集
+    # [DONE4: 動画情報を一個一個収集
     # []5: 全て取り終わったら（全て終わったらの基準がわからないが...）,カテゴリトップページに戻る
     # []次の"もっと見る"をクリックして、カテゴリ動画一覧ページへアクセス
     # []4->5同じことをする(繰り返し)
@@ -111,8 +111,6 @@ require './SaveDBTask.rb'
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
     for btn_cnt in 0..button_num
-      # 動画情報収集後に戻るためにURLを保持する
-      category_list_url = driver.current_url
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
       buttons_driver = driver.find_elements(:class, 'vod-mod-button')
@@ -127,79 +125,94 @@ require './SaveDBTask.rb'
 
       # 動画一覧からコンテンツ内にクリックで入っていく
       contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
-      @contents_driver = driver.find_elements(:class, selector.selectSelector[:content_click])
       for content_btn_cnt in 0..contents_num
-
-        sleep 1
         begin
-          # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-          driver.find_elements(:class, selector.selectSelector[:content_click])[content_btn_cnt].click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
+          sleep 1
+
+          # 最後まで読み込んだら前のページに戻る
+          if content_btn_cnt == contents_num then
+            driver.navigate().back()
+            break
+          end
+
+          begin
+            # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+            contents_driver = driver.find_elements(:class, 'vod-mod-tile__item')
+            contents_driver[content_btn_cnt].click
+          rescue
+            next
+          end
+
+          # 各動画ページのパースデータを取得する
+          content_url = driver.current_url
+          content_doc = openURL(content_url)
+
+          # パースデータから動画の情報を取得する
+          puts thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+
+          puts title = content_doc.css(selector.selectSelector[:title]).text
+
+          # original_title = content_doc.css(selector.selectSelector[:original_title])
+
+          release_year = content_doc.css(selector.selectSelector[:release_year]).text
+          tail_num = release_year.rindex('年')
+          puts release_year = release_year[tail_num-4..tail_num-1]
+
+          # ここ配列のため、DBで文字化けのまま入ってしまう
+          genres = []
+          content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
+            genres.push(genre.text)
+          end
+          puts genres
+
+          puts running_time = content_doc.css(selector.selectSelector[:running_time]).text
+          # head_num = 0
+          # if running_time.rindex('/') > 0
+          #   puts "通過"
+          #   head_num = running_time.rindex('/')+1
+          # end
+          # puts tail_num = running_time.rindex('分')
+          # puts running_time = running_time[head_num..tail_num].strip
+
+          # casts = []
+          # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
+          #   casts.push(cast.text)
+          # end
+          # puts casts
+
+          # directors = []
+          puts directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
+          # .text
+          # .each do |director|
+          #   directors.push(director.text)
+          # end
+
+          puts summary = content_doc.css(selector.selectSelector[:summary]).text
+
+          # 取得した情報を一旦まとめる
+          # 二週目で同じ名前でインスタンス作ってるからワーニング吐いてる
+          Contents_Struct = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+          contents = Contents_Struct.new(thumbnail, title, "", release_year, genres, running_time, directors, summary)
+          puts contents
+
+          # DBに保存する（一旦はsqliteで保存する（.db形式））
+          @db = db.saveDBTask(contents)
+
+          # 動画個別の収集が終わったら一覧に戻る
+          # driver.get(category_list_url)
+          # sleep 10
+
+          driver.navigate().back()
+          sleep 1
+
         rescue
-          @contents_driver[content_btn_cnt].click
+          puts "要素がなかったかも"
+          next
         end
-
-        # 最後のページ？だったら？"もっと見る"ボタン選択のところまで戻る
-        # unless driver.current_url.include?("tiles") then
-        #   driver.navigate().back()
-        #   return
-        # end
-
-        # 各動画ページのパースデータを取得する
-        content_url = driver.current_url
-        content_doc = openURL(content_url)
-
-        # パースデータから動画の情報を取得する
-        thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
-
-        title = content_doc.css(selector.selectSelector[:title]).text
-
-        # original_title = content_doc.css(selector.selectSelector[:original_title])
-
-        release_year = content_doc.css(selector.selectSelector[:release_year]).text
-        tail_num = release_year.rindex('年')
-        release_year = release_year[tail_num-4..tail_num-1]
-
-        # ここ配列のため、DBで文字化けのまま入ってしまう
-        genres = []
-        content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
-          genres.push(genre.text)
-        end
-
-        running_time = content_doc.css(selector.selectSelector[:running_time]).text
-        head_num = running_time.rindex('/')
-        tail_num = running_time.rindex('分')
-        running_time = running_time[head_num+1..tail_num].strip
-
-        # casts = []
-        # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
-        #   casts.push(cast.text)
-        # end
-        # puts casts
-
-        # directors = []
-        directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
-        # .text
-        # .each do |director|
-        #   directors.push(director.text)
-        # end
-
-        summary = content_doc.css(selector.selectSelector[:summary]).text
-
-        # 取得した情報を一旦まとめる
-        Contents_Struct = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
-        contents = Contents_Struct.new(thumbnail, title, "", release_year, genres, running_time, directors, summary)
-        puts contents
-
-        # DBに保存する（一旦はsqliteで保存する（.db形式））
-        db.saveDBTask(contents)
-
-        # 動画個別の収集が終わったら一覧に戻る
-        driver.get(category_list_url)
-        # sleep 10
-
       end
     end
 
     driver.quit # ブラウザ終了
+    db.closeDBTask
 
   end

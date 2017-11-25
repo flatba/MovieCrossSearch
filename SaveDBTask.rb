@@ -41,6 +41,9 @@ class SaveDBTask
       '#{contents.director}',
       '#{contents.summary}'
     )")
+  end
+
+  def closeDBTask
     @db.close
   end
 end
