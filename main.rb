@@ -115,8 +115,8 @@ require './SaveDBTask.rb'
       category_list_url = driver.current_url
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-      buttons = driver.find_elements(:class, 'vod-mod-button')
-      buttons[btn_cnt].click
+      buttons_driver = driver.find_elements(:class, 'vod-mod-button')
+      buttons_driver[btn_cnt].click
 
       # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
       unless driver.current_url.include?("tiles") then
@@ -127,12 +127,16 @@ require './SaveDBTask.rb'
 
       # 動画一覧からコンテンツ内にクリックで入っていく
       contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
+      @contents_driver = driver.find_elements(:class, selector.selectSelector[:content_click])
       for content_btn_cnt in 0..contents_num
 
-        # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-        content_buttons = driver.find_elements(:class, selector.selectSelector[:content_click])
         sleep 1
-        content_buttons[content_btn_cnt].click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
+        begin
+          # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+          driver.find_elements(:class, selector.selectSelector[:content_click])[content_btn_cnt].click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
+        rescue
+          @contents_driver[content_btn_cnt].click
+        end
 
         # 最後のページ？だったら？"もっと見る"ボタン選択のところまで戻る
         # unless driver.current_url.include?("tiles") then
@@ -173,7 +177,7 @@ require './SaveDBTask.rb'
         # puts casts
 
         # directors = []
-        puts directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
+        directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
         # .text
         # .each do |director|
         #   directors.push(director.text)
@@ -191,6 +195,7 @@ require './SaveDBTask.rb'
 
         # 動画個別の収集が終わったら一覧に戻る
         driver.get(category_list_url)
+        # sleep 10
 
       end
     end
