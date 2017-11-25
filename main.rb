@@ -110,10 +110,13 @@ require './SaveDBTask.rb'
 
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
-    for i in 0..button_num
-      # 毎回ページが遷移するごとにdriverのidが変わってidを使いまわせなさそうだから都度取得する
+    for btn_cnt in 0..button_num
+      # 動画情報収集後に戻るためにURLを保持する
+      category_list_url = driver.current_url
+
+      # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
       buttons = driver.find_elements(:class, 'vod-mod-button')
-      buttons[i].click
+      buttons[btn_cnt].click
 
       # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
       unless driver.current_url.include?("tiles") then
@@ -122,15 +125,20 @@ require './SaveDBTask.rb'
         next
       end
 
-#github to Slackテスト
-
       # 動画一覧からコンテンツ内にクリックで入っていく
-      driver.find_elements(:class, selector.selectSelector[:content_click]).each do |element|
+      contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
+      for content_btn_cnt in 0..contents_num
 
+        # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+        content_buttons = driver.find_elements(:class, selector.selectSelector[:content_click])
         sleep 1
+        content_buttons[content_btn_cnt].click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
 
-        # 動画個別ページを開く
-        element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
+        # 最後のページ？だったら？"もっと見る"ボタン選択のところまで戻る
+        # unless driver.current_url.include?("tiles") then
+        #   driver.navigate().back()
+        #   return
+        # end
 
         # 各動画ページのパースデータを取得する
         content_url = driver.current_url
@@ -175,14 +183,14 @@ require './SaveDBTask.rb'
 
         # 取得した情報を一旦まとめる
         Contents_Struct = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
-        contents = Contents_Struct.new(thumbnail, title, "original_title", release_year, genres, running_time, directors, summary)
+        contents = Contents_Struct.new(thumbnail, title, "", release_year, genres, running_time, directors, summary)
         puts contents
 
         # DBに保存する（一旦はsqliteで保存する（.db形式））
         db.saveDBTask(contents)
 
         # 動画個別の収集が終わったら一覧に戻る
-        driver.navigate().back()
+        driver.get(category_list_url)
 
       end
     end
