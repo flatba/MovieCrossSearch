@@ -9,7 +9,7 @@ class Selector
       def selectSelector
         return @huluSelector = {
           :category_selector => 'div.vod-frm--user01 > header > div > div > nav > ul > li > a',
-          :thumbnail_click => 'div.vod-mod-tray__item > a',
+          :thumbnail_click => 'div.vod-utl-panel-opener',
 
           :thumbnail => 'body > div.vod-frm--user01 > main > div.vod-mod-key-visual > div > img',
           :title => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > h2',

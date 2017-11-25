@@ -111,7 +111,7 @@ require './SaveDBTask.rb'
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
     for i in 0..button_num
-      # 毎回ページが遷移するごとにidが変わってidを使いまわせなさそうだから都度取得する
+      # 毎回ページが遷移するごとにdriverのidが変わってidを使いまわせなさそうだから都度取得する
       buttons = driver.find_elements(:class, 'vod-mod-button')
       buttons[i].click
 
@@ -124,6 +124,8 @@ require './SaveDBTask.rb'
 
       # 動画一覧からコンテンツをポチポチクリックしていく
       driver.find_elements(selector.selectSelector[:thumbnail_click]).each do |element|
+
+        sleep 10
 
         # 動画個別ページを開く
         element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
