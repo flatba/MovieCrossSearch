@@ -1,12 +1,16 @@
+# coding: utf-8
 require 'sqlite3'
 
-# import classfile
-require './Contents.rb'
-
+#
+# 保存処理
+#
 class SaveDBTask
 
+  #
+  # DB生成
+  # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
+  #
   def initialize(site_name)
-    # DB生成（CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。）
     output_directory = 'output/' + site_name + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
