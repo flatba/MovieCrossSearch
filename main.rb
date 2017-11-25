@@ -122,10 +122,10 @@ require './SaveDBTask.rb'
         next
       end
 
-      # 動画一覧からコンテンツをポチポチクリックしていく
-      driver.find_elements(selector.selectSelector[:thumbnail_click]).each do |element|
+      # 動画一覧からコンテンツ内にクリックで入っていく
+      driver.find_elements(:class, selector.selectSelector[:content_click]).each do |element|
 
-        sleep 10
+        sleep 1
 
         # 動画個別ページを開く
         element.click # 別ページに遷移してしまうので、クリック後に戻る処理も必要
