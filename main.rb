@@ -62,6 +62,13 @@ require './SaveDBTask.rb'
     end
   end
 
+  #
+  # 情報取得の項目があるかどうかのチェック
+  #
+  def checkContentItem(item)
+    return item.blank?
+  end
+
   robotex = Robotex.new
   p robotex.allowed?(@main_url)
 
@@ -75,9 +82,11 @@ require './SaveDBTask.rb'
   selector = Selector.new(@site_name)
 
   # サイト名称に応じてDBのインスタンスを生成する
-  # 今後定期で回すとき、ファイルが存在している場合は新たに生成しない処理にする
   # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
   db = SaveDBTask.new(@site_name)
+
+  # 構造体："トップ画像URL", "タイトル", "原題", "公開年", "ジャンル", "時間", "監督", "あらすじ"
+  contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
 
   # メインページから動画カテゴリ一覧のurlを取得する
   category_url_arr = []
@@ -102,6 +111,7 @@ require './SaveDBTask.rb'
     # []全ての"もっと見る"から収集が終わったら、次のカテゴリトップページ②へアクセスする
 
     # ブラウザ起動
+    # Headless Chromiumに切り替える！！！
     driver = Selenium::WebDriver.for :chrome
     # カテゴリトップページにアクセス
     driver.get(category_url)
@@ -125,9 +135,8 @@ require './SaveDBTask.rb'
 
       # 動画一覧からコンテンツ内にクリックで入っていく
       contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
-      for content_btn_cnt in 0..contents_num
-        begin
-          sleep 1
+      begin
+        for content_btn_cnt in 0..contents_num
 
           # 最後まで読み込んだら前のページに戻る
           if content_btn_cnt == contents_num then
@@ -148,67 +157,83 @@ require './SaveDBTask.rb'
           content_doc = openURL(content_url)
 
           # パースデータから動画の情報を取得する
-          puts thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+          insert_contents = contents.new("", "", "", "", "", "", "", "")
 
-          puts title = content_doc.css(selector.selectSelector[:title]).text
+          # 取得中にいらんデータもしくは、データが無い場合の処理を考えたい
+          # 現状考えているのは、if文でセレクタで指定した値が無ければセットしないという方法
 
-          # original_title = content_doc.css(selector.selectSelector[:original_title])
+          # ここの例外処理のif文が判定できてないので
+          # セレクタで要素がない場合の判定を処理書き途中
+          if content_doc.css(selector.selectSelector[:thumbnail])
+            insert_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+          end
 
-          release_year = content_doc.css(selector.selectSelector[:release_year]).text
-          tail_num = release_year.rindex('年')
-          puts release_year = release_year[tail_num-4..tail_num-1]
+          if checkContentItem(content_doc.css(selector.selectSelector[:title]).text)
+            puts insert_contents.title = content_doc.css(selector.selectSelector[:title]).text
+          end
+
+          if checkContentItem(content_doc.css(selector.selectSelector[:original_title]))
+            contents_tmp.original_title = content_doc.css(selector.selectSelector[:original_title])
+          end
+
+          if checkContentItem(content_doc.css(selector.selectSelector[:release_year]).text)
+            insert_contents.release_year = content_doc.css(selector.selectSelector[:release_year]).text
+            tail_num = release_year.rindex('年')
+            puts release_year = release_year[tail_num-4..tail_num-1]
+          end
 
           # ここ配列のため、DBで文字化けのまま入ってしまう
-          genres = []
-          content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
-            genres.push(genre.text)
+          if checkContentItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
+            genres = []
+            insert_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
+              genres.push(genre.text)
+            end
+            puts genres
           end
-          puts genres
 
-          puts running_time = content_doc.css(selector.selectSelector[:running_time]).text
-          # head_num = 0
-          # if running_time.rindex('/') > 0
-          #   puts "通過"
-          #   head_num = running_time.rindex('/')+1
-          # end
-          # puts tail_num = running_time.rindex('分')
-          # puts running_time = running_time[head_num..tail_num].strip
+          if checkContentItem(content_doc.css(selector.selectSelector[:running_time]).text)
+            puts insert_contents.running_time = content_doc.css(selector.selectSelector[:running_time]).text
+            # head_num = 0
+            # if running_time.rindex('/') > 0
+            #   puts "通過"
+            #   head_num = running_time.rindex('/')+1
+            # end
+            # puts tail_num = running_time.rindex('分')
+            # puts running_time = running_time[head_num..tail_num].strip
+          end
 
-          # casts = []
-          # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
-          #   casts.push(cast.text)
-          # end
-          # puts casts
-
-          # directors = []
-          puts directors = content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip
-          # .text
-          # .each do |director|
-          #   directors.push(director.text)
+          # if checkContentItem(content_doc.css(selector.selectSelector[:director])[0])
+            # casts = []
+            # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
+            #   casts.push(cast.text)
+            # end
+            # puts casts
           # end
 
-          puts summary = content_doc.css(selector.selectSelector[:summary]).text
+          if checkContentItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
+            # directors = []
+            puts insert_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
+          end
 
-          # 取得した情報を一旦まとめる
-          # 二週目で同じ名前でインスタンス作ってるからワーニング吐いてる
-          Contents_Struct = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
-          contents = Contents_Struct.new(thumbnail, title, "", release_year, genres, running_time, directors, summary)
+          if checkContentItem(content_doc.css(selector.selectSelector[:summary]).text)
+            puts insert_contents.summary = content_doc.css(selector.selectSelector[:summary]).text
+          end
+
           puts contents
 
           # DBに保存する（一旦はsqliteで保存する（.db形式））
           @db = db.saveDBTask(contents)
 
-          # 動画個別の収集が終わったら一覧に戻る
-          # driver.get(category_list_url)
-          # sleep 10
-
+          # コンテンツ情報を収集したら前のページに戻る
           driver.navigate().back()
           sleep 1
-
-        rescue
-          puts "要素がなかったかも"
-          next
         end
+      rescue
+        puts "要素がなかったかも"
+        puts driver.current_url
+        driver.navigate().back()
+        sleep 1
+        next
       end
     end
 
