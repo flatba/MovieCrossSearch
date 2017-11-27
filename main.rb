@@ -110,41 +110,38 @@ require './SaveDBTask.rb'
   # 各カテゴリページにアクセスする
   category_url_arr.each do |category_url|
 
-    # [DONE]1: webdriver起動
-    # [DONE]2: カテゴリトップページ①にアクセス
-    # [DONE]3: "もっと見る"をクリックして、カテゴリ動画一覧ページへアクセス
-      # [DONE]3-1:"もっと見る"のCSSセレクターを取得する
-      # [DONE]3-2:カテゴリ動画一覧ページへアクセスする
-    # [DONE4: 動画情報を一個一個収集
-    # []5: 全て取り終わったら（全て終わったらの基準がわからないが...）,カテゴリトップページに戻る
-    # []次の"もっと見る"をクリックして、カテゴリ動画一覧ページへアクセス
-    # []4->5同じことをする(繰り返し)
-    # []全ての"もっと見る"から収集が終わったら、次のカテゴリトップページ②へアクセスする
-
     # HeadressChrome起動
     # 通常起動：driver = Selenium::WebDriver.for :chrome
-    ua = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
     caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
     driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
     # カテゴリトップページにアクセス
     driver.get(category_url)
+    screenshot(driver) # デバッグ用
+    puts category_url + "にアクセス中..."
+
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
     driver.manage.timeouts.implicit_wait = 10 # 一括設定
 
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
-    screenshot(driver) # デバッグ用
     for btn_cnt in 0..button_num
+
+      sleep 10
+      screenshot(driver) # デバッグ用
+      puts "[もっと見る]をクリック中..."
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
       buttons_driver = driver.find_elements(:class, 'vod-mod-button')
       buttons_driver[btn_cnt].click
 
+      screenshot(driver) # デバッグ用
+      puts "各動画コンテンツ一覧にアクセス中..."
+
       # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
       unless driver.current_url.include?("tiles") then
         driver.navigate().back()
-        sleep 1
+        sleep 10
         next
       end
 
@@ -163,6 +160,10 @@ require './SaveDBTask.rb'
             # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
             contents_driver = driver.find_elements(:class, 'vod-mod-tile__item')
             contents_driver[content_btn_cnt].click
+
+            screenshot(driver) # デバッグ用
+            puts "各動画コンテンツにアクセス中..."
+
           rescue
             next
           end
@@ -250,13 +251,14 @@ require './SaveDBTask.rb'
 
           # コンテンツ情報を収集したら前のページに戻る
           driver.navigate().back()
-          sleep 1
+
         end
       rescue
+        screenshot(driver) # デバッグ用
         puts "要素がなかったかも"
         puts driver.current_url
         driver.navigate().back()
-        sleep 1
+        sleep 10
         next
       end
     end
