@@ -7,8 +7,8 @@ require "selenium-webdriver"
 require "date"
 
 # import classfile
-require './Selector.rb'
-require './SaveDBTask.rb'
+require './selector.rb'
+require './save_db_task.rb'
 
 #
 # 動画サイト横断検索

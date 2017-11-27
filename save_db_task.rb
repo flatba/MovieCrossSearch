@@ -5,14 +5,25 @@ require 'sqlite3'
 # 保存処理
 #
 class SaveDBTask
-
   #
   # DB生成
   # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
   #
   def initialize(site_name)
+
+    # 出力先ディレクトリの有無の確認
+    # 無ければ作成する
+    unless File.directory?("./db") || File.directory?("./output") || File.directory?("./output/screenshot")
+      Dir::mkdir("./db")
+      Dir::mkdir("./output")
+      Dir::mkdir("./output/screenshot")
+    end
+
     # movie_master_table（ムービーテーブル）の生成
-    output_directory = 'output/' + site_name + '/' + 'movie_master' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'movie_master' + '.db'
+    unless File.directory?("./db/" + site_name)
+      Dir::mkdir("./db/" + site_name)
+    end
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS movie_master (
@@ -28,7 +39,7 @@ class SaveDBTask
     )
 
     # genre_table（ジャンルテーブル）の生成
-    output_directory = 'output/' + site_name + '/' + 'genre' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'genre' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (
@@ -37,7 +48,7 @@ class SaveDBTask
     )
 
     # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
-    output_directory = 'output/' + site_name + '/' + 'movie_genre' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (
@@ -47,7 +58,7 @@ class SaveDBTask
     )
 
     # director_tale（監督テーブル）の生成
-    output_directory = 'output/' + site_name + '/' + 'director' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'director' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (

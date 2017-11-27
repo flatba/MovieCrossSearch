@@ -50,6 +50,5 @@ build-iPhoneSimulator/
 .rvmrc
 
 # I personally added it
-.vscode
 /output/
 memo.txt
