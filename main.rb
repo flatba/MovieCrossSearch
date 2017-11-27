@@ -4,6 +4,7 @@ require 'nokogiri'
 require 'robotex'
 require 'sqlite3'
 require "selenium-webdriver"
+require "date"
 
 # import classfile
 require './Selector.rb'
@@ -69,6 +70,16 @@ require './SaveDBTask.rb'
     return item.empty?
   end
 
+  #
+  # デバッグ用
+  #
+  def ss(driver)
+    file_name = "screenshot"
+    extension = ".png"
+    default_dir_path = "/Users/flatba/dev/project_ruby/movieCrossSearch/output/screenshot/"
+    driver.save_screenshot default_dir_path + DateTime.now.to_s + file_name + extension
+  end
+
   robotex = Robotex.new
   p robotex.allowed?(@main_url)
 
@@ -110,13 +121,12 @@ require './SaveDBTask.rb'
     # []4->5同じことをする(繰り返し)
     # []全ての"もっと見る"から収集が終わったら、次のカテゴリトップページ②へアクセスする
 
-    # ブラウザ起動
-    # Headless Chromiumに切り替える！！！
-    ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36"
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu", "--user-agent=#{ua}", "window-size=1280x800"]})
+    # HeadressChrome起動
+    # 通常起動：driver = Selenium::WebDriver.for :chrome
+    ua = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
     driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-    # 通常起動：driver = Selenium::WebDriver.for :chrome
     # カテゴリトップページにアクセス
     driver.get(category_url)
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
@@ -124,6 +134,8 @@ require './SaveDBTask.rb'
 
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
+    sleep 10
+    ss(driver)
     for btn_cnt in 0..button_num
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
