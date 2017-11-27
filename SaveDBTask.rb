@@ -47,7 +47,7 @@ class SaveDBTask
     )
 
     # director_tale（監督テーブル）の生成
-    output_directory = 'output/' + site_name + '/' + 'director_master' + '.db'
+    output_directory = 'output/' + site_name + '/' + 'director' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (

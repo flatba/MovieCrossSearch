@@ -66,7 +66,7 @@ require './SaveDBTask.rb'
   # 情報取得の項目があるかどうかのチェック
   #
   def checkContentItem(item)
-    return item.blank?
+    return item.empty?
   end
 
   robotex = Robotex.new
@@ -157,53 +157,56 @@ require './SaveDBTask.rb'
           content_doc = openURL(content_url)
 
           # パースデータから動画の情報を取得する
-          insert_contents = contents.new("", "", "", "", "", "", "", "")
+          add_contents = contents.new("", "", "", "", "", "", "", "")
 
-          # 取得中にいらんデータもしくは、データが無い場合の処理を考えたい
-          # 現状考えているのは、if文でセレクタで指定した値が無ければセットしないという方法
-
-          # ここの例外処理のif文が判定できてないので
-          # セレクタで要素がない場合の判定を処理書き途中
-          puts content_doc.css("baobabu")
-          if content_doc.css(selector.selectSelector[:thumbnail])
-            insert_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+          # データが存在しない場合は処理を飛ばす
+          # トップ画像
+          unless checkContentItem(content_doc.css(selector.selectSelector[:thumbnail]))
+            add_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
           end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:title]).text)
-            puts insert_contents.title = content_doc.css(selector.selectSelector[:title]).text
+          # 映画タイトル
+          unless checkContentItem(content_doc.css(selector.selectSelector[:title]).text)
+            add_contents.title = content_doc.css(selector.selectSelector[:title]).text
           end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:original_title]))
-            contents_tmp.original_title = content_doc.css(selector.selectSelector[:original_title])
+          # 原題
+          unless checkContentItem(content_doc.css(selector.selectSelector[:original_title]))
+            add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
           end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:release_year]).text)
-            insert_contents.release_year = content_doc.css(selector.selectSelector[:release_year]).text
+          # 公開年
+          unless checkContentItem(content_doc.css(selector.selectSelector[:release_year]).text)
+            add_contents.release_year = content_doc.css(selector.selectSelector[:release_year]).text
             tail_num = release_year.rindex('年')
             puts release_year = release_year[tail_num-4..tail_num-1]
           end
 
-          # ここ配列のため、DBで文字化けのまま入ってしまう
-          if checkContentItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
+          # ジャンル # ここ配列のため、DBで文字化けのまま入ってしまう
+          # テーブルを切り分けるので、あとで処理を直す必要あり
+          unless checkContentItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
             genres = []
-            insert_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
+            add_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
               genres.push(genre.text)
             end
             puts genres
           end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:running_time]).text)
-            puts insert_contents.running_time = content_doc.css(selector.selectSelector[:running_time]).text
+          # 上映時間
+          unless checkContentItem(content_doc.css(selector.selectSelector[:running_time]).text)
+            add_contents.running_time = content_doc.css(selector.selectSelector[:running_time]).text
             # head_num = 0
             # if running_time.rindex('/') > 0
             #   puts "通過"
             #   head_num = running_time.rindex('/')+1
             # end
             # puts tail_num = running_time.rindex('分')
-            # puts running_time = running_time[head_num..tail_num].strip
+            # puts add_contents.running_time = running_time[head_num..tail_num].strip
           end
 
-          # if checkContentItem(content_doc.css(selector.selectSelector[:director])[0])
+          # キャスト
+          # テーブルを切り分ける？ので、あとで処理を直す必要あり
+          # unless checkContentItem(content_doc.css(selector.selectSelector[:director])[0])
             # casts = []
             # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
             #   casts.push(cast.text)
@@ -211,13 +214,16 @@ require './SaveDBTask.rb'
             # puts casts
           # end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
+          # 監督
+          # テーブルを切り分ける？ので、あとで処理を直す必要あり
+          unless checkContentItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
             # directors = []
-            puts insert_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
+            add_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
           end
 
-          if checkContentItem(content_doc.css(selector.selectSelector[:summary]).text)
-            puts insert_contents.summary = content_doc.css(selector.selectSelector[:summary]).text
+          # あらすじ
+          unless checkContentItem(content_doc.css(selector.selectSelector[:summary]).text)
+            add_contents.summary = content_doc.css(selector.selectSelector[:summary]).text
           end
 
           puts contents
