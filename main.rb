@@ -112,7 +112,11 @@ require './SaveDBTask.rb'
 
     # ブラウザ起動
     # Headless Chromiumに切り替える！！！
-    driver = Selenium::WebDriver.for :chrome
+    ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36"
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu", "--user-agent=#{ua}", "window-size=1280x800"]})
+    driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+
+    # 通常起動：driver = Selenium::WebDriver.for :chrome
     # カテゴリトップページにアクセス
     driver.get(category_url)
     # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
