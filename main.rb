@@ -73,11 +73,11 @@ require './SaveDBTask.rb'
   #
   # デバッグ用
   #
-  def ss(driver)
-    file_name = "screenshot"
+  def screenshot(driver)
+    file_name = "_screenshot"
     extension = ".png"
     default_dir_path = "/Users/flatba/dev/project_ruby/movieCrossSearch/output/screenshot/"
-    driver.save_screenshot default_dir_path + DateTime.now.to_s + file_name + extension
+    driver.save_screenshot default_dir_path + DateTime.now.strftime("%Y%m%d%H%M%S") + file_name + extension
   end
 
   robotex = Robotex.new
@@ -134,8 +134,7 @@ require './SaveDBTask.rb'
 
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
     button_num = driver.find_elements(:class, 'vod-mod-button').size
-    sleep 10
-    ss(driver)
+    screenshot(driver) # デバッグ用
     for btn_cnt in 0..button_num
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
@@ -171,6 +170,8 @@ require './SaveDBTask.rb'
           # 各動画ページのパースデータを取得する
           content_url = driver.current_url
           content_doc = openURL(content_url)
+
+          screenshot(driver) # デバッグ用
 
           # パースデータから動画の情報を取得する
           add_contents = contents.new("", "", "", "", "", "", "", "")
