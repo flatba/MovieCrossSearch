@@ -164,6 +164,7 @@ require './SaveDBTask.rb'
 
           # ここの例外処理のif文が判定できてないので
           # セレクタで要素がない場合の判定を処理書き途中
+          puts content_doc.css("baobabu")
           if content_doc.css(selector.selectSelector[:thumbnail])
             insert_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
           end
@@ -237,7 +238,7 @@ require './SaveDBTask.rb'
       end
     end
 
-    driver.quit # ブラウザ終了
-    db.closeDBTask
+    driver.quit    # ブラウザ終了
+    db.closeDBTask # データベースの編集終了
 
   end
