@@ -66,8 +66,10 @@ require './save_db_task.rb'
   #
   # 情報取得の項目があるかどうかのチェック
   #
-  def checkContentItem(item)
-    return item.empty?
+  def checkContentsItem(item)
+    if item.empty? || item.nil?
+      return true
+    end
   end
 
   #
@@ -127,9 +129,18 @@ require './save_db_task.rb'
     button_num = driver.find_elements(:class, 'vod-mod-button').size
     for btn_cnt in 0..button_num
 
+      if btn_cnt > 1 then
+        puts "ページ末尾にスクロールする..."
+        screenshot(driver) # デバッグ用
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        sleep 10
+        screenshot(driver) # デバッグ用
+      end
+
       sleep 10
       screenshot(driver) # デバッグ用
       puts "[もっと見る]をクリック中..."
+      puts driver.current_url + "にアクセス中..."
 
       # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
       buttons_driver = driver.find_elements(:class, 'vod-mod-button')
@@ -180,7 +191,6 @@ require './save_db_task.rb'
           content_doc = openURL(content_url)
 
           puts "パース完了..."
-
           screenshot(driver) # デバッグ用
 
           # パースデータから動画の情報を取得する
@@ -188,45 +198,50 @@ require './save_db_task.rb'
 
           # データが存在しない場合は処理を飛ばす
           # トップ画像
-          unless checkContentItem(content_doc.css(selector.selectSelector[:thumbnail]))
+          screenshot(driver) # デバッグ用
+
+          unless checkContentsItem(content_doc.css(selector.selectSelector[:thumbnail]))
             puts add_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
           end
 
           # 映画タイトル
-          unless checkContentItem(content_doc.css(selector.selectSelector[:title]).text)
+          screenshot(driver) # デバッグ用
+          unless checkContentsItem(content_doc.css(selector.selectSelector[:title]).text)
             puts add_contents.title = content_doc.css(selector.selectSelector[:title]).text
           end
 
           # 原題
-          unless checkContentItem(content_doc.css(selector.selectSelector[:original_title]))
-            puts add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
-          end
+          # screenshot(driver) # デバッグ用
+          # unless checkContentsItem(content_doc.css(selector.selectSelector[:original_title]))
+          #   puts add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
+          # end
 
           # 公開年
-          unless checkContentItem(content_doc.css(selector.selectSelector[:release_year]).text)
-            add_contents.release_year = content_doc.css(selector.selectSelector[:release_year]).text
-            tail_num = release_year.rindex('年')
-            puts release_year = release_year[tail_num-4..tail_num-1]
+          screenshot(driver) # デバッグ用
+          unless checkContentsItem(content_doc.css(selector.selectSelector[:release_year]).text)
+            release_year_tmp = content_doc.css(selector.selectSelector[:release_year]).text
+            tail_num = release_year_tmp.rindex('年')
+            puts add_contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
           end
 
           # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          unless checkContentItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
-            genres = []
-            add_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
-              genres.push(genre.text)
-            end
-            puts genres
-          end
+          # unless checkContentsItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
+            # genres = []
+            # add_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
+            #   genres.push(genre.text)
+            # end
+            # puts genres
+          # end
 
           # 上映時間
-          unless checkContentItem(content_doc.css(selector.selectSelector[:running_time]).text)
-            add_contents.running_time = content_doc.css(selector.selectSelector[:running_time]).text
-            tail_num = running_time.rindex('分')
-            puts add_contents.running_time = running_time[tail_num-3..tail_num].strip
+          unless checkContentsItem(content_doc.css(selector.selectSelector[:running_time]).text)
+            running_time_tmp = content_doc.css(selector.selectSelector[:running_time]).text
+            tail_num = running_time_tmp.rindex('分')
+            puts add_contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
           end
 
           # キャスト <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          # unless checkContentItem(content_doc.css(selector.selectSelector[:director])[0])
+          # unless checkContentsItem(content_doc.css(selector.selectSelector[:director])[0])
             # casts = []
             # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
             #   casts.push(cast.text)
@@ -235,13 +250,13 @@ require './save_db_task.rb'
           # end
 
           # 監督 <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          unless checkContentItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
-            # directors = []
-            add_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
-          end
+          # unless checkContentsItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
+          #   # directors = []
+          #   add_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
+          # end
 
           # あらすじ
-          unless checkContentItem(content_doc.css(selector.selectSelector[:summary]).text)
+          unless checkContentsItem(content_doc.css(selector.selectSelector[:summary]).text)
             add_contents.summary = content_doc.css(selector.selectSelector[:summary]).text
           end
 
@@ -256,8 +271,7 @@ require './save_db_task.rb'
         end
       rescue
         screenshot(driver) # デバッグ用
-        puts "要素がなかったかも"
-        puts driver.current_url
+        puts driver.current_url + "内で要素がなかったかも"
         driver.navigate().back()
         sleep 10
         next
