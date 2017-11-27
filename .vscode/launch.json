@@ -9,15 +9,8 @@
       "type": "Ruby",
       "request": "launch",
       "cwd": "${workspaceRoot}",
-      "program": "${workspaceRoot}/Main.rb",
+      "program": "${workspaceRoot}/main.rb",
       "useBundler": true
-    },
-    {
-      "name": "Debug Local File",
-      "type": "Ruby",
-      "request": "launch",
-      "cwd": "${workspaceRoot}",
-      "program": "${workspaceRoot}/Main.rb"
     },
     {
       "name": "Listen for rdebug-ide",

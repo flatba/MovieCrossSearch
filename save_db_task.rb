@@ -11,8 +11,7 @@ class SaveDBTask
   #
   def initialize(site_name)
 
-    # 出力先ディレクトリの有無の確認
-    # 無ければ作成する
+    # 出力先ディレクトリの有無の確認して無ければ作成する
     unless File.directory?("./db") || File.directory?("./output") || File.directory?("./output/screenshot")
       Dir::mkdir("./db")
       Dir::mkdir("./output")
@@ -21,9 +20,11 @@ class SaveDBTask
 
     # movie_master_table（ムービーテーブル）の生成
     output_directory = 'db/' + site_name + '/' + 'movie_master' + '.db'
+
     unless File.directory?("./db/" + site_name)
       Dir::mkdir("./db/" + site_name)
     end
+
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS movie_master (

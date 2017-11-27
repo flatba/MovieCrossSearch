@@ -140,6 +140,8 @@ require './save_db_task.rb'
 
       # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
       unless driver.current_url.include?("tiles") then
+        screenshot(driver) # デバッグ用
+        puts "動画コンテンツがないので次の[もっと見る]に遷移する..."
         driver.navigate().back()
         sleep 10
         next
@@ -149,6 +151,11 @@ require './save_db_task.rb'
       contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
       begin
         for content_btn_cnt in 0..contents_num
+
+          # if content_btn_cnt%2 == 0
+            # puts "ページ末尾にスクロールする..."
+            # driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+          # end
 
           # 最後まで読み込んだら前のページに戻る
           if content_btn_cnt == contents_num then
@@ -162,7 +169,7 @@ require './save_db_task.rb'
             contents_driver[content_btn_cnt].click
 
             screenshot(driver) # デバッグ用
-            puts "各動画コンテンツにアクセス中..."
+            puts driver.current_url + "にアクセス中..."
 
           rescue
             next
@@ -172,6 +179,8 @@ require './save_db_task.rb'
           content_url = driver.current_url
           content_doc = openURL(content_url)
 
+          puts "パース完了..."
+
           screenshot(driver) # デバッグ用
 
           # パースデータから動画の情報を取得する
@@ -180,17 +189,17 @@ require './save_db_task.rb'
           # データが存在しない場合は処理を飛ばす
           # トップ画像
           unless checkContentItem(content_doc.css(selector.selectSelector[:thumbnail]))
-            add_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+            puts add_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
           end
 
           # 映画タイトル
           unless checkContentItem(content_doc.css(selector.selectSelector[:title]).text)
-            add_contents.title = content_doc.css(selector.selectSelector[:title]).text
+            puts add_contents.title = content_doc.css(selector.selectSelector[:title]).text
           end
 
           # 原題
           unless checkContentItem(content_doc.css(selector.selectSelector[:original_title]))
-            add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
+            puts add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
           end
 
           # 公開年
@@ -200,8 +209,7 @@ require './save_db_task.rb'
             puts release_year = release_year[tail_num-4..tail_num-1]
           end
 
-          # ジャンル # ここ配列のため、DBで文字化けのまま入ってしまう
-          # テーブルを切り分けるので、あとで処理を直す必要あり
+          # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
           unless checkContentItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
             genres = []
             add_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
@@ -213,17 +221,11 @@ require './save_db_task.rb'
           # 上映時間
           unless checkContentItem(content_doc.css(selector.selectSelector[:running_time]).text)
             add_contents.running_time = content_doc.css(selector.selectSelector[:running_time]).text
-            # head_num = 0
-            # if running_time.rindex('/') > 0
-            #   puts "通過"
-            #   head_num = running_time.rindex('/')+1
-            # end
-            # puts tail_num = running_time.rindex('分')
-            # puts add_contents.running_time = running_time[head_num..tail_num].strip
+            tail_num = running_time.rindex('分')
+            puts add_contents.running_time = running_time[tail_num-3..tail_num].strip
           end
 
-          # キャスト
-          # テーブルを切り分ける？ので、あとで処理を直す必要あり
+          # キャスト <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
           # unless checkContentItem(content_doc.css(selector.selectSelector[:director])[0])
             # casts = []
             # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
@@ -232,8 +234,7 @@ require './save_db_task.rb'
             # puts casts
           # end
 
-          # 監督
-          # テーブルを切り分ける？ので、あとで処理を直す必要あり
+          # 監督 <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
           unless checkContentItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
             # directors = []
             add_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
@@ -246,8 +247,8 @@ require './save_db_task.rb'
 
           puts contents
 
-          # DBに保存する（一旦はsqliteで保存する（.db形式））
-          @db = db.saveDBTask(contents)
+          # DBに保存する（sqlite形式）
+          @db = db.createContents(contents)
 
           # コンテンツ情報を収集したら前のページに戻る
           driver.navigate().back()
