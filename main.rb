@@ -14,7 +14,41 @@ require './save_db_task.rb'
 # 動画サイト横断検索
 #
 
-  @main_url = "https://www.happyon.jp/"
+# class Main
+#   def initialize
+#     # インスタンス変数などをここで定義するように変更する
+#   end
+# end
+
+# class Clawl
+#   # クロール処理をここにまとめる
+# end
+
+# class scrape
+#   # 解析処理をここにまとめる
+#   # 厳密にはクロール処理と分けにくいので一緒でも良いのかも
+# end
+
+
+
+  #
+  # 初期データの生成
+  #
+  def initData
+
+    # サイト名称に応じて読み込むセレクターのインスタンスを切り替える
+    @selector = Selector.new(@site_name)
+
+    # 構造体："トップ画像URL", "タイトル", "原題", "公開年", "ジャンル", "時間", "監督", "あらすじ"
+    @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+
+    # サイト名称に応じてDBのインスタンスを生成する
+    # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
+    @db = SaveDBTask.new(@site_name)
+
+
+  end
+
 
   #
   # URLからパースデータを取得する
@@ -63,13 +97,15 @@ require './save_db_task.rb'
     end
   end
 
-  #
-  # 情報取得の項目があるかどうかのチェック
-  #
-  def checkContentsItem(item)
-    if item.empty? || item.nil?
-      return true
-    end
+
+
+  def startDriver
+    # HeadressChrome起動
+    # 通常起動：driver = Selenium::WebDriver.for :chrome
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
+    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
+    @wait = Selenium::WebDriver::Wait.new(timeout: 10)
   end
 
   #
@@ -82,28 +118,128 @@ require './save_db_task.rb'
     driver.save_screenshot default_dir_path + DateTime.now.strftime("%Y%m%d%H%M%S") + file_name + extension
   end
 
+  def login
+
+  end
+
+
+  #
+  #
+  #
+  def close(driver, db)
+    driver.quit    # ブラウザ終了
+    db.closeDBTask # データベースの編集終了
+  end
+
+  #
+  # 情報収集処理
+  #
+  # 情報取得の項目があるかどうかのチェック
+  def checkContentsItem(item)
+    if item.empty? || item.nil?
+      return true
+    end
+  end
+
+  # 情報を取得してcontents（構造体）に入れて返す
+  def newContents(driver, doc)
+    # パースデータから動画の情報を取得する
+    contents = @contents.new("", "", "", "", "", "", "", "")
+
+    begin
+      # データが存在しない場合は処理を飛ばす
+      # トップ画像
+      unless checkContentsItem(doc.css(@selector.selectSelector[:thumbnail]))
+        puts contents.thumbnail = doc.css(@selector.selectSelector[:thumbnail]).attr('src').to_s
+      end
+
+      # 映画タイトル
+      unless checkContentsItem(doc.css(@selector.selectSelector[:title]).text)
+        puts add_contents.title = doc.css(@selector.selectSelector[:title]).text
+      end
+
+      # 原題
+      # screenshot(@driver) # デバッグ用
+      # unless checkContentsItem(doc.css(@selector.selectSelector[:original_title]))
+      #   puts contents.original_title = doc.css(@selector.selectSelector[:original_title])
+      # end
+
+      # 公開年
+      unless checkContentsItem(doc.css(@selector.selectSelector[:release_year]).text)
+        release_year_tmp = doc.css(@selector.selectSelector[:release_year]).text
+        tail_num = release_year_tmp.rindex('年')
+        puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
+      end
+
+      # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
+      # unless checkContentsItem(insert_contents.doc.css(@selector.selectSelector[:genre]).children)
+        # genres = []
+        # contents.doc.css(@selector.selectSelector[:genre]).children.each do |genre|
+        #   genres.push(genre.text)
+        # end
+        # puts genres
+      # end
+
+      # 上映時間
+      unless checkContentsItem(doc.css(@selector.selectSelector[:running_time]).text)
+        running_time_tmp = doc.css(@selector.selectSelector[:running_time]).text
+        tail_num = running_time_tmp.rindex('分')
+        puts contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
+      end
+
+      # キャスト <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
+      # unless checkContentsItem(doc.css(@selector.selectSelector[:director])[0])
+        # casts = []
+        # doc.css(@selector.selectSelector[:director])[0].each do |cast|
+        #   casts.push(cast.text)
+        # end
+        # puts casts
+      # end
+
+      # 監督 <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
+      # unless checkContentsItem(doc.css(@selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
+      #   # directors = []
+      #   contents.directors = doc.css(@selector.selectSelector[:directors])[2].text.chomp.strip
+      # end
+
+      # あらすじ
+      unless checkContentsItem(doc.css(@selector.selectSelector[:summary]))
+        contents.summary = doc.css(@selector.selectSelector[:summary]).text
+      end
+
+    rescue
+      puts contents
+      puts @driver.current_url + "内で要素がなかったかも"
+      @driver.navigate().back()
+    end
+
+    return contents
+
+  end
+
+########################################
+
+  @base_url = "https://www.happyon.jp/"
+
+  # クロール可能サイトかどうかチェックする
   robotex = Robotex.new
-  p robotex.allowed?(@main_url)
+  p robotex.allowed?(@base_url)
 
   # サイト名称の識別 @site_name にサイト名称格納
-  checkSiteName(@main_url)
+  checkSiteName(@base_url)
+
+  # 初期データの生成
+  initData()
+
+  # ドライバー起動
+  startDriver()
 
   # メインページにアクセスしてパースデータを取得する
-  main_doc = openURL(@main_url)
-
-  # サイト名称に応じて読み込むセレクターのインスタンスを切り替える
-  selector = Selector.new(@site_name)
-
-  # サイト名称に応じてDBのインスタンスを生成する
-  # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
-  db = SaveDBTask.new(@site_name)
-
-  # 構造体："トップ画像URL", "タイトル", "原題", "公開年", "ジャンル", "時間", "監督", "あらすじ"
-  contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+  main_doc = openURL(@base_url)
 
   # メインページから動画カテゴリ一覧のurlを取得する
   category_url_arr = []
-  main_doc.css(selector.selectSelector[:category_selector]).each { |element|
+  main_doc.css(@selector.selectSelector[:category_selector]).each { |element|
     # puts a_tag.text.strip   # カテゴリ名称
     # puts a_tag.attr('href') # カテゴリURL
     category_url_arr << element.attr('href')
@@ -112,173 +248,96 @@ require './save_db_task.rb'
   # 各カテゴリページにアクセスする
   category_url_arr.each do |category_url|
 
-    # HeadressChrome起動
-    # 通常起動：driver = Selenium::WebDriver.for :chrome
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-    driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-
     # カテゴリトップページにアクセス
-    driver.get(category_url)
-    screenshot(driver) # デバッグ用
+    @driver.get(category_url)
     puts category_url + "にアクセス中..."
 
-    # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
-    driver.manage.timeouts.implicit_wait = 10 # 一括設定
-
     # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
-    button_num = driver.find_elements(:class, 'vod-mod-button').size
+    button_num = @driver.find_elements(:class, 'vod-mod-button').size
     for btn_cnt in 0..button_num
 
-      if btn_cnt > 1 then
-        puts "ページ末尾にスクロールする..."
-        screenshot(driver) # デバッグ用
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        sleep 10
-        screenshot(driver) # デバッグ用
-      end
+      # if btn_cnt > 1 then
+      #   puts "ページ末尾にスクロールする..."
+      #   screenshot(@driver) # デバッグ用
+      #   @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+      #   sleep 10
+      #   screenshot(@driver) # デバッグ用
+      # end
 
       sleep 10
-      screenshot(driver) # デバッグ用
       puts "[もっと見る]をクリック中..."
-      puts driver.current_url + "にアクセス中..."
+      puts @driver.current_url + "にアクセス中..."
+      sleep 10
 
-      # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-      buttons_driver = driver.find_elements(:class, 'vod-mod-button')
+      # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+      buttons_driver = @driver.find_elements(:class, 'vod-mod-button') # <= 二週目以降のelement情報が2個しか取れていない。なぜ？
+      screenshot(@driver) # デバッグ用
+      @driver.find_element(:class, 'vod-mod-button').displayed?
+      @driver.find_element(:class, 'vod-mod-button').location_once_scrolled_into_view
+      screenshot(@driver) # デバッグ用
       buttons_driver[btn_cnt].click
 
-      screenshot(driver) # デバッグ用
+
+      screenshot(@driver) # デバッグ用
       puts "各動画コンテンツ一覧にアクセス中..."
 
       # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-      unless driver.current_url.include?("tiles") then
-        screenshot(driver) # デバッグ用
-        puts "動画コンテンツがないので次の[もっと見る]に遷移する..."
-        driver.navigate().back()
+      unless @driver.current_url.include?("tiles") then
+        @driver.navigate().back()
+        puts "動画コンテンツがないので各動画コンテンツ一覧に戻る..."
         sleep 10
         next
       end
 
       # 動画一覧からコンテンツ内にクリックで入っていく
-      contents_num = driver.find_elements(:class, selector.selectSelector[:content_click]).size
-      begin
+      contents_num = @driver.find_elements(:class, @selector.selectSelector[:content_click]).size
+
         for content_btn_cnt in 0..contents_num
 
           # if content_btn_cnt%2 == 0
             # puts "ページ末尾にスクロールする..."
-            # driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            # @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
           # end
 
           # 最後まで読み込んだら前のページに戻る
           if content_btn_cnt == contents_num then
-            driver.navigate().back()
+            @driver.navigate().back()
             break
           end
 
           begin
-            # driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-            contents_driver = driver.find_elements(:class, 'vod-mod-tile__item')
+            # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+            contents_driver = @driver.find_elements(:class, @selector.selectSelector[:content_click])
             contents_driver[content_btn_cnt].click
 
-            screenshot(driver) # デバッグ用
-            puts driver.current_url + "にアクセス中..."
+            puts @driver.current_url + "にアクセス中..."
 
           rescue
             next
           end
 
           # 各動画ページのパースデータを取得する
-          content_url = driver.current_url
+          content_url = @driver.current_url
           content_doc = openURL(content_url)
 
           puts "パース完了..."
-          screenshot(driver) # デバッグ用
 
-          # パースデータから動画の情報を取得する
-          add_contents = contents.new("", "", "", "", "", "", "", "")
+          add_contents = newContents(content_doc)
 
-          # データが存在しない場合は処理を飛ばす
-          # トップ画像
-          screenshot(driver) # デバッグ用
 
-          unless checkContentsItem(content_doc.css(selector.selectSelector[:thumbnail]))
-            puts add_contents.thumbnail = content_doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
-          end
 
-          # 映画タイトル
-          screenshot(driver) # デバッグ用
-          unless checkContentsItem(content_doc.css(selector.selectSelector[:title]).text)
-            puts add_contents.title = content_doc.css(selector.selectSelector[:title]).text
-          end
-
-          # 原題
-          # screenshot(driver) # デバッグ用
-          # unless checkContentsItem(content_doc.css(selector.selectSelector[:original_title]))
-          #   puts add_contents.original_title = content_doc.css(selector.selectSelector[:original_title])
-          # end
-
-          # 公開年
-          screenshot(driver) # デバッグ用
-          unless checkContentsItem(content_doc.css(selector.selectSelector[:release_year]).text)
-            release_year_tmp = content_doc.css(selector.selectSelector[:release_year]).text
-            tail_num = release_year_tmp.rindex('年')
-            puts add_contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
-          end
-
-          # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          # unless checkContentsItem(insert_contents.content_doc.css(selector.selectSelector[:genre]).children)
-            # genres = []
-            # add_contents.content_doc.css(selector.selectSelector[:genre]).children.each do |genre|
-            #   genres.push(genre.text)
-            # end
-            # puts genres
-          # end
-
-          # 上映時間
-          unless checkContentsItem(content_doc.css(selector.selectSelector[:running_time]).text)
-            running_time_tmp = content_doc.css(selector.selectSelector[:running_time]).text
-            tail_num = running_time_tmp.rindex('分')
-            puts add_contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
-          end
-
-          # キャスト <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          # unless checkContentsItem(content_doc.css(selector.selectSelector[:director])[0])
-            # casts = []
-            # content_doc.css(selector.selectSelector[:director])[0].each do |cast|
-            #   casts.push(cast.text)
-            # end
-            # puts casts
-          # end
-
-          # 監督 <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
-          # unless checkContentsItem(content_doc.css(selector.selectSelector[:directors])[2].text.gsub("\\n", "").strip)
-          #   # directors = []
-          #   add_contents.directors = content_doc.css(selector.selectSelector[:directors])[2].text.chomp.strip
-          # end
-
-          # あらすじ
-          unless checkContentsItem(content_doc.css(selector.selectSelector[:summary]).text)
-            add_contents.summary = content_doc.css(selector.selectSelector[:summary]).text
-          end
-
-          puts contents
+          # puts contents
 
           # DBに保存する（sqlite形式）
           @db = db.createContents(contents)
 
           # コンテンツ情報を収集したら前のページに戻る
-          driver.navigate().back()
+          @driver.navigate().back()
 
         end
-      rescue
-        screenshot(driver) # デバッグ用
-        puts driver.current_url + "内で要素がなかったかも"
-        driver.navigate().back()
-        sleep 10
-        next
-      end
+
     end
 
-    driver.quit    # ブラウザ終了
-    db.closeDBTask # データベースの編集終了
+    close(@driver, @db)
 
   end

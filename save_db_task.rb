@@ -73,7 +73,7 @@ class SaveDBTask
   #
   # 映画コンテンツの追加
   #
-  def createContents(contents)
+  def addContentsDB(contents)
     @db.execute(
       "insert into movie_master (
       thumbnail, title, original_title, release_year, genres, running_time, director, summary
@@ -92,7 +92,7 @@ class SaveDBTask
   #
   # 映画コンテンツの更新
   #
-  def updateContents(contents)
+  def updateContentsDB(contents)
     @db.execute(
       "insert into movie_master (
       thumbnail, title, original_title, release_year, genres, running_time, director, summary
@@ -111,7 +111,7 @@ class SaveDBTask
   #
   # 映画コンテンツの削除
   #
-  def deleteContents(contents)
+  def deleteContentsDB(contents)
     @db.execute(
       "insert into movie_master (
       thumbnail, title, original_title, release_year, genres, running_time, director, summary
@@ -130,14 +130,14 @@ class SaveDBTask
   #
   # ジャンルの追加
   #
-  def createGenre(genres)
+  def addGenreDB(genres)
     @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
   end
 
   #
   # ジャンルの更新
   #
-  def updateGenre(genres)
+  def updateGenreDB(genres)
     # 未編集　コマンドがinsertではない <= あとで編集
     # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
   end
@@ -145,7 +145,7 @@ class SaveDBTask
   #
   # ジャンルの削除
   #
-  def deleteGenre(genres)
+  def deleteGenreDB(genres)
     # 未編集　コマンドがinsertではない <= あとで編集
     # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
   end
