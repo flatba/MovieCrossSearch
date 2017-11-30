@@ -8,6 +8,8 @@ class SaveDBTask
   #
   # DB生成
   # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
+  # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
+  # ある程度進んだらActiveRecord使ってみたい
   #
   def initialize(site_name)
 

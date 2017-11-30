@@ -82,19 +82,24 @@ class Main
 
   # 情報を取得してcontents（構造体）に入れて返す
   def newContents(selector, doc, contents)
-    # パースデータから動画の情報を取得する
+
+    # 20171130
+    # 細かい情報を取得するよりちゃんと全ての動画コンテンツを舐める流れを作るほうが優先度高い。
+    # ので、ここのコンテンツ取得は一旦コメントアウトしておく。
+
+    # 構造体："トップ画像URL", "タイトル", "原題", "公開年", "ジャンル", "時間", "監督", "あらすじ"
     contents = contents.new("", "", "", "", "", "", "", "")
 
     # データが存在しない場合は処理を飛ばす
     # トップ画像
-    unless checkContentsItem(doc.css(selector.selectSelector[:thumbnail]))
-      puts contents.thumbnail = doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
-    end
+    # unless checkContentsItem(doc.css(selector.selectSelector[:thumbnail]))
+    #   puts contents.thumbnail = doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+    # end
 
     # 映画タイトル
-    unless checkContentsItem(doc.css(selector.selectSelector[:title]).text)
-      puts add_contents.title = doc.css(selector.selectSelector[:title]).text
-    end
+    # unless checkContentsItem(doc.css(selector.selectSelector[:title]).text)
+    #   puts add_contents.title = doc.css(selector.selectSelector[:title]).text
+    # end
 
     # 原題
     # screenshot(@driver) # デバッグ用
@@ -103,11 +108,11 @@ class Main
     # end
 
     # 公開年
-    unless checkContentsItem(doc.css(selector.selectSelector[:release_year]).text)
-      release_year_tmp = doc.css(selector.selectSelector[:release_year]).text
-      tail_num = release_year_tmp.rindex('年')
-      puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
-    end
+    # unless checkContentsItem(doc.css(selector.selectSelector[:release_year]).text)
+    #   release_year_tmp = doc.css(selector.selectSelector[:release_year]).text
+    #   tail_num = release_year_tmp.rindex('年')
+    #   puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
+    # end
 
     # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
     # unless checkContentsItem(insert_contents.doc.css(@selector.selectSelector[:genre]).children)
@@ -119,11 +124,11 @@ class Main
     # end
 
     # 上映時間
-    unless checkContentsItem(doc.css(selector.selectSelector[:running_time]).text)
-      running_time_tmp = doc.css(selector.selectSelector[:running_time]).text
-      tail_num = running_time_tmp.rindex('分')
-      puts contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
-    end
+    # unless checkContentsItem(doc.css(selector.selectSelector[:running_time]).text)
+    #   running_time_tmp = doc.css(selector.selectSelector[:running_time]).text
+    #   tail_num = running_time_tmp.rindex('分')
+    #   puts contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
+    # end
 
     # キャスト <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
     # unless checkContentsItem(doc.css(@selector.selectSelector[:director])[0])
@@ -141,9 +146,9 @@ class Main
     # end
 
     # あらすじ
-    unless checkContentsItem(doc.css(selector.selectSelector[:summary]))
-      contents.summary = doc.css(selector.selectSelector[:summary]).text
-    end
+    # unless checkContentsItem(doc.css(selector.selectSelector[:summary]))
+    #   contents.summary = doc.css(selector.selectSelector[:summary]).text
+    # end
 
     # rescue
     #   puts contents
@@ -202,125 +207,100 @@ main = Main.new
 robotex = Robotex.new
 p robotex.allowed?(@base_url)
 
-# サイト名称の識別
 @site_name = main.checkSiteName(@base_url)
-
-# サイト名称に応じて読み込むセレクターのインスタンスを切り替える
 @selector = Selector.new(@site_name)
-
-# サイト名称に応じてDBのインスタンスを生成する
-# 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
 @db = SaveDBTask.new(@site_name)
-
-# 構造体："トップ画像URL", "タイトル", "原題", "公開年", "ジャンル", "時間", "監督", "あらすじ"
 @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
-
-# ドライバー起動
-caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-@driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-# WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
+@driver = Selenium::WebDriver.for :chrome
 @wait = Selenium::WebDriver::Wait.new(timeout: 10)
 
 # メインページにアクセスしてパースデータを取得する
 main_doc = main.openURL(@base_url)
 
-# メインページから動画カテゴリ一覧のurlを取得する
+
+#--- 大枠の流れはこれ。---#
+# ログインする
+# [DONE]カテゴリ一覧を取得する
+# [DONE]カテゴリにアクセスする
+  # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
+  # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押す）
+    # [DONE?]動画一覧を取得する
+    # 動画にアクセスする
+      # 情報を取得する
+        # 情報を保存する（sqlite形式）
+
+
+# [DONE]カテゴリ一覧を取得する
+puts "カテゴリ一覧を取得する"
 category_url_arr = []
 main_doc.css(@selector.selectSelector[:category_selector]).each { |element|
   # puts a_tag.text.strip   # カテゴリ名称
   # puts a_tag.attr('href') # カテゴリURL
   category_url_arr << element.attr('href')
 }
-puts "カテゴリ一覧を取得した。"
-
-# 各カテゴリページにアクセスする
-category_url_arr.each do |category_url|
-
-  # カテゴリトップページにアクセス
-  @driver.get(category_url)
-  puts "カテゴリのひとつにアクセス中..." + category_url
-
-  # "もっと見る"をクリックして、カテゴリ動画一覧ページへ
-  more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size
-  for more_watch_btn_cnt in 0..more_watch_button_num
-
-    puts "[もっと見る]の#{more_watch_btn_cnt}個目をクリック"
-    puts "カテゴリにアクセス..." + @driver.current_url
-
-    # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-    # @wait.until { @driver.find_elements(:class, 'vod-mod-button').displayed? }
-    more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
-    # <= 二週目以降のelement情報が2個しか取れていない。なぜ？
-    main.screenshot(@driver)
-
-    # ここのクリックのURLがズレてる？
-    more_watch_buttons_elements[more_watch_btn_cnt].click
-    main.screenshot(@driver)
-    puts "[もっと見る]をクリック"
-
-    # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-    unless @driver.current_url.include?("tiles") then
-      @driver.navigate().back()
-      puts "動画コンテンツがないので動画コンテンツ一覧に戻る..."
-      sleep 10
-      next
-    end
-
-    @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])}
-
-    # 動画一覧にある動画コンテンツの数
-    # all_content_num = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click]).size}
-    puts content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])}
-    puts all_content_num = content_elements.size
-    begin
-      for slect_content_num in 0..30
-
-        puts @driver.current_url
-
-        begin
-          # 毎回elementsを取得するのは時間かかるからなんとか、新規ページ開いてという実装にしたい。
-
-          # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-          content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])}
-          content_elements[slect_content_num].click
-          puts "コンテンツをクリック"
-          puts @driver.current_url + "にアクセス中..."
-        rescue RuntimeError => e
-          print e.message
-          $browser.close
-        rescue => e
-          print e.message + "\n"
-          next
-        end
 
 
-        # 各動画ページの映画情報を取得する
+# [DONE]カテゴリにアクセスする
+puts "カテゴリにアクセスする"
+begin
+  category_url_arr.each do |category_url|
+    @driver.get(category_url)
+
+    # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
+    puts "サブカテゴリを取得する"
+    more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
+
+    # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押す）
+    puts "サブカテゴリにアクセスする"
+    for more_watch_btn_cnt in 0..more_watch_button_num
+
+      # [DONE?]動画一覧を取得する
+      puts "動画一覧を取得する"
+      more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
+
+      # 動画にアクセスする
+      puts "動画一覧にアクセスする"
+      more_watch_buttons_elements[more_watch_btn_cnt].click
+
+      # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
+      unless @driver.current_url.include?("tiles") then
+        puts "動画一覧に戻る"
+        @driver.get(category_url)
+        next
+      end
+
+      # 動画にアクセスする
+      puts "動画にアクセスする"
+      content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])}
+      all_content_num = content_elements.size
+
+      for slect_content_num in 0..all_content_num
+        content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])} # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+        content_elements[slect_content_num].click
+
+        # 情報を取得する
+        puts "情報を取得する"
         content_url = @driver.current_url
         content_doc = main.openURL(content_url)
-        puts contents = main.newContents(@selector, content_doc, @contents)
+        contents = main.newContents(@selector, content_doc, @contents)
 
         # 取得したデータをDBに保存する（sqlite形式）
         @db = db.addContentsDB(contents)
 
         # コンテンツ情報を収集したら前のページに戻る
+        puts "動画一覧に戻る"
         @driver.navigate().back()
 
-        # 最後まで読み込んだら前のページに戻る
-        if slect_content_number == all_content_num then
-          @driver.navigate().back()
-          break
-        end
-
+        # 最後まで読み込んだら前のページに戻る処理を入れる
       end
-    rescue
-      puts contents
-      puts @driver.current_url + "内で要素がなかったかも"
-      @driver.navigate().back()
-      next
     end
-
+    main.close(@driver, @db)
   end
 
+rescue RuntimeError => e
+  print e.message
+  $browser.close
+rescue => e
+  print e.message + "\n"
   main.close(@driver, @db)
-
 end
