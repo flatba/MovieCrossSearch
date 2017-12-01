@@ -41,8 +41,15 @@ class Entry
   end
 
   def initialize_driver
+    # 通常起動
     @driver = Selenium::WebDriver.for :chrome
     @wait = Selenium::WebDriver::Wait.new(timeout: 30)
+
+    # HeadressChrome起動
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
+    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
+    # @wait = Selenium::WebDriver::Wait.new(timeout: 10)
   end
 
   # クロールするサイトの名称を判断する
@@ -92,8 +99,6 @@ class Main
     doc = Nokogiri::HTML.parse(html, nil, charset)
     return doc
   end
-
-
 
   # ログイン処理
   def login
@@ -191,73 +196,14 @@ class Main
 
   end
 
-
   def crawl
-    # クロール処理をここにまとめる
+    # クロール処理をここにまとめる？
+    # ...
   end
 
+  def scrape()
 
-  def scrape(more_watch_button_num)
-
-    # for more_watch_btn_cnt in 0..more_watch_button_num
-      # # [DONE?]動画一覧を取得する
-      # puts "動画一覧を取得する"
-      # more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
-
-      # # 動画にアクセスする
-      # puts "動画一覧にアクセスする"
-      # more_watch_buttons_elements[more_watch_btn_cnt].click
-
-      # # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-      # unless @driver.current_url.include?("tiles") then
-      #   puts "動画一覧に戻る"
-      #   @driver.get(category_url)
-      #   next
-      # end
-
-      # 動画にアクセスする
-      puts "動画にアクセスする"
-      sleep 10 # <= waitに置き換えたい
-      content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
-      all_content_num = content_elements.size
-
-      for slect_content_num in 0..all_content_num
-
-        if slect_content_num > 0 # ページが遷移するごとに@driver_idがページ変わってしまうので毎回取得し直す
-          sleep 10 # <= waitに置き換えたい
-          content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
-        end
-
-        puts "動画をクリック"
-        content_elements[slect_content_num].click
-
-        # 情報を取得する
-        puts "情報を取得する"
-        content_url = @driver.current_url
-        content_doc = main.open_url(content_url)
-        contents = main.new_contents(@selector, content_doc, @contents)
-
-        # 情報を保存する
-        puts "情報を保存する"
-        # @db.add_contents_DB(contents)
-
-        # コンテンツ情報を収集したら前のページに戻る
-        puts "動画一覧に戻る"
-        @driver.navigate().back()
-
-        # 最後まで読み込んだらカテゴリページに戻る処理を入れる
-      end
-    # end
   end
-
-  # def startDriver
-  #   # HeadressChrome起動
-  #   # 通常起動：driver = Selenium::WebDriver.for :chrome
-  #   caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-  #   @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-  #   # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
-  #   @wait = Selenium::WebDriver::Wait.new(timeout: 10)
-  # end
 
   def screenshot(driver)
     file_name = "_screenshot"
@@ -308,108 +254,69 @@ main_doc.css(@selector.selectSelector[:category_selector]).each { |element|
 }
 
 begin
-  category_url_arr.each do |category_url|
+category_url_arr.each do |category_url|
 
-    # [DONE]カテゴリにアクセスする
-    puts "カテゴリにアクセスする"
-    @driver.get(category_url)
+  # [DONE]カテゴリにアクセスする
+  puts "カテゴリにアクセスする"
+  @driver.get(category_url)
 
-    # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
-    puts "サブカテゴリを取得する"
-    more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
-    # more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
+  # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
+  puts "サブカテゴリを取得する"
+  more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
+  # more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
 
-    more_watch_buttons.each do |button|
+  more_watch_buttons.each do |button|
 
-      # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）
-      puts "サブカテゴリにアクセスする（動画一覧へアクセスする）"
-      button.click
+    # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）
+    puts "サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）"
+    button.click
 
-      # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-      unless @driver.current_url.include?("tiles") then
-        puts "動画一覧に戻る"
-        @driver.get(category_url)
-        next
-      end
-
+    # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
+    unless @driver.current_url.include?("tiles") then
+      puts "動画一覧に戻る"
+      @driver.get(category_url)
+      next
     end
 
+    # 動画一覧を取得する
+    puts "動画一覧を取得する"
+    sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
+    content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
 
-    for cnt in 0..more_watch_button.size
-      # [DONE?]動画一覧を取得する
-      puts "動画一覧を取得する"
-      more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
+    content_elements.each do |element|
 
       # 動画にアクセスする
-      puts "動画一覧にアクセスする"
-      more_watch_buttons_elements[cnt].click
+      puts "動画にアクセスする"
+      element.click # <= ここを新規タブで開きたい
+
+      # # 情報を取得する
+      # puts "情報を取得する"
+      # content_url = @driver.current_url
+      # content_doc = main.openURL(content_url)
+      # contents = main.newContents(@selector, content_doc, @contents)
+
+      # # 情報を保存する
+      # puts "情報を保存する"
+      # # @db.addContentsDB(contents)
+
+      # # コンテンツ情報を収集したら前のページに戻る
+      # puts "動画一覧に戻る"
+      # @driver.navigate().back()
+
+      # 最後まで読み込んだらカテゴリページに戻る処理を入れる
 
     end
 
-
-
-
-
-
-    main.scrape(more_watch_button_num)
-    # for more_watch_btn_cnt in 0..more_watch_button_num
-
-    #   # [DONE?]動画一覧を取得する
-    #   puts "動画一覧を取得する"
-    #   more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
-
-    #   # 動画にアクセスする
-    #   puts "動画一覧にアクセスする"
-    #   more_watch_buttons_elements[more_watch_btn_cnt].click
-
-    #   # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-    #   unless @driver.current_url.include?("tiles") then
-    #     puts "動画一覧に戻る"
-    #     @driver.get(category_url)
-    #     next
-    #   end
-
-    #   # 動画にアクセスする
-    #   puts "動画にアクセスする"
-    #   sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
-    #   content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
-    #   all_content_num = content_elements.size
-
-    #   for slect_content_num in 0..all_content_num
-
-    #     if slect_content_num > 0
-    #       sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
-    #       content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
-    #     end
-
-    #     puts "動画をクリック"
-    #     content_elements[slect_content_num].click
-
-    #     # 情報を取得する
-    #     puts "情報を取得する"
-    #     content_url = @driver.current_url
-    #     content_doc = main.openURL(content_url)
-    #     contents = main.newContents(@selector, content_doc, @contents)
-
-    #     # 情報を保存する
-    #     puts "情報を保存する"
-    #     # @db.addContentsDB(contents)
-
-    #     # コンテンツ情報を収集したら前のページに戻る
-    #     puts "動画一覧に戻る"
-    #     @driver.navigate().back()
-
-    #     # 最後まで読み込んだらカテゴリページに戻る処理を入れる
-    #   end
-    # end
-
-    if slect_content_num > 29 then
-      puts "ページ末尾にスクロールする"
-      @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    end
-
-    main.close(@driver, @db)
   end
+
+  if slect_content_num === 30 then
+    puts "ページ末尾にスクロールする"
+    @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+  end
+
+  main.close(@driver, @db)
+
+end
 
 rescue RuntimeError => e
   print e.message
