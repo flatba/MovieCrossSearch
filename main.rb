@@ -199,6 +199,7 @@ end
 
 
 
+
 main = Main.new
 
 @base_url = "https://www.happyon.jp/"
@@ -212,11 +213,10 @@ p robotex.allowed?(@base_url)
 @db = SaveDBTask.new(@site_name)
 @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
 @driver = Selenium::WebDriver.for :chrome
-@wait = Selenium::WebDriver::Wait.new(timeout: 10)
+@wait = Selenium::WebDriver::Wait.new(timeout: 30)
 
 # メインページにアクセスしてパースデータを取得する
 main_doc = main.openURL(@base_url)
-
 
 #--- 大枠の流れはこれ。---#
 # ログインする
@@ -224,11 +224,10 @@ main_doc = main.openURL(@base_url)
 # [DONE]カテゴリにアクセスする
   # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
   # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押す）
-    # [DONE?]動画一覧を取得する
-    # 動画にアクセスする
+    # [DONE]動画一覧を取得する
+    # [DOING]動画にアクセスする
       # 情報を取得する
         # 情報を保存する（sqlite形式）
-
 
 # [DONE]カテゴリ一覧を取得する
 puts "カテゴリ一覧を取得する"
@@ -271,11 +270,18 @@ begin
 
       # 動画にアクセスする
       puts "動画にアクセスする"
-      content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])}
+      sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
+      content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
       all_content_num = content_elements.size
 
       for slect_content_num in 0..all_content_num
-        content_elements = @wait.until{@driver.find_elements(:class, @selector.selectSelector[:content_click])} # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+
+        if slect_content_num > 0
+          sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
+          content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+        end
+
+        puts "動画をクリック"
         content_elements[slect_content_num].click
 
         # 情報を取得する
@@ -284,8 +290,9 @@ begin
         content_doc = main.openURL(content_url)
         contents = main.newContents(@selector, content_doc, @contents)
 
-        # 取得したデータをDBに保存する（sqlite形式）
-        @db = db.addContentsDB(contents)
+        # 情報を保存する
+        puts "情報を保存する"
+        # @db.addContentsDB(contents)
 
         # コンテンツ情報を収集したら前のページに戻る
         puts "動画一覧に戻る"
