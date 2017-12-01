@@ -263,7 +263,6 @@ category_url_arr.each do |category_url|
   # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
   puts "サブカテゴリを取得する"
   more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
-  # more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
 
   more_watch_buttons.each do |button|
 
@@ -281,13 +280,39 @@ category_url_arr.each do |category_url|
     # 動画一覧を取得する
     puts "動画一覧を取得する"
     sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
-    content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
+    content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
+
+    底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
 
     content_elements.each do |element|
 
       # 動画にアクセスする
       puts "動画にアクセスする"
+
+##########################
+# Java用の記述なのでRubyのを調査する
+//元のページのハンドルを記憶
+String Handle = driver.getWindowHandle();
+//新しくタブを開くリンクをクリック
+driver.findElement(By.id("LinkID")).click();
+//次のタブのハンドルを用意し、タブが新しく開かれていたらnewHandleに代入する
+String newHandle = null;
+for (String id : driver.getWindowHandles()) {
+    if (!id.equals(Handle)) {
+        newHandle = id;
+    }
+}
+//newHandleにハンドルを移す
+driver.switchTo().window(newHandle);
+//処理が終わって元のタブに戻ったのであれば
+driver.switchTo().window(Handle);
+##########################
+
+      # 新規タブで開く
       element.click # <= ここを新規タブで開きたい
+
+      # 新規タブにハンドルを移す
+      # ...
 
       # # 情報を取得する
       # puts "情報を取得する"
@@ -299,11 +324,11 @@ category_url_arr.each do |category_url|
       # puts "情報を保存する"
       # # @db.addContentsDB(contents)
 
-      # # コンテンツ情報を収集したら前のページに戻る
-      # puts "動画一覧に戻る"
-      # @driver.navigate().back()
+      # 元のページにハンドルを戻す
+      # ...
 
-      # 最後まで読み込んだらカテゴリページに戻る処理を入れる
+      # 新規タブを閉じる
+      # ...
 
     end
 
