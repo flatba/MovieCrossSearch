@@ -14,25 +14,35 @@ require './save_db_task.rb'
 # 動画サイト横断検索
 #
 
-class Main
+class Entry
+
+  attr_reader :base_url, :site_name, :selector, :db, :contents, :driver, :wait
 
   # 初期データの生成
-  def initialize
+  def initialize(url)
+    # クロール可能サイトかどうかチェックする
+    robotex = Robotex.new
+    p robotex.allowed?(url)
 
+    @base_url = url
+    @site_name = ""
   end
 
-  # URLからパースデータを取得する
-  def open_url(url)
-    charset = nil
-    html = nil
-    # user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36' # GoogleChrome
-    # html = open(url, "User-Agent" => user_agent) do |f|
-    html = open(url) do |f|
-      charset = f.charset
-      f.read
-    end
-    doc = Nokogiri::HTML.parse(html, nil, charset)
-    return doc
+  def initialize_selector(site_name)
+    @selector = Selector.new(site_name)
+  end
+
+  def initialize_db(site_name)
+    @db = SaveDBTask.new(site_name)
+  end
+
+  def initialize_contents
+    @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+  end
+
+  def initialize_driver
+    @driver = Selenium::WebDriver.for :chrome
+    @wait = Selenium::WebDriver::Wait.new(timeout: 30)
   end
 
   # クロールするサイトの名称を判断する
@@ -63,6 +73,27 @@ class Main
     end
     return name
   end
+
+end
+
+
+class Main
+
+  # URLからパースデータを取得する
+  def open_url(url)
+    charset = nil
+    html = nil
+    # user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36' # GoogleChrome
+    # html = open(url, "User-Agent" => user_agent) do |f|
+    html = open(url) do |f|
+      charset = f.charset
+      f.read
+    end
+    doc = Nokogiri::HTML.parse(html, nil, charset)
+    return doc
+  end
+
+
 
   # ログイン処理
   def login
@@ -167,33 +198,34 @@ class Main
 
 
   def scrape(more_watch_button_num)
-    for more_watch_btn_cnt in 0..more_watch_button_num
-      # [DONE?]動画一覧を取得する
-      puts "動画一覧を取得する"
-      more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
 
-      # 動画にアクセスする
-      puts "動画一覧にアクセスする"
-      more_watch_buttons_elements[more_watch_btn_cnt].click
+    # for more_watch_btn_cnt in 0..more_watch_button_num
+      # # [DONE?]動画一覧を取得する
+      # puts "動画一覧を取得する"
+      # more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
 
-      # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-      unless @driver.current_url.include?("tiles") then
-        puts "動画一覧に戻る"
-        @driver.get(category_url)
-        next
-      end
+      # # 動画にアクセスする
+      # puts "動画一覧にアクセスする"
+      # more_watch_buttons_elements[more_watch_btn_cnt].click
+
+      # # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
+      # unless @driver.current_url.include?("tiles") then
+      #   puts "動画一覧に戻る"
+      #   @driver.get(category_url)
+      #   next
+      # end
 
       # 動画にアクセスする
       puts "動画にアクセスする"
-      sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
+      sleep 10 # <= waitに置き換えたい
       content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
       all_content_num = content_elements.size
 
       for slect_content_num in 0..all_content_num
 
-        if slect_content_num > 0
-          sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
-          content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # @driver_idがページ遷移ごとに変わってしまうのでページが遷移するごとに取得する
+        if slect_content_num > 0 # ページが遷移するごとに@driver_idがページ変わってしまうので毎回取得し直す
+          sleep 10 # <= waitに置き換えたい
+          content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click])
         end
 
         puts "動画をクリック"
@@ -215,7 +247,7 @@ class Main
 
         # 最後まで読み込んだらカテゴリページに戻る処理を入れる
       end
-    end
+    # end
   end
 
   # def startDriver
@@ -244,31 +276,6 @@ class Main
 
 end
 
-
-
-
-main = Main.new
-
-@base_url = "https://www.happyon.jp/"
-
-# クロール可能サイトかどうかチェックする
-robotex = Robotex.new
-p robotex.allowed?(@base_url)
-
-@site_name = main.check_site_name(@base_url)
-@selector = Selector.new(@site_name)
-@db = SaveDBTask.new(@site_name)
-@contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
-@driver = Selenium::WebDriver.for :chrome
-@wait = Selenium::WebDriver::Wait.new(timeout: 30)
-
-# pagedown 押下
-@act = Actions.new(@driver)
-
-
-# メインページにアクセスしてパースデータを取得する
-main_doc = main.open_url(@base_url)
-
 #--- 大枠の流れはこれ。---#
 # ログインする
 # [DONE]カテゴリ一覧を取得する
@@ -280,6 +287,17 @@ main_doc = main.open_url(@base_url)
       # 情報を取得する
         # 情報を保存する（sqlite形式）
 
+entry = Entry.new("https://www.happyon.jp/")
+entry.check_site_name(entry.base_url)
+@selector = entry.initialize_selector(entry.site_name)
+@db       = entry.initialize_db(entry.site_name)
+@contents = entry.initialize_contents
+@driver   = entry.initialize_driver
+main = Main.new
+
+# メインページにアクセスしてパースデータを取得する
+main_doc = main.open_url(entry.base_url)
+
 # [DONE]カテゴリ一覧を取得する
 puts "カテゴリ一覧を取得する"
 category_url_arr = []
@@ -289,19 +307,50 @@ main_doc.css(@selector.selectSelector[:category_selector]).each { |element|
   category_url_arr << element.attr('href')
 }
 
-
-# [DONE]カテゴリにアクセスする
-puts "カテゴリにアクセスする"
 begin
   category_url_arr.each do |category_url|
+
+    # [DONE]カテゴリにアクセスする
+    puts "カテゴリにアクセスする"
     @driver.get(category_url)
 
     # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
     puts "サブカテゴリを取得する"
-    more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
+    more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
+    # more_watch_button_num = @driver.find_elements(:class, 'vod-mod-button').size # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
 
-    # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押す）
-    puts "サブカテゴリにアクセスする"
+    more_watch_buttons.each do |button|
+
+      # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）
+      puts "サブカテゴリにアクセスする（動画一覧へアクセスする）"
+      button.click
+
+      # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
+      unless @driver.current_url.include?("tiles") then
+        puts "動画一覧に戻る"
+        @driver.get(category_url)
+        next
+      end
+
+    end
+
+
+    for cnt in 0..more_watch_button.size
+      # [DONE?]動画一覧を取得する
+      puts "動画一覧を取得する"
+      more_watch_buttons_elements = @wait.until{@driver.find_elements(:class, 'vod-mod-button')}
+
+      # 動画にアクセスする
+      puts "動画一覧にアクセスする"
+      more_watch_buttons_elements[cnt].click
+
+    end
+
+
+
+
+
+
     main.scrape(more_watch_button_num)
     # for more_watch_btn_cnt in 0..more_watch_button_num
 
