@@ -43,7 +43,7 @@ class Entry
   def initialize_driver
     # 通常起動
     @driver = Selenium::WebDriver.for :chrome
-    @wait = Selenium::WebDriver::Wait.new(timeout: 30)
+    # @wait = Selenium::WebDriver::Wait.new(timeout: 30)
 
     # HeadressChrome起動
     # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
@@ -78,7 +78,7 @@ class Entry
     elsif url.include?('mubi')
       name = 'mubi'
     end
-    return name
+    @site_name = name
   end
 
 end
@@ -108,7 +108,7 @@ class Main
   # クローズ処理
   def close(driver, db)
     driver.quit    # ブラウザ終了
-    db.closeDBTask # データベースの編集終了
+    db.close_DB_task # データベースの編集終了
   end
 
 
@@ -205,6 +205,65 @@ class Main
 
   end
 
+  # def new_page_scraping(driver, element)
+
+  #   # 元ページのウィンドウ情報（ハンドル）を記憶
+  #   puts "元ページのウィンドウ情報（ハンドル）を記憶"
+  #   current_window = @driver.window_handles.last
+
+  #   # 新規タブでリンクを開いてURLを取得
+  #   content_url = change_current_window(driver, element)
+
+  #   # 新規タブで開いたリンクの情報を取得する
+  #   contents = get_contents_information(content_url)
+
+  #   # 取得した情報を保存する
+  #   save_contents(contents)
+
+  #   # 新規タブを閉じる
+  #   close_window(current_window)
+
+  # end
+
+  def change_current_window(driver, element)
+
+      # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
+      # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
+      puts "新規タブでリンクを開く"
+      element.send_keys(:command, :enter)
+
+      # 新規で開いたタブのハンドルを取得
+      puts "新規で開いたタブのハンドルを取得"
+      puts new_window = driver.window_handles.last
+
+      # 新規タブにハンドルを移す
+      puts "新規タブにハンドルを移す"
+      driver.switch_to.window(new_window)
+      puts driver.window_handle
+
+      # 新規タブのURLを取得する
+      puts "新規タブのURLを取得する"
+      puts content_url = driver.current_url
+
+      return content_url
+
+  end
+
+  def get_contents_information(content_url)
+      # 情報を取得する
+      puts "情報を取得する"
+      # content_doc = main.openURL(content_url)
+      # contents = main.newContents(@selector, content_doc, @contents)
+
+      # return contents
+  end
+
+  def save_contents(contents)
+    # 情報を保存する
+    puts "情報を保存する"
+    # @db.addContentsDB(contents)
+  end
+
   def screenshot(driver)
     file_name = "_screenshot"
     extension = ".png"
@@ -222,17 +281,10 @@ class Main
 
 end
 
-#--- 大枠の流れはこれ。---#
-# ログインする
-# [DONE]カテゴリ一覧を取得する
-# [DONE]カテゴリにアクセスする
-  # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
-  # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押す）
-    # [DONE]動画一覧を取得する
-    # [DOING]動画にアクセスする
-      # 情報を取得する
-        # 情報を保存する（sqlite形式）
 
+# ----------------------------------------------------------------------
+# main
+# ----------------------------------------------------------------------
 entry = Entry.new("https://www.happyon.jp/")
 entry.check_site_name(entry.base_url)
 @selector = entry.initialize_selector(entry.site_name)
@@ -264,71 +316,72 @@ category_url_arr.each do |category_url|
   puts "サブカテゴリを取得する"
   more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
 
-  more_watch_buttons.each do |button|
+  more_watch_buttons.each do |button_element|
 
-    # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）
-    puts "サブカテゴリにアクセスする（[もっと見る]ボタンを押して動画一覧へアクセスする）"
-    button.click
+    # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
+    puts "元ページのウィンドウ情報（ハンドル）を記憶"
+    current_window = @driver.window_handles.last
+    puts "handle情報1"
+    puts @driver.window_handle
 
-    # クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-    unless @driver.current_url.include?("tiles") then
-      puts "動画一覧に戻る"
-      @driver.get(category_url)
+    # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
+    puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
+    # すでにこの時点で、新規タブにハンドルは移っている
+    contents_url = main.change_current_window(@driver, button_element)
+    puts "handle情報2"
+    puts @driver.window_handle
+
+    # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
+    unless contents_url.include?("tiles") then
+      puts "新規タブを閉じる"
+      @driver.close
+      puts "元タブにハンドルを戻す"
+      @driver.switch_to.window(current_window)
       next
     end
 
+    ### ここまでで、動画一覧ページ ###
+
     # 動画一覧を取得する
     puts "動画一覧を取得する"
-    sleep 10 # 読み込みタイミングが合わないと要素を取得できないため
+    sleep 5 # 読み込みタイミングが合わないと要素を取得できないため。ただしこの処理は良くない。ちゃんと、読み込み完了時点で次の処理に移るように修正する。
+
     content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
 
-    底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
+    # [未]底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
 
     content_elements.each do |element|
 
+      # element.click
+
       # 動画にアクセスする
       puts "動画にアクセスする"
+      # @driver.action.move_to(element).perform
+      # element.send_keys(:command)
+      # element.click
+      # # element.send_keys(:enter)
 
-##########################
-# Java用の記述なのでRubyのを調査する
-//元のページのハンドルを記憶
-String Handle = driver.getWindowHandle();
-//新しくタブを開くリンクをクリック
-driver.findElement(By.id("LinkID")).click();
-//次のタブのハンドルを用意し、タブが新しく開かれていたらnewHandleに代入する
-String newHandle = null;
-for (String id : driver.getWindowHandles()) {
-    if (!id.equals(Handle)) {
-        newHandle = id;
-    }
-}
-//newHandleにハンドルを移す
-driver.switchTo().window(newHandle);
-//処理が終わって元のタブに戻ったのであれば
-driver.switchTo().window(Handle);
-##########################
+      # @driver.action.move_to(element).perform
+      @driver.action.send_keys(:command).click(element).perform
 
-      # 新規タブで開く
-      element.click # <= ここを新規タブで開きたい
+      # @driver.action.move_to(element).perform
+      # @driver.action.key_down(:command).click(element)
+      # # @driver.action.send_keys(:command)
+      # @driver.action.click(element)
+      # @driver.action.perform
 
+      # 新規で開いたタブのハンドルを取得
+      puts "新規で開いたタブのハンドルを取得"
+      new_window = @driver.window_handles.last
       # 新規タブにハンドルを移す
-      # ...
+      puts "新規タブにハンドルを移す"
+      @driver.switch_to.window(new_window)
+      # 新規タブのURLを取得する
+      puts "新規タブのURLを取得する"
+      puts content_url = @driver.current_url
 
-      # # 情報を取得する
-      # puts "情報を取得する"
-      # content_url = @driver.current_url
-      # content_doc = main.openURL(content_url)
-      # contents = main.newContents(@selector, content_doc, @contents)
+      # puts content_url = main.change_current_window(@driver, element)
 
-      # # 情報を保存する
-      # puts "情報を保存する"
-      # # @db.addContentsDB(contents)
-
-      # 元のページにハンドルを戻す
-      # ...
-
-      # 新規タブを閉じる
-      # ...
 
     end
 
