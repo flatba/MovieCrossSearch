@@ -229,8 +229,8 @@ class Main
 
       # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
       # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
-      puts "新規タブでリンクを開く"
-      element.send_keys(:command, :enter)
+      # puts "新規タブでリンクを開く"
+      # element.send_keys(:command, :enter)
 
       # 新規で開いたタブのハンドルを取得
       puts "新規で開いたタブのハンドルを取得"
@@ -262,6 +262,13 @@ class Main
     # 情報を保存する
     puts "情報を保存する"
     # @db.addContentsDB(contents)
+  end
+
+  def close_new_window(driver, window)
+      puts "新規タブを閉じる"
+      driver.close
+      puts "　元タブにハンドルを戻す"
+      driver.switch_to.window(window)
   end
 
   def screenshot(driver)
@@ -321,22 +328,18 @@ category_url_arr.each do |category_url|
     # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
     puts "元ページのウィンドウ情報（ハンドル）を記憶"
     current_window = @driver.window_handles.last
-    puts "handle情報1"
-    puts @driver.window_handle
 
     # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
     puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
-    # すでにこの時点で、新規タブにハンドルは移っている
+    puts "新規タブでリンクを開く"
+    button_element.send_keys(:command, :enter)
+    puts "　新規タブにハンドルを移す"
     contents_url = main.change_current_window(@driver, button_element)
-    puts "handle情報2"
-    puts @driver.window_handle
 
     # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
     unless contents_url.include?("tiles") then
-      puts "新規タブを閉じる"
-      @driver.close
-      puts "元タブにハンドルを戻す"
-      @driver.switch_to.window(current_window)
+      puts "動画コンテンツが無い"
+      main.close_new_window(@driver, current_window)
       next
     end
 
@@ -350,38 +353,36 @@ category_url_arr.each do |category_url|
 
     # [未]底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
 
+    # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
+    puts "元ページのウィンドウ情報（ハンドル）を記憶"
+    current_window = @driver.window_handles.last
+
+    cnt = 0
     content_elements.each do |element|
 
-      # element.click
+      # puts "新規タブでリンクを開く"
+      # @driver.action.send_keys(:command).click(element).perform
 
-      # 動画にアクセスする
-      puts "動画にアクセスする"
-      # @driver.action.move_to(element).perform
-      # element.send_keys(:command)
-      # element.click
-      # # element.send_keys(:enter)
+      if cnt === 0
+        puts "新規タブでリンクを開く"
+        @driver.action.send_keys(:command).click(element).perform
+        action.clear
+      end
 
-      # @driver.action.move_to(element).perform
-      @driver.action.send_keys(:command).click(element).perform
+      if cnt > 0
+        puts "新規タブでリンクを開く"
+        @driver.action.send_keys(:command).click(element).perform
+      end
 
-      # @driver.action.move_to(element).perform
-      # @driver.action.key_down(:command).click(element)
-      # # @driver.action.send_keys(:command)
-      # @driver.action.click(element)
-      # @driver.action.perform
+      puts "　新規タブにハンドルを移す"
+      content_url = main.change_current_window(@driver, element)
+      main.get_contents_information(content_url)
+      main.save_contents(@contents)
 
-      # 新規で開いたタブのハンドルを取得
-      puts "新規で開いたタブのハンドルを取得"
-      new_window = @driver.window_handles.last
-      # 新規タブにハンドルを移す
-      puts "新規タブにハンドルを移す"
-      @driver.switch_to.window(new_window)
-      # 新規タブのURLを取得する
-      puts "新規タブのURLを取得する"
-      puts content_url = @driver.current_url
+      # 新規タブを閉じて元タブにハンドルを戻す
+      main.close_new_window(@driver, current_window)
 
-      # puts content_url = main.change_current_window(@driver, element)
-
+      cnt += 1
 
     end
 
