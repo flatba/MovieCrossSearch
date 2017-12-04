@@ -347,15 +347,9 @@ category_url_arr.each do |category_url|
 
     # 動画一覧を取得する
     puts "動画一覧を取得する"
-    sleep 5 # 読み込みタイミングが合わないと要素を取得できないため。ただしこの処理は良くない。ちゃんと、読み込み完了時点で次の処理に移るように修正する。
+    sleep 5
 
-    # wait = Selenium::WebDriver::Wait.new(:timeout => 100) # seconds
-    # begin
-
-    # ensure
-    #   @driver.quit
-    # end
-
+    puts "末端までスクロールする"
     body_dom_height = @driver.find_element(:tag_name, 'body').size.height
     @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     sleep 5
@@ -365,14 +359,12 @@ category_url_arr.each do |category_url|
 
       puts "末尾までスクロール"
       @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep 5
+      sleep 2
 
       new_body_dom_height = @driver.find_element(:tag_name, 'body').size.height
     end
 
-    content_elements = @driver.find_elements(:css, @selector.selectSelector[:content_click]) # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
-
-    # [未]底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
+    content_elements = @driver.find_elements(:css, @selector.selectSelector[:content_click])
 
     # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
     puts "元ページのウィンドウ情報（ハンドル）を記憶"
