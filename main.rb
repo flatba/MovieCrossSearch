@@ -365,7 +365,7 @@ category_url_arr.each do |category_url|
 
       puts "末尾までスクロール"
       @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep 1
+      sleep 5
 
       new_body_dom_height = @driver.find_element(:tag_name, 'body').size.height
     end
@@ -403,13 +403,10 @@ category_url_arr.each do |category_url|
       # 新規タブを閉じて元タブにハンドルを戻す
       main.close_new_window(@driver, current_window)
 
+      sleep 1
+
     end
 
-  end
-
-  if slect_content_num === 30 then
-    puts "ページ末尾にスクロールする"
-    @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
   end
 
   main.close(@driver, @db)
