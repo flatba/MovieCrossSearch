@@ -349,7 +349,7 @@ category_url_arr.each do |category_url|
     puts "動画一覧を取得する"
     sleep 5 # 読み込みタイミングが合わないと要素を取得できないため。ただしこの処理は良くない。ちゃんと、読み込み完了時点で次の処理に移るように修正する。
 
-    content_elements = @driver.find_elements(:class, @selector.selectSelector[:content_click]) # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
+    content_elements = @driver.find_elements(:css, @selector.selectSelector[:content_click]) # 動画一覧の動画数を取得する（最下までいったら読み込みを開始している処理なので、表示されている分しか取れていない。直す。）
 
     # [未]底までスクロールしてwhile文で動画一覧のコンテンツが末端に行くまで処理するようにする
 
@@ -357,25 +357,24 @@ category_url_arr.each do |category_url|
     puts "元ページのウィンドウ情報（ハンドル）を記憶"
     current_window = @driver.window_handles.last
 
-    cnt = 0
     content_elements.each do |element|
+
+      contents_url = element.attribute('href')
 
       # puts "新規タブでリンクを開く"
       # @driver.action.send_keys(:command).click(element).perform
 
-      if cnt === 0
-        puts "新規タブでリンクを開く"
-        @driver.action.send_keys(:command).click(element).perform
-        action.clear
-      end
-
-      if cnt > 0
-        puts "新規タブでリンクを開く"
-        @driver.action.send_keys(:command).click(element).perform
-      end
+      puts "新規タブでリンクを開く"
+      # 何故か二個目のコンテンツに移ると、新規タブで開かれない
+      # 一個目は絶対新規タブになる
+      # クリックはされている
+      @driver.send_keys(:command, 't')
+      new_window = @driver.window_handles.last
+      @driver.action.switch_to.window(new_window)
+      @driver.get(contents_url)
 
       puts "　新規タブにハンドルを移す"
-      content_url = main.change_current_window(@driver, element)
+      # content_url = main.change_current_window(@driver, element)
       main.get_contents_information(content_url)
       main.save_contents(@contents)
 
