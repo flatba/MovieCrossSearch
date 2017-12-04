@@ -359,29 +359,28 @@ category_url_arr.each do |category_url|
 
     content_elements.each do |element|
 
-      contents_url = element.attribute('href')
+      puts "動画コンテンツのURLを取り出す"
+      content_url = element.attribute('href')
 
-      # puts "新規タブでリンクを開く"
-      # @driver.action.send_keys(:command).click(element).perform
+      puts "現在のタブ情報を保持する"
+      current_window = @driver.window_handles.last
+
+      puts "新規タブを開く"
+      @driver.execute_script("window.open()")
+
+      puts "新規タブにハンドルを移す"
+      new_window = @driver.window_handles.last
+      @driver.switch_to.window(new_window)
 
       puts "新規タブでリンクを開く"
-      # 何故か二個目のコンテンツに移ると、新規タブで開かれない
-      # 一個目は絶対新規タブになる
-      # クリックはされている
-      @driver.send_keys(:command, 't')
-      new_window = @driver.window_handles.last
-      @driver.action.switch_to.window(new_window)
-      @driver.get(contents_url)
+      @driver.get(content_url)
 
       puts "　新規タブにハンドルを移す"
-      # content_url = main.change_current_window(@driver, element)
       main.get_contents_information(content_url)
       main.save_contents(@contents)
 
       # 新規タブを閉じて元タブにハンドルを戻す
       main.close_new_window(@driver, current_window)
-
-      cnt += 1
 
     end
 
