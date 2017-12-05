@@ -11,6 +11,9 @@ class SaveDBTask
   # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
   # ある程度進んだらActiveRecord使ってみたい
   #
+
+  attr_reader :db
+
   def initialize(site_name)
 
     # 出力先ディレクトリの有無の確認して無ければ作成する
@@ -75,20 +78,27 @@ class SaveDBTask
   #
   # 映画コンテンツの追加
   #
-  def add_contents_DB(contents)
-    @db.execute(
-      "insert into movie_master (
-      thumbnail, title, original_title, release_year, genres, running_time, director, summary
-      ) values(
+  def create_contents_DB(contents)
+    db.execute(
+      "insert into movie_master values (
+      thumbnail,
+      title,
+      original_title,
+      release_year,
+      genres,
+      running_time,
+      director,
+      summary
+      )
       '#{contents.thumbnail}',
       '#{contents.title}',
-      '#{contents.original_title}',
-      '#{contents.release_year}',
-      '#{contents.genres}',
-      '#{contents.running_time}',
-      '#{contents.director}',
-      '#{contents.summary}'
-    )")
+      '#{"contents.original_title"}',
+      '#{"contents.release_year"}',
+      '#{"contents.genres"}',
+      '#{"contents.running_time"}',
+      '#{"contents.director"}',
+      '#{"contents.summary"}'
+    ")
   end
 
   #
@@ -96,7 +106,7 @@ class SaveDBTask
   #
   def update_contents_DB(contents)
     @db.execute(
-      "insert into movie_master (
+      "insert into movie_master values (
       thumbnail, title, original_title, release_year, genres, running_time, director, summary
       ) values(
       '#{contents.thumbnail}',
@@ -115,7 +125,7 @@ class SaveDBTask
   #
   def delete_contents_DB(contents)
     @db.execute(
-      "insert into movie_master (
+      "insert into movie_master values (
       thumbnail, title, original_title, release_year, genres, running_time, director, summary
       ) values(
       '#{contents.thumbnail}',
@@ -132,7 +142,7 @@ class SaveDBTask
   #
   # ジャンルの追加
   #
-  def add_genre_DB(genres)
+  def create_genre_DB(genres)
     @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
   end
 

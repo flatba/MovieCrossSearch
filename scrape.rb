@@ -2,14 +2,20 @@
 #
 # 解析（情報収集処理）
 #
+require './save_db_task.rb'
 require './crawl.rb'
+
 
 class Scrape
 
+  def initialize
+    # 普通にここにdbの初期化入れたほうが良いか？
+  end
+
   # 情報を保存する
-  def save_contents(contents)
+  def save_contents(db, contents)
     puts "情報を保存する"
-    # @db.addContentsDB(contents)
+    db.create_contents_DB(contents)
   end
 
   # 情報を取得してcontents（構造体）に入れて返す
@@ -29,9 +35,9 @@ class Scrape
     end
 
     # 映画タイトル
-    # unless check_contents_item(doc.css(selector.select_selector[:title]).text)
-    #   puts add_contents.title = doc.css(selector.select_selector[:title]).text
-    # end
+    unless check_contents_item(doc.css(selector.select_selector[:title]).text)
+      puts contents.title = doc.css(selector.select_selector[:title]).text
+    end
 
     # 原題
     # crawl.screenshot(@driver) # デバッグ用

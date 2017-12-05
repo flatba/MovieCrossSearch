@@ -191,7 +191,7 @@ category_url_arr.each do |category_url|
       puts "　新規タブにハンドルを移す"
       content_doc = crawl.open_url(content_url)
       contents = scrape.new_contents(@selector, content_doc, @contents)
-      scrape.save_contents(contents)
+      scrape.save_contents(@db, contents)
 
       # 新規タブを閉じて元タブにハンドルを戻す
       crawl.close_new_window(@driver, current_window)
