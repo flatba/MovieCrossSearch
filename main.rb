@@ -42,14 +42,13 @@ class Entry
   end
 
   def initialize_driver
-    # 通常起動
-    # @driver = Selenium::WebDriver.for :chrome
+    # 通常chrome起動
+    @driver = Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-    # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
-    # @wait = Selenium::WebDriver::Wait.new(timeout: 10)
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
+    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+
   end
 
   # クロールするサイトの名称を判断する
@@ -340,7 +339,7 @@ category_url_arr.each do |category_url|
 
     # 動画一覧を取得する
     sleep 5
-    puts "スクロールの開始"
+    puts "**********スクロールの開始**********"
     body_dom_height = crawl.get_body_dom_height(@driver)
     @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     sleep 5
@@ -354,7 +353,7 @@ category_url_arr.each do |category_url|
       new_body_dom_height = crawl.get_body_dom_height(@driver)
       cnt += 1
     end
-    puts "スクロールの終了（末端までスクロールした）"
+    puts "**********スクロールの終了（末端までスクロールした）**********"
 
     puts "動画一覧を取得する"
     content_elements = @driver.find_elements(:css, @selector.selectSelector[:content_click])
@@ -363,6 +362,7 @@ category_url_arr.each do |category_url|
     puts "元ページのウィンドウ情報（ハンドル）を記憶"
     current_window = @driver.window_handles.last
 
+    puts "**********動画コンテンツ情報取得開始**********"
     content_elements.each do |element|
 
       puts "動画コンテンツのURLを取り出す"
@@ -391,6 +391,7 @@ category_url_arr.each do |category_url|
       sleep 1
 
     end
+    puts "**********動画コンテンツ情報取得終了**********"
 
   end
 
