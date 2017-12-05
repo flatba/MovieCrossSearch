@@ -13,19 +13,20 @@ require './save_db_task.rb'
 #
 # 動画サイト横断検索
 #
-
 class Entry
 
   attr_reader :base_url, :site_name, :selector, :db, :contents, :driver, :wait
 
   # 初期データの生成
   def initialize(url)
+
     # クロール可能サイトかどうかチェックする
     robotex = Robotex.new
     p robotex.allowed?(url)
 
     @base_url = url
     @site_name = ""
+
   end
 
   def initialize_selector(site_name)
@@ -42,13 +43,12 @@ class Entry
 
   def initialize_driver
     # 通常起動
-    @driver = Selenium::WebDriver.for :chrome
-    # @wait = Selenium::WebDriver::Wait.new(timeout: 30)
+    # @driver = Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-    # # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
+    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # WebDriverはロードが完了するのを待たないので必要に応じて待ち時間を設定
     # @wait = Selenium::WebDriver::Wait.new(timeout: 10)
   end
 
@@ -84,7 +84,10 @@ class Entry
 end
 
 
-class Main
+#
+# クロール（主にページ遷移のための処理）
+#
+class Crawl
 
   # URLからパースデータを取得する
   def open_url(url)
@@ -111,10 +114,79 @@ class Main
     db.close_DB_task # データベースの編集終了
   end
 
+  # ウィンドウを閉じる
+  def close_new_window(driver, window)
+    puts "新規タブを閉じる"
+    driver.close
+    puts "　元タブにハンドルを戻す"
+    driver.switch_to.window(window)
+  end
 
-  #
-  # 情報収集処理
-  #
+  def send_key_new_tab(element)
+    puts "新規タブでリンクを開く"
+    element.send_keys(:command, :enter)
+    sleep 3
+  end
+
+  # ウィンドウのハンドルを後から開いたタブに移す
+  def change_current_window(driver, element)
+
+      # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
+      # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
+      # puts "新規タブでリンクを開く"
+      # element.send_keys(:command, :enter)
+
+      # 新規で開いたタブのハンドルを取得
+      puts "新規で開いたタブのハンドルを取得"
+      new_window = driver.window_handles.last
+
+      # 新規タブにハンドルを移す
+      puts "新規タブにハンドルを移す"
+      driver.switch_to.window(new_window)
+      driver.window_handle
+
+      # 新規タブのURLを取得する
+      puts "新規タブのURLを取得する"
+      screenshot(driver)
+      content_url = driver.current_url
+
+      return content_url
+
+  end
+
+  # bodyの高さを取得する（動的に変動する高さの取得に使用）
+  def get_body_dom_height(driver)
+    return driver.find_element(:tag_name, 'body').size.height
+  end
+
+  def screenshot(driver)
+    file_name = "_screenshot"
+    extension = ".png"
+    default_dir_path = "/Users/flatba/dev/project_ruby/movieCrossSearch/output/screenshot/"
+    driver.save_screenshot default_dir_path + DateTime.now.strftime("%Y%m%d%H%M%S") + file_name + extension
+  end
+
+end
+
+
+#
+# 解析（情報収集処理）
+#
+class Scrape
+
+  # 情報を取得する
+  def get_contents_information(content_url)
+    puts "情報を取得する"
+    # content_doc = main.openURL(content_url)
+    # contents = main.newContents(@selector, content_doc, @contents)
+    # return contents
+  end
+
+  # 情報を保存する
+  def save_contents(contents)
+    puts "情報を保存する"
+    # @db.addContentsDB(contents)
+  end
 
   # 情報を取得してcontents（構造体）に入れて返す
   def new_contents(selector, doc, contents)
@@ -127,10 +199,10 @@ class Main
     contents = contents.new("", "", "", "", "", "", "", "")
 
     # データが存在しない場合は処理を飛ばす
-    # トップ画像
-    # unless check_contents_item(doc.css(selector.selectSelector[:thumbnail]))
-    #   puts contents.thumbnail = doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
-    # end
+    トップ画像
+    unless check_contents_item(doc.css(selector.selectSelector[:thumbnail]))
+      puts contents.thumbnail = doc.css(selector.selectSelector[:thumbnail]).attr('src').to_s
+    end
 
     # 映画タイトル
     # unless check_contents_item(doc.css(selector.selectSelector[:title]).text)
@@ -138,7 +210,7 @@ class Main
     # end
 
     # 原題
-    # screenshot(@driver) # デバッグ用
+    # crawl.screenshot(@driver) # デバッグ用
     # unless check_contents_item(doc.css(@selector.selectSelector[:original_title]))
     #   puts contents.original_title = doc.css(@selector.selectSelector[:original_title])
     # end
@@ -196,90 +268,8 @@ class Main
 
   end
 
-  def crawl
-    # クロール処理をここにまとめる？
-    # ...
-  end
-
-  def scrape()
-
-  end
-
-  # def new_page_scraping(driver, element)
-
-  #   # 元ページのウィンドウ情報（ハンドル）を記憶
-  #   puts "元ページのウィンドウ情報（ハンドル）を記憶"
-  #   current_window = @driver.window_handles.last
-
-  #   # 新規タブでリンクを開いてURLを取得
-  #   content_url = change_current_window(driver, element)
-
-  #   # 新規タブで開いたリンクの情報を取得する
-  #   contents = get_contents_information(content_url)
-
-  #   # 取得した情報を保存する
-  #   save_contents(contents)
-
-  #   # 新規タブを閉じる
-  #   close_window(current_window)
-
-  # end
-
-  def change_current_window(driver, element)
-
-      # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
-      # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
-      # puts "新規タブでリンクを開く"
-      # element.send_keys(:command, :enter)
-
-      # 新規で開いたタブのハンドルを取得
-      puts "新規で開いたタブのハンドルを取得"
-      puts new_window = driver.window_handles.last
-
-      # 新規タブにハンドルを移す
-      puts "新規タブにハンドルを移す"
-      driver.switch_to.window(new_window)
-      puts driver.window_handle
-
-      # 新規タブのURLを取得する
-      puts "新規タブのURLを取得する"
-      puts content_url = driver.current_url
-
-      return content_url
-
-  end
-
-  def get_contents_information(content_url)
-      # 情報を取得する
-      puts "情報を取得する"
-      # content_doc = main.openURL(content_url)
-      # contents = main.newContents(@selector, content_doc, @contents)
-
-      # return contents
-  end
-
-  def save_contents(contents)
-    # 情報を保存する
-    puts "情報を保存する"
-    # @db.addContentsDB(contents)
-  end
-
-  def close_new_window(driver, window)
-      puts "新規タブを閉じる"
-      driver.close
-      puts "　元タブにハンドルを戻す"
-      driver.switch_to.window(window)
-  end
-
-  def screenshot(driver)
-    file_name = "_screenshot"
-    extension = ".png"
-    default_dir_path = "/Users/flatba/dev/project_ruby/movieCrossSearch/output/screenshot/"
-    driver.save_screenshot default_dir_path + DateTime.now.strftime("%Y%m%d%H%M%S") + file_name + extension
-  end
-
   private
-  # 情報取得の項目があるかどうかのチェック
+  # 情報取得の項目があるかどうかのチェック（new_contentsメソッドで使用）
   def check_contents_item(item)
     if item.empty? || item.nil?
       return true
@@ -292,16 +282,19 @@ end
 # ----------------------------------------------------------------------
 # main
 # ----------------------------------------------------------------------
+
 entry = Entry.new("https://www.happyon.jp/")
 entry.check_site_name(entry.base_url)
 @selector = entry.initialize_selector(entry.site_name)
 @db       = entry.initialize_db(entry.site_name)
 @contents = entry.initialize_contents
 @driver   = entry.initialize_driver
-main = Main.new
+
+crawl = Crawl.new
+scrape = Scrape.new
 
 # メインページにアクセスしてパースデータを取得する
-main_doc = main.open_url(entry.base_url)
+main_doc = crawl.open_url(entry.base_url)
 
 # [DONE]カテゴリ一覧を取得する
 puts "カテゴリ一覧を取得する"
@@ -331,39 +324,39 @@ category_url_arr.each do |category_url|
 
     # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
     puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
-    puts "新規タブでリンクを開く"
-    button_element.send_keys(:command, :enter)
+    crawl.send_key_new_tab(button_element)
+
     puts "　新規タブにハンドルを移す"
-    contents_url = main.change_current_window(@driver, button_element)
+    contents_url = crawl.change_current_window(@driver, button_element)
 
     # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
     unless contents_url.include?("tiles") then
       puts "動画コンテンツが無い"
-      main.close_new_window(@driver, current_window)
+      crawl.close_new_window(@driver, current_window)
       next
     end
 
-    ### ここまでで、動画一覧ページ ###
+    ###### ここまでで、動画一覧ページ ######
 
     # 動画一覧を取得する
-    puts "動画一覧を取得する"
     sleep 5
-
-    puts "末端までスクロールする"
-    body_dom_height = @driver.find_element(:tag_name, 'body').size.height
+    puts "スクロールの開始"
+    body_dom_height = crawl.get_body_dom_height(@driver)
     @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     sleep 5
-    new_body_dom_height = @driver.find_element(:tag_name, 'body').size.height
+    new_body_dom_height = crawl.get_body_dom_height(@driver)
+    cnt = 1
     while body_dom_height != new_body_dom_height do
-      body_dom_height = @driver.find_element(:tag_name, 'body').size.height
-
-      puts "末尾までスクロール"
+      body_dom_height = crawl.get_body_dom_height(@driver)
+      puts '%{cnt}スクロール目' % { cnt: cnt }
       @driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep 2
-
-      new_body_dom_height = @driver.find_element(:tag_name, 'body').size.height
+      sleep 3 # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
+      new_body_dom_height = crawl.get_body_dom_height(@driver)
+      cnt += 1
     end
+    puts "スクロールの終了（末端までスクロールした）"
 
+    puts "動画一覧を取得する"
     content_elements = @driver.find_elements(:css, @selector.selectSelector[:content_click])
 
     # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
@@ -389,11 +382,11 @@ category_url_arr.each do |category_url|
       @driver.get(content_url)
 
       puts "　新規タブにハンドルを移す"
-      main.get_contents_information(content_url)
-      main.save_contents(@contents)
+      scrape.get_contents_information(content_url)
+      scrape.save_contents(@contents)
 
       # 新規タブを閉じて元タブにハンドルを戻す
-      main.close_new_window(@driver, current_window)
+      crawl.close_new_window(@driver, current_window)
 
       sleep 1
 
@@ -401,7 +394,7 @@ category_url_arr.each do |category_url|
 
   end
 
-  main.close(@driver, @db)
+  crawl.close(@driver, @db)
 
 end
 
@@ -410,5 +403,5 @@ rescue RuntimeError => e
   $browser.close
 rescue => e
   print e.message + "\n"
-  main.close(@driver, @db)
+  crawl.close(@driver, @db)
 end
