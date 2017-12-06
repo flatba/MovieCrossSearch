@@ -46,11 +46,11 @@ class Scrape
     # end
 
     # 公開年
-    # unless check_contents_item(doc.css(selector.select_selector[:release_year]).text)
-    #   release_year_tmp = doc.css(selector.select_selector[:release_year]).text
-    #   tail_num = release_year_tmp.rindex('年')
-    #   puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
-    # end
+    unless check_contents_item(doc.css(selector.select_selector[:release_year]).text)
+      release_year_tmp = doc.css(selector.select_selector[:release_year]).text
+      tail_num = release_year_tmp.rindex('年')
+      puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
+    end
 
     # ジャンル <= ここ複数項目のためテーブルを切り分けるので、あとで処理を直す必要あり
     # unless check_contents_item(insert_contents.doc.css(@selector.select_selector[:genre]).children)

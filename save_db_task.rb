@@ -77,23 +77,22 @@ class SaveDBTask
   # 映画コンテンツの追加
   #
   def create_contents_DB(contents)
-
-
     @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
   end
 
   #
   # 映画コンテンツの更新
+  # レコード探索して、idなどが合致していたら？
   #
   def update_contents_DB(contents)
-    @db.execute 'INSERT INTO movie_master values (thumbnail,title,original_title,release_year,genres,running_time,director,summary);',["#{contents.thumbnail}","#{contents.title}","#{contents.original_title}","#{contents.release_year}","#{contents.genres}","#{contents.running_time}","#{contents.director}","#{contents.summary}"]
+    @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
   end
 
   #
   # 映画コンテンツの削除
   #
   def delete_contents_DB(contents)
-    @db.execute 'INSERT INTO movie_master values (thumbnail,title,original_title,release_year,genres,running_time,director,summary);',["#{contents.thumbnail}","#{contents.title}","#{contents.original_title}","#{contents.release_year}","#{contents.genres}","#{contents.running_time}","#{contents.director}","#{contents.summary}"]
+    @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
   end
 
   #
