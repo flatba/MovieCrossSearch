@@ -6,7 +6,7 @@ class Selector
 
   def initialize(site_name)
     if site_name.include?('hulu')
-      def selectSelector
+      def select_selector
         return @huluSelector = {
           :category_selector => 'div.vod-frm--user01 > header > div > div > nav > ul > li > a',
           :content_click => 'body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div > a',
@@ -22,7 +22,7 @@ class Selector
         }
       end
     elsif site_name.include?('netflix')
-      def selectSelector
+      def slect_selector
         return @netflixSelector = {
           :thumbnail => '',
           :title => '',
@@ -35,7 +35,7 @@ class Selector
         }
       end
     elsif site_name.include?('amazon_prime')
-      def selectSelector
+      def slect_selector
         return @amazonPrimeSelector = {
           :thumbnail => '',
           :title => '',
@@ -48,7 +48,7 @@ class Selector
         }
       end
     elsif site_name.include?('amazon_video')
-      def selectSelector
+      def slect_selector
         return @amazonVideoSelector = {
           :thumbnail => '',
           :title => '',
@@ -61,7 +61,7 @@ class Selector
         }
       end
     elsif site_name.include?('gyao')
-      def selectSelector
+      def slect_selector
         return @gyaoSelector = {
           :thumbnail => '',
           :title => '',
@@ -74,7 +74,7 @@ class Selector
         }
       end
     elsif site_name.include?('dtv')
-      def selectSelector
+      def slect_selector
         return @dtvSelector = {
           :thumbnail => '',
           :title => '',
@@ -87,7 +87,7 @@ class Selector
         }
       end
     elsif site_name.include?('unext')
-      def selectSelector
+      def slect_selector
         return @unextSelector = {
           :thumbnail => '',
           :title => '',
@@ -100,7 +100,7 @@ class Selector
         }
       end
     elsif site_name.include?('apple_itunes')
-      def selectSelector
+      def slect_selector
         return @appleItunesSelector = {
           :thumbnail => '',
           :title => '',
@@ -113,7 +113,7 @@ class Selector
         }
       end
     elsif site_name.include?('ms_video')
-      def selectSelector
+      def slect_selector
         return @microsoftSelector = {
           :thumbnail => '',
           :title => '',
@@ -126,7 +126,7 @@ class Selector
         }
       end
     elsif site_name.include?('googleplay')
-      def selectSelector
+      def slect_selector
         return @googleplaySelector = {
           :thumbnail => '',
           :title => '',
@@ -139,7 +139,7 @@ class Selector
         }
       end
     elsif site_name.include?('mubi')
-      def selectSelector
+      def slect_selector
         return @mubiSelector = {
           :thumbnail => '',
           :title => '',
