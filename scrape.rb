@@ -48,7 +48,7 @@ class Scrape
     # 公開年
     unless check_contents_item(doc.css(selector.select_selector[:release_year]).text)
       release_year_tmp = doc.css(selector.select_selector[:release_year]).text
-      tail_num = release_year_tmp.rindex('年')
+      tail_num = release_year_tmp.rindex('年') # <= 年で取得できないサイトもあるかもなので要検討
       puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
     end
 

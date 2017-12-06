@@ -83,16 +83,18 @@ class SaveDBTask
   #
   # 映画コンテンツの更新
   # レコード探索して、idなどが合致していたら？
+  # SELECT * FROM movie_master;
+  # @db.execute "SELECT * FROM customer WHERE title=(title);,'#{contents.title}'"
   #
   def update_contents_DB(contents)
-    @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
+    @db.execute "UPDATE movie_master SET title=(title) WHERE title=(title); ,'#{contents.title}'"
   end
 
   #
   # 映画コンテンツの削除
   #
   def delete_contents_DB(contents)
-    @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
+    @db.execute "DELETE  FROM movie_master WHERE title=(title);,'#{contents.title}'"
   end
 
   #
@@ -106,16 +108,14 @@ class SaveDBTask
   # ジャンルの更新
   #
   def update_genre_DB(genres)
-    # 未編集　コマンドがinsertではない <= あとで編集
-    # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
+    @db.execute "UPDATE genre_master SET genres=(genres) WHERE title=(title); ,'#{genres.name}'"
   end
 
   #
   # ジャンルの削除
   #
   def delete_genre_DB(genres)
-    # 未編集　コマンドがinsertではない <= あとで編集
-    # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
+    @db.execute "DELETE  FROM genre_master WHERE genre=(genre);,'#{genres.name}'"
   end
 
   #
