@@ -36,40 +36,67 @@ class SaveDBTask
       title varchar(200),
       original_title varchar(200),
       release_year varchar(200),
-      genres varchar(200),
       running_time varchar(200),
-      director varchar(200),
       summary varchar(200)
       );'
 
-    # genre_table（ジャンルテーブル）の生成
-    # output_directory = 'db/' + site_name + '/' + 'genre' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     genres varchar(200)
-    #   );'
-    # )
-
-    # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
-    # output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     movie_id varchar(200),
-    #     genre_id varchar(200)
-    #   );'
-    # )
+    # cast_table（ジャンルテーブル）の生成
+    output_directory = 'db/' + site_name + '/' + 'cast' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS genre_master (
+        cast varchar(200)
+      );'
+    )
 
     # director_tale（監督テーブル）の生成
-    # output_directory = 'db/' + site_name + '/' + 'director' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     movie_id varchar(200),
-    #     genre_id varchar(200)
-    #   );'
-    # )
+    output_directory = 'db/' + site_name + '/' + 'director' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS director (
+        director varchar(200)
+      );'
+    )
+
+    # director_tale（監督テーブル）の生成
+    output_directory = 'db/' + site_name + '/' + 'director' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS director (
+        movie_id varchar(200),
+        genre_id varchar(200)
+      );'
+    )
+
+    # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
+    output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS movie_genre_master (
+        movie_id varchar(200),
+        genre_id varchar(200)
+      );'
+    )
+
+    # movie_director_table（映画と監督の紐付け）の生成（中間テーブル）
+    output_directory = 'db/' + site_name + '/' + 'movie_director' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS movie_director_master (
+        movie varchar(200),
+        director varchar(200)
+      );'
+    )
+
+    # movie_cast_table（映画と監督の紐付け）の生成（中間テーブル）
+    output_directory = 'db/' + site_name + '/' + 'movie_cast' + '.db'
+    @db = SQLite3::Database.new(output_directory)
+    @db.execute(
+      'CREATE TABLE IF NOT EXISTS movie_cast_master (
+        movie varchar(200),
+        cast varchar(200)
+      );'
+    )
 
   end
 
