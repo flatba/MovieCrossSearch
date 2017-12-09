@@ -40,7 +40,10 @@ class Entry
   end
 
   def initialize_contents
-    @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+    @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time,  :summary)
+    @genre_master    = Struct.new(:cast)
+    @director_master = Struct.new(:cast)
+    @cast_master     = Struct.new(:cast)
   end
 
   def initialize_driver
