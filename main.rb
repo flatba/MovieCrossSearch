@@ -197,9 +197,9 @@ category_url_arr.each do |category_url|
       # 映画コンテンツ情報
 
       @movie_master = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
-      @genre_list = scrape.create_genre_list(@selector, content_doc)
-      @director_list = scrape.create_director_list(@selector, content_doc)
-      @cast_list = scrape.create_cast_list(@selector, content_doc)
+      puts @genre_list = scrape.create_genre_list(@selector, content_doc)
+      puts @director_list = scrape.create_director_list(@selector, content_doc)
+      puts @cast_list = scrape.create_cast_list(@selector, content_doc)
 
       # 保存処理
       scrape.save_movie_master_contents(@db, @movie_master)

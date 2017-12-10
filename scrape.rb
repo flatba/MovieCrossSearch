@@ -102,8 +102,8 @@ class Scrape
     # unless check_contents_item(doc.css(selector.select_selector[:director])[2].text.gsub("\\n", "").strip)
     unless check_contents_item(doc.css(selector.select_selector[:director]))
       # ここ未調整のため直す。2監督いる場合に対応する
-      doc.css(selector.select_selector[:director]).children.each do |director|
-        director_list.push(director)
+      doc.css(selector.select_selector[:director]).each do |director|
+        director_list.push(director).text
       end
     end
     return director_list
