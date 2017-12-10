@@ -17,7 +17,7 @@ require './scrape.rb'
 #
 class Entry
 
-  attr_reader :base_url, :site_name, :selector, :db, :contents, :driver, :wait
+  attr_reader :base_url, :site_name, :selector, :db, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
 
   # 初期データの生成
   def initialize(url)
@@ -28,6 +28,9 @@ class Entry
 
     @base_url = url
     @site_name = ""
+    @genre_master    = []
+    @director_master = []
+    @cast_master     = []
 
   end
 
@@ -39,11 +42,8 @@ class Entry
     @db = SaveDBTask.new(site_name)
   end
 
-  def initialize_contents
-    @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time,  :summary)
-    @genre_master    = Struct.new(:cast)
-    @director_master = Struct.new(:cast)
-    @cast_master     = Struct.new(:cast)
+  def initialize_movie_master
+    @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
   end
 
   def initialize_driver
@@ -93,10 +93,10 @@ end
 # ----------------------------------------------------------------------
 entry = Entry.new("https://www.happyon.jp/")
 entry.check_site_name(entry.base_url)
-@selector = entry.initialize_selector(entry.site_name)
-@db       = entry.initialize_db(entry.site_name)
-@contents = entry.initialize_contents
-@driver   = entry.initialize_driver
+@selector     = entry.initialize_selector(entry.site_name)
+@db           = entry.initialize_db(entry.site_name)
+@movie_master = entry.initialize_movie_master
+@driver       = entry.initialize_driver
 
 crawl = Crawl.new
 scrape = Scrape.new
@@ -192,9 +192,25 @@ category_url_arr.each do |category_url|
       @driver.get(content_url)
 
       puts "　新規タブにハンドルを移す"
+      # パースデータの取得
       content_doc = crawl.open_url(content_url)
-      contents = scrape.new_contents(@selector, content_doc, @contents)
-      scrape.save_contents(@db, contents)
+      # 映画コンテンツ情報
+
+      @movie_master = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
+      @genre_list = scrape.create_genre_list(@selector, content_doc)
+      @director_list = scrape.create_director_list(@selector, content_doc)
+      @cast_list = scrape.create_cast_list(@selector, content_doc)
+
+      # 保存処理
+      scrape.save_movie_master_contents(@db, @movie_master)
+      # scrape.save_genre_master_contents(@db, contents)
+      # scrape.save_director_master_contents(@db, contents)
+      # scrape.save_cast_master_contents(@db, contents)
+      # 中間テーブル処理① movie_genre
+      # 中間テーブル処理② movie_director
+      # 中間テーブル処理③ movie_cast
+
+
 
       # 新規タブを閉じて元タブにハンドルを戻す
       crawl.close_new_window(@driver, current_window)

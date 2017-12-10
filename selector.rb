@@ -14,11 +14,12 @@ class Selector
           :title => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > h2',
           :original_title => '',
           :release_year => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > p > small',
-          :genre => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > div.vod-mod-detail-info02__navi > ul > li',
           :running_time => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__movie > figure > figcaption > dl > dd',
-          :directors => 'div.vod-mod-detail-info02__credit-col > ul',
-          :casts => 'div.vod-mod-detail-info02__credit-col > ul',
-          :summary => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-detail-info02__summary.vod-utl-brief-target.is-brief-closed > div > div.vod-mod-detail-info02__program-description > p'
+          :summary => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-detail-info02__summary.vod-utl-brief-target.is-brief-closed > div > div.vod-mod-detail-info02__program-description > p',
+
+          :genre => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > div.vod-mod-detail-info02__navi > ul > li',
+          :cast => 'div.vod-mod-detail-info02__credit-col:nth-child(1) > ul > li',
+          :director => 'div.vod-mod-detail-info02__credit-col:nth-child(2) > ul:nth-child(4) > li'
         }
       end
     elsif site_name.include?('netflix')
@@ -28,10 +29,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('amazon_prime')
@@ -41,10 +44,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('amazon_video')
@@ -54,10 +59,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('gyao')
@@ -67,10 +74,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('dtv')
@@ -80,10 +89,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('unext')
@@ -93,10 +104,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('apple_itunes')
@@ -106,10 +119,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('ms_video')
@@ -119,10 +134,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('googleplay')
@@ -132,10 +149,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     elsif site_name.include?('mubi')
@@ -145,10 +164,12 @@ class Selector
           :title => '',
           :original_title => '',
           :release_year => '',
-          :genre => '',
           :running_time => '',
+          :summary => '',
+
+          :genre => '',
           :director => '',
-          :summary => ''
+          :cast => ''
         }
       end
     end

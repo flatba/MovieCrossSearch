@@ -100,6 +100,40 @@ class SaveDBTask
       );'
     )
 
+
+# 中間テーブル
+
+  # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
+  output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
+  @db = SQLite3::Database.new(output_directory)
+  @db.execute(
+    'CREATE TABLE IF NOT EXISTS movie_genre_master (
+      movie_id varchar(200),
+      genre_id varchar(200)
+    );'
+  )
+
+  # movie_director_table（映画と監督の紐付け）の生成（中間テーブル）
+  output_directory = 'db/' + site_name + '/' + 'movie_director' + '.db'
+  @db = SQLite3::Database.new(output_directory)
+  @db.execute(
+    'CREATE TABLE IF NOT EXISTS movie_director_master (
+      movie varchar(200),
+      director varchar(200)
+    );'
+  )
+
+  # movie_cast_table（映画と監督の紐付け）の生成（中間テーブル）
+  output_directory = 'db/' + site_name + '/' + 'movie_cast' + '.db'
+  @db = SQLite3::Database.new(output_directory)
+  @db.execute(
+    'CREATE TABLE IF NOT EXISTS movie_cast_master (
+      movie varchar(200),
+      cast varchar(200)
+    );'
+  )
+#
+
   end
 #
 
@@ -219,38 +253,7 @@ class SaveDBTask
   end
 #
 
-# 中間テーブル
 
-  # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
-  @db = SQLite3::Database.new(output_directory)
-  @db.execute(
-    'CREATE TABLE IF NOT EXISTS movie_genre_master (
-      movie_id varchar(200),
-      genre_id varchar(200)
-    );'
-  )
-
-  # movie_director_table（映画と監督の紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_director' + '.db'
-  @db = SQLite3::Database.new(output_directory)
-  @db.execute(
-    'CREATE TABLE IF NOT EXISTS movie_director_master (
-      movie varchar(200),
-      director varchar(200)
-    );'
-  )
-
-  # movie_cast_table（映画と監督の紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_cast' + '.db'
-  @db = SQLite3::Database.new(output_directory)
-  @db.execute(
-    'CREATE TABLE IF NOT EXISTS movie_cast_master (
-      movie varchar(200),
-      cast varchar(200)
-    );'
-  )
-#
 
   #
   # データベースの編集終了
