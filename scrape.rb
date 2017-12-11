@@ -2,7 +2,7 @@
 #
 # 解析（情報収集処理）
 #
-require './save_db_task.rb'
+require './database.rb'
 require './crawl.rb'
 
 
@@ -73,6 +73,7 @@ class Scrape
       summary = ""
     end
 
+    # 例外処理
     # rescue
     #   puts contents
     #   puts driver.current_url + "内で要素がなかったかも"
@@ -99,11 +100,10 @@ class Scrape
   # 監督一覧取得
   def create_director_list(selector, doc)
     director_list = []
-    # unless check_contents_item(doc.css(selector.select_selector[:director])[2].text.gsub("\\n", "").strip)
     unless check_contents_item(doc.css(selector.select_selector[:director]))
       # ここ未調整のため直す。2監督いる場合に対応する
       doc.css(selector.select_selector[:director]).each do |director|
-        director_list.push(director).text
+        director_list.push(director.text)
       end
     end
     return director_list
@@ -121,14 +121,14 @@ class Scrape
   end
 
 
-  # 情報を取得する
-  def get_contents_all(content_url, selector)
-    puts "情報を取得する"
-    crawl = Crawl.new
-    content_doc = crawl.open_url(content_url)
-    # contents = new_contents(selector, content_doc)
-    return contents
-  end
+  # # 情報を取得する
+  # def get_contents_all(content_url, selector)
+  #   puts "情報を取得する"
+  #   crawl = Crawl.new
+  #   content_doc = crawl.open_url(content_url)
+  #   # contents = new_contents(selector, content_doc)
+  #   return contents
+  # end
 
 
   private
