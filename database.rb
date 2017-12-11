@@ -49,7 +49,7 @@ class Database
       );'
 
     # genre_table（ジャンルテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'genre' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'genre_master' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (
@@ -58,7 +58,7 @@ class Database
     )
 
     # director_tale（監督テーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'director' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'director_master' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS director_master (
@@ -67,7 +67,7 @@ class Database
     )
 
     # cast_tale（キャストテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'cast' + '.db'
+    output_directory = 'db/' + site_name + '/' + 'cast_master' + '.db'
     @db = SQLite3::Database.new(output_directory)
     @db.execute(
       'CREATE TABLE IF NOT EXISTS cast_master (
@@ -135,12 +135,12 @@ class Database
   # SELECT * FROM movie_master;
   # @db.execute "SELECT * FROM customer WHERE title=(title);,'#{contents.title}'"
   def update_contents_DB(contents)
-    @db.execute "UPDATE movie_master SET title=(title) WHERE title=(title); ,'#{contents.title}'"
+    db.execute "UPDATE movie_master SET title=(title) WHERE title=(title); ,'#{contents.title}'"
   end
 
   # 映画コンテンツの削除
   def delete_contents_DB(contents)
-    @db.execute "DELETE  FROM movie_master WHERE title=(title);,'#{contents.title}'"
+    db.execute "DELETE  FROM movie_master WHERE title=(title);,'#{contents.title}'"
   end
 #
 
@@ -152,18 +152,18 @@ class Database
   end
 
   # ジャンルの取得
-  def read_genre_master_item(column_name, item_name)
-    @db.execute "SELECT * FROM genre_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  def read_genre_master_item(db, column_name, item_name)
+    db.execute "SELECT * FROM genre_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # ジャンルの更新
   def update_genre_master_DB(db, genres)
-    @db.execute "UPDATE genre_master SET genres=(genres) WHERE title=(title); ,'#{genres.name}'"
+    db.execute "UPDATE genre_master SET genres=(genres) WHERE title=(title); ,'#{genres.name}'"
   end
 
   # ジャンルの削除
   def delete_genre_master_DB(db, genres)
-    @db.execute "DELETE FROM genre_master WHERE genre=(genre);,'#{genres.name}'"
+    db.execute "DELETE FROM genre_master WHERE genre=(genre);,'#{genres.name}'"
   end
 
 #
@@ -171,23 +171,23 @@ class Database
 # 監督テーブル
 
   # 監督の追加
-  def create_director_master_DB(director)
-    @db.execute "insert into director_master (genres) values('#{director}')"
+  def create_director_master_DB(db, director)
+    db.execute "insert into director_master (genres) values('#{director}')"
   end
 
   # 監督の取得
-  def read_director_master_item(column_name, item_name)
-    @db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  def read_director_master_item(db, column_name, item_name)
+    db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # 監督の更新
-  def update_director_master_DB(director)
-    @db.execute "UPDATE director_master SET director=(director) WHERE title=(title); ,'#{director}'"
+  def update_director_master_DB(db, director)
+    db.execute "UPDATE director_master SET director=(director) WHERE title=(title); ,'#{director}'"
   end
 
   # 監督の削除
-  def delete_director_master_DB(director)
-    @db.execute "DELETE  FROM director_master WHERE director=(director);,'#{director}'"
+  def delete_director_master_DB(db, director)
+    db.execute "DELETE  FROM director_master WHERE director=(director);,'#{director}'"
   end
 
 #
@@ -195,23 +195,23 @@ class Database
 # キャストテーブル
 
   # キャストの追加
-  def create_cast_master_DB(cast)
-    @db.execute "insert into cast_master (cast) values('#{cast}')"
+  def create_cast_master_DB(db, cast)
+    db.execute "insert into cast_master (cast) values('#{cast}')"
   end
 
   # キャストの取得
-  def read_cast_master_item(column_name, item_name)
-    @db.execute "SELECT * FROM cast_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  def read_cast_master_item(db, column_name, item_name)
+    db.execute "SELECT * FROM cast_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # キャストの更新
-  def update_cast_master_DB(cast)
-    @db.execute "UPDATE cast_master SET director=(director) WHERE title=(title); ,'#{cast}'"
+  def update_cast_master_DB(db, cast)
+    db.execute "UPDATE cast_master SET cast=(cast) WHERE title=(title); ,'#{cast}'"
   end
 
   # キャストの削除
-  def delete_cast_master_DB(cast)
-    @db.execute "DELETE  FROM cast_master WHERE cast=(cast);,'#{cast}'"
+  def delete_cast_master_DB(db, cast)
+    db.execute "DELETE  FROM cast_master WHERE cast=(cast);,'#{cast}'"
   end
 
 #
@@ -252,75 +252,81 @@ end
 
 
 
-class SaveDBTask
+# class SaveDBTask
 
-  #
-  # 保存処理
-  #
-   # 映画コンテンツ保存
-    def save_movie_master_contents(db, movie_master)
-      # DBに映画コンテンツを保存する
-      Database.create_contents_DB(db, movie_master)
+#   # attr_reader :db_case
 
-      # 保存した映画コンテンツのDB上のタイトルのIDを取得する
-      # タイトルに合致するIDを取得する
-      movie_id = Database.read_movie_master_item(db, "movie_master", title, movie_master.title)
+#   # def initialize
+#   #   db_case = Database.new
+#   # end
 
-      return movie_id
-    end
+#   #
+#   # 保存処理
+#   #
+#    # 映画コンテンツ保存
+#     def save_movie_master_contents(db, movie_master)
+#       # DBに映画コンテンツを保存する
+#       Database.create_contents_DB(db, movie_master)
 
-    # ジャンル保存
-    def save_genre_master_contents(db, genre_list)
-      genre_id_list = []
-      genre_list.each do |item|
-        # 保存
-        Database.create_genre_master_DB(db, item)
-        # id取得
-        genre_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-      end
-      return genre_id_list
-    end
+#       # 保存した映画コンテンツのDB上のタイトルのIDを取得する
+#       # タイトルに合致するIDを取得する
+#       movie_id = Database.read_movie_master_item(db, "movie_master", title, movie_master.title)
 
-    # 監督保存
-    def save_director_master_contents(db, director_list)
-      # 保存
-      Database.create_director_master_DB(db, director_list)
-      # idを取得
-      director_id_list = []
-      director_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-    end
+#       return movie_id
+#     end
 
-    # キャスト保存
-    def save_cast_master_contents(db, cast_list)
-      cast_list.each do |item|
-        # 保存
-        Database.create_cast_master_DB(db, item)
-        # idを取得
-        cast_id_list = []
-        cast_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-      end
-      return cast_id_list
-    end
-  #
+#     # ジャンル保存
+#     def save_genre_master_contents(db, genre_list)
+#       genre_id_list = []
+#       genre_list.each do |item|
+#         # 保存
+#         Database.create_genre_master_DB(db, item)
+#         # id取得
+#         genre_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
+#       end
+#       return genre_id_list
+#     end
 
-  #
-  # 中間テーブル処理
-  #
-    # 中間テーブル処理①
-    def save_movie_genre(db, movie_id, genre_id_list)
-      Database.create_movie_genre_DB(db, movie_id, genre_id_list)
-    end
+#     # 監督保存
+#     def save_director_master_contents(db, director_list)
+#       # 保存
+#       Database.create_director_master_DB(db, director_list)
+#       # idを取得
+#       director_id_list = []
+#       director_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
+#     end
 
-    # 中間テーブル処理②
-    def save_movie_director(db, movie_id, director_id_list)
-      Database.create_movie_director_DB(db, movie_id, director_id_list)
-    end
+#     # キャスト保存
+#     def save_cast_master_contents(db, cast_list)
+#       cast_list.each do |item|
+#         # 保存
+#         Database.create_cast_master_DB(db, item)
+#         # idを取得
+#         cast_id_list = []
+#         cast_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
+#       end
+#       return cast_id_list
+#     end
+#   #
+
+#   #
+#   # 中間テーブル処理
+#   #
+#     # 中間テーブル処理①
+#     def save_movie_genre(db, movie_id, genre_id_list)
+#       Database.create_movie_genre_DB(db, movie_id, genre_id_list)
+#     end
+
+#     # 中間テーブル処理②
+#     def save_movie_director(db, movie_id, director_id_list)
+#       Database.create_movie_director_DB(db, movie_id, director_id_list)
+#     end
 
 
-    #中間テーブル処理③
-    def save_movie_cast(db, movie_id, cast_id_list)
-      Database.create_movie_cast_DB(db, movie_id, cast_id_list)
-    end
-  #
+#     #中間テーブル処理③
+#     def save_movie_cast(db, movie_id, cast_id_list)
+#       Database.create_movie_cast_DB(db, movie_id, cast_id_list)
+#     end
+#   #
 
-end
+# end

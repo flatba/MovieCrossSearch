@@ -199,9 +199,9 @@ category_url_arr.each do |category_url|
       # 映画コンテンツ情報
 
       @movie_master = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
-      puts genre_list = scrape.create_genre_list(@selector, content_doc)
-      puts director_list = scrape.create_director_list(@selector, content_doc)
-      puts cast_list = scrape.create_cast_list(@selector, content_doc)
+      genre_list = scrape.create_genre_list(@selector, content_doc)
+      director_list = scrape.create_director_list(@selector, content_doc)
+      cast_list = scrape.create_cast_list(@selector, content_doc)
 
       #
       # 保存処理(保存とレコードIDの取得)
@@ -212,11 +212,11 @@ category_url_arr.each do |category_url|
       db_task.save_cast_master_contents(@db, cast_list)
 
       # 中間テーブル処理① movie_genre
-      db_task.save_movie_genre(movie_id, genre_id_list)
+      db_task.save_movie_genre(@db, movie_id, genre_id_list)
       # 中間テーブル処理② movie_director
-      db_task.save_movie_director(movie_id, director_id_list)
+      db_task.save_movie_director(@db, movie_id, director_id_list)
       # 中間テーブル処理③ movie_cast
-      db_task.save_movie_cast(movie_id, cast_id_list)
+      db_task.save_movie_cast(@db, movie_id, cast_id_list)
 
 
       # 新規タブを閉じて元タブにハンドルを戻す

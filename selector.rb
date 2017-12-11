@@ -19,7 +19,7 @@ class Selector
 
           :genre => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > div.vod-mod-detail-info02__navi > ul > li',
           :cast => 'div.vod-mod-detail-info02__credit-col:nth-child(1) > ul > li',
-          :director => 'div.vod-mod-detail-info02__credit-col:nth-child(2) > ul:nth-child(4) > li'
+          :director => 'div.vod-mod-detail-info02__credit-col:nth-child(2) > ul:nth-child(4) > li > a'
         }
       end
     elsif site_name.include?('netflix')
