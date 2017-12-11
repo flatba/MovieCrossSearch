@@ -204,19 +204,19 @@ category_url_arr.each do |category_url|
       puts cast_list = scrape.create_cast_list(@selector, content_doc)
 
       #
-      # 保存処理
+      # 保存処理(保存とレコードIDの取得)
       #
-      db_task.save_movie_master_contents(@db, @movie_master)
-      db_task.save_genre_master_contents(@db, genre_list)
-      db_task.save_director_master_contents(@db, director_list)
+      movie_id = db_task.save_movie_master_contents(@db, @movie_master)
+      genre_id_list = db_task.save_genre_master_contents(@db, genre_list)
+      cast_id_list = db_task.save_director_master_contents(@db, director_list)
       db_task.save_cast_master_contents(@db, cast_list)
 
       # 中間テーブル処理① movie_genre
-      db_task.save_movie_genre
+      db_task.save_movie_genre(movie_id, genre_id_list)
       # 中間テーブル処理② movie_director
-      db_task.save_movie_director
+      db_task.save_movie_director(movie_id, director_id_list)
       # 中間テーブル処理③ movie_cast
-      db_task.save_movie_cast
+      db_task.save_movie_cast(movie_id, cast_id_list)
 
 
       # 新規タブを閉じて元タブにハンドルを戻す
