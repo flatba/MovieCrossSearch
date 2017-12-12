@@ -94,8 +94,8 @@ class Database
   @movie_director_db = SQLite3::Database.new(output_directory)
   @movie_director_db.execute(
     'CREATE TABLE IF NOT EXISTS movie_director (
-      movie varchar(200),
-      director varchar(200)
+      movie_id varchar(200),
+      director_id varchar(200)
     );'
   )
 
@@ -104,8 +104,8 @@ class Database
   @movie_cast_db = SQLite3::Database.new(output_directory)
   @movie_cast_db.execute(
     'CREATE TABLE IF NOT EXISTS movie_cast (
-      movie varchar(200),
-      cast varchar(200)
+      movie_id varchar(200),
+      cast_id varchar(200)
     );'
   )
 #
@@ -125,19 +125,14 @@ class Database
     @movie_master_db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,running_time,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.running_time}','#{contents.summary}');"
   end
 
-  # 映画コンテンツの取得
+  # [DONE]映画コンテンツの取得
   def read_movie_master_item(table, column_name, item_name)
     # 登録したものをtilteで取得
     record_id = @movie_master_db.execute "select ROWID from '#{table}' where title = '#{item_name}';"
 
-    # 登録した最後の情報
+    # 登録した最後の情報（全部返ってきちゃう）
     # record_id = @movie_master_db.execute "select * from '#{table}' where ROWID = last_insert_rowid();"
-    return record_id
-  end
-
-   # あとで直すレコードの取得汎用的にできる
-  def read_item(table, column_name, item_name)
-    return @movie_master_db.execute "SELECT * FROM #{table} WHERE #{column_name} = #{item_name};"
+    return record_id[0]
   end
 
   # 映画コンテンツの更新
@@ -156,14 +151,16 @@ class Database
 
 # ジャンルテーブル
 
-  # ジャンルの追加
-  def create_genre_master_DB(db, genre)
-    @genre_master_db.execute "insert into genre_master (item) values('#{item}')"
+  # [check]ジャンルの追加
+  def create_genre_master_DB(genre)
+    # もし既にあったら登録しない処理を入れる
+    @genre_master_db.execute "insert into genre_master (name) values ('#{genre}')"
   end
 
-  # ジャンルの取得
-  def read_genre_master_item(db, column_name, item_name)
-    @genre_master_db.execute "SELECT * FROM genre_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  # [check]ジャンルの取得
+  def read_genre_master_item(table, column_name, item_name)
+    record_id = @genre_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
+    return record_id[0]
   end
 
   # ジャンルの更新
@@ -180,14 +177,17 @@ class Database
 
 # 監督テーブル
 
-  # 監督の追加
+  # [check]監督の追加
   def create_director_master_DB(db, director)
-    @director_master_db.execute "insert into director_master (genres) values('#{director}')"
+    # もし既に登録されてたら処理飛ばす処理を入れる
+    @director_master_db.execute "insert into director_master (name) values('#{director}')"
   end
 
-  # 監督の取得
-  def read_director_master_item(db, column_name, item_name)
-    @director_master_db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  # [check]監督の取得
+  def read_director_master_item(table, column_name, item_name)
+    # @director_master_db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+    record_id = @director_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
+    return record_id[0]
   end
 
   # 監督の更新
@@ -206,12 +206,14 @@ class Database
 
   # キャストの追加
   def create_cast_master_DB(db, cast)
-    @cast_master_db.execute "insert into cast_master (cast) values('#{cast}')"
+    # 既に登録されてたら飛ばす処理入れる
+    @cast_master_db.execute "insert into cast_master (name) values('#{cast}')"
   end
 
-  # キャストの取得
-  def read_cast_master_item(db, column_name, item_name)
-    @cast_master_db.execute "SELECT * FROM cast_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  # [check]キャストの取得
+  def read_cast_master_item(table, column_name, item_name)
+    record_id = @cast_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
+    return record_id[0]
   end
 
   # キャストの更新
@@ -229,21 +231,21 @@ class Database
 # 中間テーブル
 
   # 中間 映画コンテンツ-ジャンルの追加
-  def create_movie_genre_DB(db, movie_id, genre_id_list)
+  def create_movie_genre_DB(movie_id, genre_id_list)
     genre_id_list.each do |id|
       @movie_genre_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id}','#{id}');"
     end
   end
 
   # 中間 映画コンテンツ-監督の追加
-  def create_movie_director_DB(db, movie_id, director_id_list)
+  def create_movie_director_DB(movie_id, director_id_list)
     director_id_list.each do |id|
       @movie_director_db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id}','#{id}');"
     end
   end
 
   # 中間 映画コンテンツ-キャストの追加
-  def create_movie_cast_DB(db, movie_id, cast_id_list)
+  def create_movie_cast_DB(movie_id, cast_id_list)
     cast_id_list.each do |id|
       @movie_cast_db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id}','#{id}');"
     end

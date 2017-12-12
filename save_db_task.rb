@@ -6,27 +6,23 @@ class SaveDBTask
 
     # 保存処理
     #
-     # 映画コンテンツ保存
+     # [DONE]映画コンテンツ保存
       def save_movie_master_contents(db, movie_master)
         # DBに映画コンテンツを保存する
         db.create_movie_master_DB(db, movie_master)
-
-        # 保存した映画コンテンツのDB上のタイトルのIDを取得する
-        # タイトルに合致するIDを取得する
-        # ここでタイトルが見つからないというを修正する
-        movie_id = db.read_movie_master_item("movie_master", "title", movie_master.title)
-
-        return movie_id.to_s
+        # 保存した映画コンテンツのタイトルに合致するレコードIDを取得する
+        movie_id = db.read_movie_master_item('movie_master', 'title', movie_master.title)
+        return movie_id
       end
 
       # ジャンル保存
       def save_genre_master_contents(db, genre_list)
         genre_id_list = []
-        genre_list.each do |item|
+        genre_list.each do |genre|
           # 保存
-          db.create_genre_master_DB(db, item)
+          db.create_genre_master_DB(genre)
           # id取得
-          genre_id_list << db.read_movie_master_item(db, "genre_master", title, item)
+          genre_id_list << db.read_genre_master_item('genre_master', 'title', genre)
         end
         return genre_id_list
       end
@@ -37,17 +33,17 @@ class SaveDBTask
         db.create_director_master_DB(db, director_list)
         # idを取得
         director_id_list = []
-        director_id_list << db.read_movie_master_item(db, "genre_master", title, item)
+        director_id_list << db.read_director_master_item("director_master", 'title', director_list)
       end
 
       # キャスト保存
       def save_cast_master_contents(db, cast_list)
-        cast_list.each do |item|
+        cast_id_list = []
+        cast_list.each do |cast|
           # 保存
-          db.create_cast_master_DB(db, item)
+          db.create_cast_master_DB(db, cast)
           # idを取得
-          cast_id_list = []
-          cast_id_list << db.read_movie_master_item(db, "genre_master", title, item)
+          cast_id_list << db.read_cast_master_item("cast_master", 'name', cast)
         end
         return cast_id_list
       end
@@ -58,18 +54,18 @@ class SaveDBTask
     #
       # 中間テーブル処理①
       def save_movie_genre(db, movie_id, genre_id_list)
-        db.create_movie_genre_DB(db, movie_id, genre_id_list)
+        db.create_movie_genre_DB(movie_id, genre_id_list)
       end
 
       # 中間テーブル処理②
       def save_movie_director(db, movie_id, director_id_list)
-        db.create_movie_director_DB(db, movie_id, director_id_list)
+        db.create_movie_director_DB(movie_id, director_id_list)
       end
 
 
       #中間テーブル処理③
       def save_movie_cast(db, movie_id, cast_id_list)
-        db.create_movie_cast_DB(db, movie_id, cast_id_list)
+        db.create_movie_cast_DB(movie_id, cast_id_list)
       end
     #
 

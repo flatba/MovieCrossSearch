@@ -208,8 +208,8 @@ category_url_arr.each do |category_url|
       #
       movie_id = db_task.save_movie_master_contents(@db, movie_master_contents)
       genre_id_list = db_task.save_genre_master_contents(@db, genre_list)
-      cast_id_list = db_task.save_director_master_contents(@db, director_list)
-      db_task.save_cast_master_contents(@db, cast_list)
+      director_id_list = db_task.save_director_master_contents(@db, director_list)
+      cast_id_list = db_task.save_cast_master_contents(@db, cast_list)
 
       # 中間テーブル処理① movie_genre
       db_task.save_movie_genre(@db, movie_id, genre_id_list)
