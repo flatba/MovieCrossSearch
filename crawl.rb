@@ -62,7 +62,6 @@ class Crawl
 
       # 新規タブのURLを取得する
       puts "新規タブのURLを取得する"
-      screenshot(driver)
       content_url = driver.current_url
 
       return content_url

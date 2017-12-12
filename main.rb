@@ -8,6 +8,7 @@ require "date"
 
 # import classfile
 require './selector.rb'
+require './database.rb'
 require './save_db_task.rb'
 require './crawl.rb'
 require './scrape.rb'
@@ -17,7 +18,7 @@ require './scrape.rb'
 #
 class Entry
 
-  attr_reader :base_url, :site_name, :selector, :db, :contents, :driver, :wait
+  attr_reader :base_url, :site_name, :selector, :db, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
 
   # 初期データの生成
   def initialize(url)
@@ -28,6 +29,9 @@ class Entry
 
     @base_url = url
     @site_name = ""
+    @genre_master    = []
+    @director_master = []
+    @cast_master     = []
 
   end
 
@@ -35,21 +39,21 @@ class Entry
     @selector = Selector.new(site_name)
   end
 
-  def initialize_db(site_name)
-    @db = SaveDBTask.new(site_name)
+  def initialize_data_base(site_name)
+    @db = Database.new(site_name)
   end
 
-  def initialize_contents
-    @contents = Struct.new(:thumbnail, :title, :original_title, :release_year, :genres, :running_time, :director, :summary)
+  def initialize_movie_master
+    @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
   end
 
   def initialize_driver
     # 通常chrome起動
-    @driver = Selenium::WebDriver.for :chrome
+    # @driver = Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
-    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary', args: ["--headless", "--disable-gpu",  "window-size=1280x800"]})
+    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
   end
 
@@ -90,11 +94,12 @@ end
 # ----------------------------------------------------------------------
 entry = Entry.new("https://www.happyon.jp/")
 entry.check_site_name(entry.base_url)
-@selector = entry.initialize_selector(entry.site_name)
-@db       = entry.initialize_db(entry.site_name)
-@contents = entry.initialize_contents
-@driver   = entry.initialize_driver
+@selector     = entry.initialize_selector(entry.site_name)
+@db           = entry.initialize_data_base(entry.site_name)
+@movie_master = entry.initialize_movie_master
+@driver       = entry.initialize_driver
 
+db_task = SaveDBTask.new
 crawl = Crawl.new
 scrape = Scrape.new
 
@@ -189,9 +194,30 @@ category_url_arr.each do |category_url|
       @driver.get(content_url)
 
       puts "　新規タブにハンドルを移す"
+      # パースデータの取得
       content_doc = crawl.open_url(content_url)
-      contents = scrape.new_contents(@selector, content_doc, @contents)
-      scrape.save_contents(@db, contents)
+      # 映画コンテンツ情報
+
+      movie_master_contents = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
+      genre_list = scrape.create_genre_list(@selector, content_doc)
+      director_list = scrape.create_director_list(@selector, content_doc)
+      cast_list = scrape.create_cast_list(@selector, content_doc)
+
+      #
+      # 保存処理(保存とレコードIDの取得)
+      #
+      movie_id = db_task.save_movie_master_contents(@db, movie_master_contents)
+      genre_id_list = db_task.save_genre_master_contents(@db, genre_list)
+      director_id_list = db_task.save_director_master_contents(@db, director_list)
+      cast_id_list = db_task.save_cast_master_contents(@db, cast_list)
+
+      # 中間テーブル処理① movie_genre
+      db_task.save_movie_genre(@db, movie_id, genre_id_list)
+      # 中間テーブル処理② movie_director
+      db_task.save_movie_director(@db, movie_id, director_id_list)
+      # 中間テーブル処理③ movie_cast
+      db_task.save_movie_cast(@db, movie_id, cast_id_list)
+
 
       # 新規タブを閉じて元タブにハンドルを戻す
       crawl.close_new_window(@driver, current_window)

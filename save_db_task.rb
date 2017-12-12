@@ -1,128 +1,72 @@
-# coding: utf-8
-require 'sqlite3'
 
-#
-# 保存処理
-#
+# import classfile
+require './database.rb'
+
 class SaveDBTask
-  #
-  # DB生成
-  # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
-  # 回す前にバックアップを生成して、更新が終わったらバックアップは削除する処理でも良いかも
-  # ある程度進んだらActiveRecord使ってみたい
-  #
 
-  # attr_reader :db
+    # 保存処理
+    #
+     # [DONE]映画コンテンツ保存
+      def save_movie_master_contents(db, movie_master)
+        # DBに映画コンテンツを保存する
+        db.create_movie_master_DB(db, movie_master)
+        # 保存した映画コンテンツのタイトルに合致するレコードIDを取得する
+        movie_id = db.read_movie_master_item('movie_master', 'title', movie_master.title)
+        return movie_id
+      end
 
-  def initialize(site_name)
+      # ジャンル保存
+      def save_genre_master_contents(db, genre_list)
+        genre_id_list = []
+        genre_list.each do |genre|
+          # 保存
+          db.create_genre_master_DB(genre)
+          # id取得
+          genre_id_list << db.read_genre_master_item('genre_master', 'title', genre)
+        end
+        return genre_id_list
+      end
 
-    # 出力先ディレクトリの有無の確認して無ければ作成する
-    unless File.directory?("./db") || File.directory?("./output") || File.directory?("./output/screenshot")
-      Dir::mkdir("./db")
-      Dir::mkdir("./output")
-      Dir::mkdir("./output/screenshot")
-    end
+      # 監督保存
+      def save_director_master_contents(db, director_list)
+        # 保存
+        db.create_director_master_DB(db, director_list)
+        # idを取得
+        director_id_list = []
+        director_id_list << db.read_director_master_item("director_master", 'title', director_list)
+      end
 
-    # movie_master_table（ムービーテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'movie_master' + '.db'
+      # キャスト保存
+      def save_cast_master_contents(db, cast_list)
+        cast_id_list = []
+        cast_list.each do |cast|
+          # 保存
+          db.create_cast_master_DB(db, cast)
+          # idを取得
+          cast_id_list << db.read_cast_master_item("cast_master", 'name', cast)
+        end
+        return cast_id_list
+      end
+    #
 
-    unless File.directory?("./db/" + site_name)
-      Dir::mkdir("./db/" + site_name)
-    end
+    #
+    # 中間テーブル処理
+    #
+      # 中間テーブル処理①
+      def save_movie_genre(db, movie_id, genre_id_list)
+        db.create_movie_genre_DB(movie_id, genre_id_list)
+      end
 
-    @db = SQLite3::Database.new(output_directory)
-    @db.execute 'CREATE TABLE IF NOT EXISTS movie_master (
-      thumbnail varchar(500),
-      title varchar(200),
-      original_title varchar(200),
-      release_year varchar(200),
-      genres varchar(200),
-      running_time varchar(200),
-      director varchar(200),
-      summary varchar(200)
-      );'
-
-    # genre_table（ジャンルテーブル）の生成
-    # output_directory = 'db/' + site_name + '/' + 'genre' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     genres varchar(200)
-    #   );'
-    # )
-
-    # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
-    # output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     movie_id varchar(200),
-    #     genre_id varchar(200)
-    #   );'
-    # )
-
-    # director_tale（監督テーブル）の生成
-    # output_directory = 'db/' + site_name + '/' + 'director' + '.db'
-    # @db = SQLite3::Database.new(output_directory)
-    # @db.execute(
-    #   'CREATE TABLE IF NOT EXISTS genre_master (
-    #     movie_id varchar(200),
-    #     genre_id varchar(200)
-    #   );'
-    # )
-
-  end
-
-  #
-  # 映画コンテンツの追加
-  #
-  def create_contents_DB(contents)
+      # 中間テーブル処理②
+      def save_movie_director(db, movie_id, director_id_list)
+        db.create_movie_director_DB(movie_id, director_id_list)
+      end
 
 
-    @db.execute "INSERT INTO movie_master (thumbnail,title,original_title,release_year,genres,running_time,director,summary) values ('#{contents.thumbnail}','#{contents.title}','#{contents.original_title}','#{contents.release_year}','#{contents.genres}','#{contents.running_time}','#{contents.director}','#{contents.summary}');"
-  end
+      #中間テーブル処理③
+      def save_movie_cast(db, movie_id, cast_id_list)
+        db.create_movie_cast_DB(movie_id, cast_id_list)
+      end
+    #
 
-  #
-  # 映画コンテンツの更新
-  #
-  def update_contents_DB(contents)
-    @db.execute 'INSERT INTO movie_master values (thumbnail,title,original_title,release_year,genres,running_time,director,summary);',["#{contents.thumbnail}","#{contents.title}","#{contents.original_title}","#{contents.release_year}","#{contents.genres}","#{contents.running_time}","#{contents.director}","#{contents.summary}"]
-  end
-
-  #
-  # 映画コンテンツの削除
-  #
-  def delete_contents_DB(contents)
-    @db.execute 'INSERT INTO movie_master values (thumbnail,title,original_title,release_year,genres,running_time,director,summary);',["#{contents.thumbnail}","#{contents.title}","#{contents.original_title}","#{contents.release_year}","#{contents.genres}","#{contents.running_time}","#{contents.director}","#{contents.summary}"]
-  end
-
-  #
-  # ジャンルの追加
-  #
-  def create_genre_DB(genres)
-    @db.execute "insert into genre_master (genres) values('#{contents.genres}')"
-  end
-
-  #
-  # ジャンルの更新
-  #
-  def update_genre_DB(genres)
-    # 未編集　コマンドがinsertではない <= あとで編集
-    # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
-  end
-
-  #
-  # ジャンルの削除
-  #
-  def delete_genre_DB(genres)
-    # 未編集　コマンドがinsertではない <= あとで編集
-    # @db.execute("insert into genre_master (genres) values('#{contents.genres}')")
-  end
-
-  #
-  # データベースの編集終了
-  #
-  def close_DB_task
-    @db.close
-  end
 end
