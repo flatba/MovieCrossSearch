@@ -82,6 +82,8 @@ class Scrape
 
     contents = contents.new(thumbnail, title, original_title, release_year, running_time, summary)
 
+    # sleep 1
+
     return contents
 
   end

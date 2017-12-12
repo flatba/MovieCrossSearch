@@ -126,8 +126,18 @@ class Database
   end
 
   # 映画コンテンツの取得
-  def read_movie_master_item(db, table, column_name, item_name)
-    @db.execute "SELECT * FROM table WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+  def read_movie_master_item(table, column_name, item_name)
+    # 登録したものをtilteで取得
+    record_id = @movie_master_db.execute "select ROWID from '#{table}' where title = '#{item_name}';"
+
+    # 登録した最後の情報
+    # record_id = @movie_master_db.execute "select * from '#{table}' where ROWID = last_insert_rowid();"
+    return record_id
+  end
+
+   # あとで直すレコードの取得汎用的にできる
+  def read_item(table, column_name, item_name)
+    return @movie_master_db.execute "SELECT * FROM #{table} WHERE #{column_name} = #{item_name};"
   end
 
   # 映画コンテンツの更新
@@ -135,12 +145,12 @@ class Database
   # SELECT * FROM movie_master;
   # @db.execute "SELECT * FROM customer WHERE title=(title);,'#{contents.title}'"
   def update_contents_DB(contents)
-    @db.execute "UPDATE movie_master SET title=(title) WHERE title=(title); ,'#{contents.title}'"
+    @movie_master_db.execute "UPDATE movie_master SET title=(title) WHERE title=(title); ,'#{contents.title}'"
   end
 
   # 映画コンテンツの削除
   def delete_contents_DB(contents)
-    @db.execute "DELETE  FROM movie_master WHERE title=(title);,'#{contents.title}'"
+    @movie_master_db.execute "DELETE  FROM movie_master WHERE title=(title);,'#{contents.title}'"
   end
 #
 
@@ -148,22 +158,22 @@ class Database
 
   # ジャンルの追加
   def create_genre_master_DB(db, genre)
-    @db.execute "insert into genre_master (item) values('#{item}')"
+    @genre_master_db.execute "insert into genre_master (item) values('#{item}')"
   end
 
   # ジャンルの取得
   def read_genre_master_item(db, column_name, item_name)
-    @db.execute "SELECT * FROM genre_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+    @genre_master_db.execute "SELECT * FROM genre_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # ジャンルの更新
   def update_genre_master_DB(db, genres)
-    @db.execute "UPDATE genre_master SET genres=(genres) WHERE title=(title); ,'#{genres.name}'"
+    @genre_master_db.execute "UPDATE genre_master SET genres=(genres) WHERE title=(title); ,'#{genres.name}'"
   end
 
   # ジャンルの削除
   def delete_genre_master_DB(db, genres)
-    @db.execute "DELETE FROM genre_master WHERE genre=(genre);,'#{genres.name}'"
+    @genre_master_db.execute "DELETE FROM genre_master WHERE genre=(genre);,'#{genres.name}'"
   end
 
 #
@@ -172,22 +182,22 @@ class Database
 
   # 監督の追加
   def create_director_master_DB(db, director)
-    @db.execute "insert into director_master (genres) values('#{director}')"
+    @director_master_db.execute "insert into director_master (genres) values('#{director}')"
   end
 
   # 監督の取得
   def read_director_master_item(db, column_name, item_name)
-    @db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+    @director_master_db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # 監督の更新
   def update_director_master_DB(db, director)
-    @db.execute "UPDATE director_master SET director=(director) WHERE title=(title); ,'#{director}'"
+    @director_master_db.execute "UPDATE director_master SET director=(director) WHERE title=(title); ,'#{director}'"
   end
 
   # 監督の削除
   def delete_director_master_DB(db, director)
-    @db.execute "DELETE  FROM director_master WHERE director=(director);,'#{director}'"
+    @director_master_db.execute "DELETE  FROM director_master WHERE director=(director);,'#{director}'"
   end
 
 #
@@ -196,22 +206,22 @@ class Database
 
   # キャストの追加
   def create_cast_master_DB(db, cast)
-    @db.execute "insert into cast_master (cast) values('#{cast}')"
+    @cast_master_db.execute "insert into cast_master (cast) values('#{cast}')"
   end
 
   # キャストの取得
   def read_cast_master_item(db, column_name, item_name)
-    @db.execute "SELECT * FROM cast_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
+    @cast_master_db.execute "SELECT * FROM cast_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
   end
 
   # キャストの更新
   def update_cast_master_DB(db, cast)
-    @db.execute "UPDATE cast_master SET cast=(cast) WHERE title=(title); ,'#{cast}'"
+    @cast_master_db.execute "UPDATE cast_master SET cast=(cast) WHERE title=(title); ,'#{cast}'"
   end
 
   # キャストの削除
   def delete_cast_master_DB(db, cast)
-    @db.execute "DELETE  FROM cast_master WHERE cast=(cast);,'#{cast}'"
+    @cast_master_db.execute "DELETE  FROM cast_master WHERE cast=(cast);,'#{cast}'"
   end
 
 #
@@ -221,21 +231,21 @@ class Database
   # 中間 映画コンテンツ-ジャンルの追加
   def create_movie_genre_DB(db, movie_id, genre_id_list)
     genre_id_list.each do |id|
-      @db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id}','#{id}');"
+      @movie_genre_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id}','#{id}');"
     end
   end
 
   # 中間 映画コンテンツ-監督の追加
   def create_movie_director_DB(db, movie_id, director_id_list)
     director_id_list.each do |id|
-      @db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id}','#{id}');"
+      @movie_director_db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id}','#{id}');"
     end
   end
 
   # 中間 映画コンテンツ-キャストの追加
   def create_movie_cast_DB(db, movie_id, cast_id_list)
     cast_id_list.each do |id|
-      @db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id}','#{id}');"
+      @movie_cast_db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id}','#{id}');"
     end
   end
 
@@ -244,7 +254,13 @@ class Database
 # データベースの編集終了
 
   def close_DB_task
-    @db.close
+    @movie_master_db.close
+    @genre_master_db.close
+    @director_master_db.close
+    @cast_master_db.close
+    @movie_genre_db.close
+    @movie_director_db.close
+    @movie_cast_db.close
   end
 #
 

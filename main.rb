@@ -198,7 +198,7 @@ category_url_arr.each do |category_url|
       content_doc = crawl.open_url(content_url)
       # 映画コンテンツ情報
 
-      @movie_master = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
+      movie_master_contents = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
       genre_list = scrape.create_genre_list(@selector, content_doc)
       director_list = scrape.create_director_list(@selector, content_doc)
       cast_list = scrape.create_cast_list(@selector, content_doc)
@@ -206,7 +206,7 @@ category_url_arr.each do |category_url|
       #
       # 保存処理(保存とレコードIDの取得)
       #
-      movie_id = db_task.save_movie_master_contents(@db, @movie_master)
+      movie_id = db_task.save_movie_master_contents(@db, movie_master_contents)
       genre_id_list = db_task.save_genre_master_contents(@db, genre_list)
       cast_id_list = db_task.save_director_master_contents(@db, director_list)
       db_task.save_cast_master_contents(@db, cast_list)

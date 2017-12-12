@@ -13,10 +13,10 @@ class SaveDBTask
 
         # 保存した映画コンテンツのDB上のタイトルのIDを取得する
         # タイトルに合致するIDを取得する
-        ここでタイトルが見つからないというを修正する
-        movie_id = db.read_movie_master_item(db, "movie_master", title, movie_master.title)
+        # ここでタイトルが見つからないというを修正する
+        movie_id = db.read_movie_master_item("movie_master", "title", movie_master.title)
 
-        return movie_id
+        return movie_id.to_s
       end
 
       # ジャンル保存
