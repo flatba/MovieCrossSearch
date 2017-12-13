@@ -55,7 +55,8 @@ class Scrape
       release_year = ""
     end
 
-    # 上映時間 # <= 分で取得できないサイトもあるかもなので要検討
+    # 上映時間
+    # 「時間0分、/ 7分、, 3分」になっている箇所などあり要修正
     unless check_contents_item(doc.css(selector.select_selector[:running_time]).text)
       running_time_tmp = doc.css(selector.select_selector[:running_time]).text
       tail_num = running_time_tmp.rindex('分')
@@ -88,7 +89,7 @@ class Scrape
 
   end
 
-  # [DONE]ジャンル一覧取得
+  # ジャンル一覧取得
   def create_genre_list(selector, doc)
     genre_list = []
     unless check_contents_item(doc.css(selector.select_selector[:genre]).children)

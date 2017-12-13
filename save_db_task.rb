@@ -52,18 +52,17 @@ class SaveDBTask
     #
     # 中間テーブル処理
     #
-      # 中間テーブル処理①
+      # 中間テーブル処理①# 配列なのを直したい
       def save_movie_genre(db, movie_id, genre_id_list)
         db.create_movie_genre_DB(movie_id, genre_id_list)
       end
 
-      # 中間テーブル処理②
+      # 中間テーブル処理②# 配列なのを直したい
       def save_movie_director(db, movie_id, director_id_list)
         db.create_movie_director_DB(movie_id, director_id_list)
       end
 
-
-      #中間テーブル処理③
+      #中間テーブル処理③# 配列なのを直したい
       def save_movie_cast(db, movie_id, cast_id_list)
         db.create_movie_cast_DB(movie_id, cast_id_list)
       end

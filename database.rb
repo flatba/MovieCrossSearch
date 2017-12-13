@@ -233,21 +233,21 @@ class Database
   # 中間 映画コンテンツ-ジャンルの追加
   def create_movie_genre_DB(movie_id, genre_id_list)
     genre_id_list.each do |id|
-      @movie_genre_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id}','#{id}');"
+      @movie_genre_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id[0]}','#{id[0]}');"
     end
   end
 
   # 中間 映画コンテンツ-監督の追加
   def create_movie_director_DB(movie_id, director_id_list)
     director_id_list.each do |id|
-      @movie_director_db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id}','#{id}');"
+      @movie_director_db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id[0]}','#{id[0]}');"
     end
   end
 
   # 中間 映画コンテンツ-キャストの追加
   def create_movie_cast_DB(movie_id, cast_id_list)
     cast_id_list.each do |id|
-      @movie_cast_db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id}','#{id}');"
+      @movie_cast_db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id[0]}','#{id[0]}');"
     end
   end
 
