@@ -177,13 +177,13 @@ class Database
 
 # 監督テーブル
 
-  # [check]監督の追加
+  # 監督の追加
   def create_director_master_DB(db, director)
     # もし既に登録されてたら処理飛ばす処理を入れる
     @director_master_db.execute "insert into director_master (name) values('#{director}')"
   end
 
-  # [check]監督の取得
+  # 監督の取得
   def read_director_master_item(table, column_name, item_name)
     # @director_master_db.execute "SELECT * FROM director_master WHERE column = 'column_name';, '#{column_name}','#{item_name}'"
     record_id = @director_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
@@ -210,7 +210,7 @@ class Database
     @cast_master_db.execute "insert into cast_master (name) values('#{cast}')"
   end
 
-  # [check]キャストの取得
+  # キャストの取得
   def read_cast_master_item(table, column_name, item_name)
     record_id = @cast_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
     return record_id[0]
@@ -267,84 +267,3 @@ class Database
 #
 
 end
-
-
-
-# class SaveDBTask
-
-#   # attr_reader :db_case
-
-#   # def initialize
-#   #   db_case = Database.new
-#   # end
-
-#   #
-#   # 保存処理
-#   #
-#    # 映画コンテンツ保存
-#     def save_movie_master_contents(db, movie_master)
-#       # DBに映画コンテンツを保存する
-#       Database.create_contents_DB(db, movie_master)
-
-#       # 保存した映画コンテンツのDB上のタイトルのIDを取得する
-#       # タイトルに合致するIDを取得する
-#       movie_id = Database.read_movie_master_item(db, "movie_master", title, movie_master.title)
-
-#       return movie_id
-#     end
-
-#     # ジャンル保存
-#     def save_genre_master_contents(db, genre_list)
-#       genre_id_list = []
-#       genre_list.each do |item|
-#         # 保存
-#         Database.create_genre_master_DB(db, item)
-#         # id取得
-#         genre_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-#       end
-#       return genre_id_list
-#     end
-
-#     # 監督保存
-#     def save_director_master_contents(db, director_list)
-#       # 保存
-#       Database.create_director_master_DB(db, director_list)
-#       # idを取得
-#       director_id_list = []
-#       director_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-#     end
-
-#     # キャスト保存
-#     def save_cast_master_contents(db, cast_list)
-#       cast_list.each do |item|
-#         # 保存
-#         Database.create_cast_master_DB(db, item)
-#         # idを取得
-#         cast_id_list = []
-#         cast_id_list << Database.read_movie_master_item(db, "genre_master", title, item)
-#       end
-#       return cast_id_list
-#     end
-#   #
-
-#   #
-#   # 中間テーブル処理
-#   #
-#     # 中間テーブル処理①
-#     def save_movie_genre(db, movie_id, genre_id_list)
-#       Database.create_movie_genre_DB(db, movie_id, genre_id_list)
-#     end
-
-#     # 中間テーブル処理②
-#     def save_movie_director(db, movie_id, director_id_list)
-#       Database.create_movie_director_DB(db, movie_id, director_id_list)
-#     end
-
-
-#     #中間テーブル処理③
-#     def save_movie_cast(db, movie_id, cast_id_list)
-#       Database.create_movie_cast_DB(db, movie_id, cast_id_list)
-#     end
-#   #
-
-# end
