@@ -266,4 +266,3 @@ class Database
   end
 #
 
-end
