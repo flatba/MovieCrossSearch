@@ -265,4 +265,4 @@ class Database
     @movie_cast_db.close
   end
 #
-
+end
