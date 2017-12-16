@@ -103,6 +103,9 @@ db_task = SaveDBTask.new
 crawl = Crawl.new
 scrape = Scrape.new
 
+# サイトの名称をDBに登録する
+site_id = db_task.create_site_master_DB(entry.site_name)
+
 # メインページにアクセスしてパースデータを取得する
 main_doc = crawl.open_url(entry.base_url)
 
@@ -205,17 +208,20 @@ category_url_arr.each do |category_url|
 
       #
       # 保存処理(保存とレコードIDの取得)
+      # @return レコードのID
       #
       movie_id = db_task.save_movie_master_contents(@db, movie_master_contents)
       genre_id_list = db_task.save_genre_master_contents(@db, genre_list)
       director_id_list = db_task.save_director_master_contents(@db, director_list)
       cast_id_list = db_task.save_cast_master_contents(@db, cast_list)
 
-      # 中間テーブル処理① movie_genre
+      # 中間テーブル０ movie_site
+      db_task.save_movie_site(@db, movie_id, site_id)
+      # 中間テーブル処理１ movie_genre
       db_task.save_movie_genre(@db, movie_id, genre_id_list)
-      # 中間テーブル処理② movie_director
+      # 中間テーブル処理２ movie_director
       db_task.save_movie_director(@db, movie_id, director_id_list)
-      # 中間テーブル処理③ movie_cast
+      # 中間テーブル処理３ movie_cast
       db_task.save_movie_cast(@db, movie_id, cast_id_list)
 
 

@@ -36,8 +36,15 @@ class Database
 #
 # メインテーブルの生成
 
+    # site_table（取得先サイトのテーブル）の生成
+    output_directory = 'db/' + 'site_master' + '.db'
+    @site_master_db = SQLite3::Database.new(output_directory)
+    @site_master_db.execute 'CREATE TABLE IF NOT EXISTS site_master (
+      name varchar(100)
+      );'
+
     # movie_master_table（ムービーテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'movie_master' + '.db'
+    output_directory = 'db/' + 'movie_master' + '.db'
     @movie_master_db = SQLite3::Database.new(output_directory)
     @movie_master_db.execute 'CREATE TABLE IF NOT EXISTS movie_master (
       thumbnail varchar(500),
@@ -49,7 +56,7 @@ class Database
       );'
 
     # genre_table（ジャンルテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'genre_master' + '.db'
+    output_directory = 'db/' + 'genre_master' + '.db'
     @genre_master_db = SQLite3::Database.new(output_directory)
     @genre_master_db.execute(
       'CREATE TABLE IF NOT EXISTS genre_master (
@@ -58,7 +65,7 @@ class Database
     )
 
     # director_tale（監督テーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'director_master' + '.db'
+    output_directory = 'db/' + 'director_master' + '.db'
     @director_master_db = SQLite3::Database.new(output_directory)
     @director_master_db.execute(
       'CREATE TABLE IF NOT EXISTS director_master (
@@ -67,7 +74,7 @@ class Database
     )
 
     # cast_tale（キャストテーブル）の生成
-    output_directory = 'db/' + site_name + '/' + 'cast_master' + '.db'
+    output_directory = 'db/' + 'cast_master' + '.db'
     @cast_master_db = SQLite3::Database.new(output_directory)
     @cast_master_db.execute(
       'CREATE TABLE IF NOT EXISTS cast_master (
@@ -79,8 +86,18 @@ class Database
 #
 # 中間テーブルの生成
 
+  # movie_site_table（映画と取得先サイト名の紐付け）の生成（中間テーブル）
+  output_directory = 'db/' + 'movie_site' + '.db'
+  @movie_genre_db = SQLite3::Database.new(output_directory)
+  @movie_genre_db.execute(
+    'CREATE TABLE IF NOT EXISTS movie_genre (
+      movie_id varchar(200),
+      site_id varchar(200)
+    );'
+  )
+
   # movie_genre_table（映画とジャンルの紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_genre' + '.db'
+  output_directory = 'db/' + 'movie_genre' + '.db'
   @movie_genre_db = SQLite3::Database.new(output_directory)
   @movie_genre_db.execute(
     'CREATE TABLE IF NOT EXISTS movie_genre (
@@ -90,7 +107,7 @@ class Database
   )
 
   # movie_director_table（映画と監督の紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_director' + '.db'
+  output_directory = 'db/' + 'movie_director' + '.db'
   @movie_director_db = SQLite3::Database.new(output_directory)
   @movie_director_db.execute(
     'CREATE TABLE IF NOT EXISTS movie_director (
@@ -100,7 +117,7 @@ class Database
   )
 
   # movie_cast_table（映画と監督の紐付け）の生成（中間テーブル）
-  output_directory = 'db/' + site_name + '/' + 'movie_cast' + '.db'
+  output_directory = 'db/' + 'movie_cast' + '.db'
   @movie_cast_db = SQLite3::Database.new(output_directory)
   @movie_cast_db.execute(
     'CREATE TABLE IF NOT EXISTS movie_cast (
@@ -117,6 +134,18 @@ class Database
 #
 # 映画コンテンツ / ジャンル / 監督 / キャスト CRUDでまとめてみる
 #
+
+  # 映画情報とサイト名の保存
+  def create_site_master_DB(site_name)
+    @site_master_db.execute "INSERT INTO movie_master (name) values ('#{site_name}');"
+  end
+
+  # サイトidの取得
+  def read_site_master_item(table, column_name, item_name)
+    record_id = @genre_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
+    return record_id[0]
+  end
+
 
 # 映画コンテンツテーブル
 
@@ -151,13 +180,13 @@ class Database
 
 # ジャンルテーブル
 
-  # [check]ジャンルの追加
+  # ジャンルの追加
   def create_genre_master_DB(genre)
     # もし既にあったら登録しない処理を入れる
     @genre_master_db.execute "insert into genre_master (name) values ('#{genre}')"
   end
 
-  # [check]ジャンルの取得
+  # ジャンルの取得
   def read_genre_master_item(table, column_name, item_name)
     record_id = @genre_master_db.execute "select ROWID from '#{table}' where name = '#{item_name}';"
     return record_id[0]
@@ -230,21 +259,26 @@ class Database
 
 # 中間テーブル
 
-  # 中間 映画コンテンツ-ジャンルの追加
+  # 映画コンテンツ-サイト名の追加
+  def create_movie_site_DB(movie_id, site_id)
+      @movie_site_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id[0]}','#{site_id[0]}');"
+  end
+
+  # 映画コンテンツ-ジャンルの追加
   def create_movie_genre_DB(movie_id, genre_id_list)
     genre_id_list.each do |id|
       @movie_genre_db.execute "INSERT INTO movie_genre (movie_id,genre_id) values ('#{movie_id[0]}','#{id[0]}');"
     end
   end
 
-  # 中間 映画コンテンツ-監督の追加
+  # 映画コンテンツ-監督の追加
   def create_movie_director_DB(movie_id, director_id_list)
     director_id_list.each do |id|
       @movie_director_db.execute "INSERT INTO movie_director (movie_id,director_id) values ('#{movie_id[0]}','#{id[0]}');"
     end
   end
 
-  # 中間 映画コンテンツ-キャストの追加
+  # 映画コンテンツ-キャストの追加
   def create_movie_cast_DB(movie_id, cast_id_list)
     cast_id_list.each do |id|
       @movie_cast_db.execute "INSERT INTO movie_cast (movie_id,cast_id) values ('#{movie_id[0]}','#{id[0]}');"
@@ -256,6 +290,7 @@ class Database
 # データベースの編集終了
 
   def close_DB_task
+    @site_master_db.close
     @movie_master_db.close
     @genre_master_db.close
     @director_master_db.close
