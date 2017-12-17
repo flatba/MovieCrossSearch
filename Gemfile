@@ -9,6 +9,6 @@ gem "ruby-debug-ide"
 gem "debase"
 gem 'nokogiri'
 gem 'robotex'
-gem 'sqlite3'
+# gem 'sqlite3'
 gem 'selenium-webdriver'
 gem 'environment'
