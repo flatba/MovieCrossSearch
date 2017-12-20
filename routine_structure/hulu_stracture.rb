@@ -1,5 +1,4 @@
 # coding: utf-8
-
 require 'open-uri'
 require 'nokogiri'
 require 'robotex'
@@ -7,7 +6,18 @@ require 'robotex'
 require "selenium-webdriver"
 require "date"
 
-#=== import classfile ===#
+#===== import classfile =====#
+require './routine_structure/hulu_structure.rb'
+require './routine_structure/netflix_structure.rb'
+# require './routine_structure/amazon_prime_structure.rb'
+# require './routine_structure/amazon_structure.rb'
+# require './routine_structure/gayo_structure.rb'
+# require './routine_structure/dtv_structure.rb'
+# require './routine_structure/apple_music_structure.rb'
+# require './routine_structure/microsoft_structure.rb'
+# require './routine_structure/googleplay_structure.rb'
+# require './routine_structure/mubi_structure.rb'
+
 require './entry_crawl.rb'
 require './selector.rb'
 # require './database.rb'
