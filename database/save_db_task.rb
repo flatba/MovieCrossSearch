@@ -1,6 +1,6 @@
 
 # import classfile
-require './database.rb'
+require './database/create_database.rb'
 
 class SaveDBTask
 

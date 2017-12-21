@@ -4,7 +4,7 @@ require 'sqlite3'
 #
 # 保存処理
 #
-class Database
+class CreateDatabase
   #
   # DB生成
   # CREATE TABLE IF NOT EXISTS をすると作成済みのテーブルを作ろうとするエラーを防げます。
