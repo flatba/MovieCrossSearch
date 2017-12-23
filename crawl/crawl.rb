@@ -1,8 +1,32 @@
 # coding: utf-8
+
+require 'open-uri'
+require 'nokogiri'
+
+
 #
 # クロール（主にページ遷移のための処理）
 #
 class Crawl
+
+  def initialize_driver
+    # 通常chrome起動
+    # @driver = Selenium::WebDriver.for :chrome
+
+    # HeadressChrome起動
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+      "chromeOptions" => {
+        binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+        args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+      }
+    )
+    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+
+  end
+
+  def initialize_selector(site_name)
+    @selector = Selector.new(site_name)
+  end
 
   # URLからパースデータを取得する
   def open_url(url)
@@ -24,9 +48,10 @@ class Crawl
   end
 
   # クローズ処理
-  def close(driver, db)
+  # def close(driver, db)
+  def close(driver)
     driver.quit    # ブラウザ終了
-    db.close_DB_task # データベースの編集終了
+    # db.close_DB_task # データベースの編集終了
   end
 
   # ウィンドウを閉じる

@@ -1,10 +1,8 @@
 # coding: utf-8
 
-require 'open-uri'
-require 'nokogiri'
 require 'robotex'
 # require 'sqlite3'
-require "selenium-webdriver"
+
 require "date"
 require 'dotenv'
 
@@ -31,15 +29,11 @@ class EntryCrawl
 
    # 初期データの生成
    def initialize(url)
-
-    check_robot(url)
-
      @base_url = url
      @site_name = ""
      @genre_master    = []
      @director_master = []
      @cast_master     = []
-
    end
 
    def check_robot(url)
@@ -48,102 +42,101 @@ class EntryCrawl
      p robotex.allowed?(url)
    end
 
-   def initialize_selector(site_name)
-     @selector = Selector.new(site_name)
-   end
+   # def initialize_selector(site_name)
+   #   @selector = Selector.new(site_name)
+   # end
 
    # def initialize_data_base(site_name)
    #   @db = Database.new(site_name)
    # end
 
-   def initialize_movie_master
-     @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
-   end
+   # def initialize_movie_master
+   #   @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
+   # end
 
-   def initialize_driver
-     # 通常chrome起動
-     # @driver = Selenium::WebDriver.for :chrome
+   # def initialize_driver
+   #   # 通常chrome起動
+   #   # @driver = Selenium::WebDriver.for :chrome
 
-     # HeadressChrome起動
-     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-       "chromeOptions" => {
-         binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-         args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-       }
-     )
-     @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+   #   # HeadressChrome起動
+   #   caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+   #     "chromeOptions" => {
+   #       binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+   #       args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+   #     }
+   #   )
+   #   @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-   end
+   # end
 
    # クロールするサイトの名称を判断して、
    # メインストラクチャーを実行する
-   def detect_site_url(url)
+   def detect_site_name_and_start_crawl(url)
      if url.include?('happyon')
        @site_name = 'hulu'
        hulu_structure = HuluStructure.new
-       hulu_structure.start
+       hulu_structure.start(url, @site_name)
 
      elsif url.include?('netflix')
        @site_name ='netflix'
-       netflix_structure = HuluStructure.new
-       netflix_structure.start
+       netflix_structure = NetflixStructure.new
+       netflix_structure.start(@site_name)
 
      elsif url.include?('Prime-Video')
        @site_name = 'amazon_prime'
-       amazon_prime_structure = HuluStructure.new
-       amazon_prime_structure.start
+       amazon_prime_structure = AmazonPrimeStructure.new
+       amazon_prime_structure.start(@site_name)
 
      elsif url.include?('Amazon')
        @site_name = 'amazon_video'
-       amazon_video_structure = HuluStructure.new
-       amazon_video_structure.start
+       amazon_video_structure = AmazonVideoStructure.new
+       amazon_video_structure.start(@site_name)
 
      elsif url.include?('gyao')
        @site_name = 'gyao'
-       gyao_structure = HuluStructure.new
-       gyao_structure.start
+       gyao_structure = GyaoStructure.new
+       gyao_structure.start(@site_name)
 
      elsif url.include?('dmkt')
        @site_name = 'dtv'
-       dtv_structure = HuluStructure.new
-       dtv_structure.start
+       dtv_structure = DtvStructure.new
+       dtv_structure.start(@site_name)
 
      elsif url.include?('unext')
        @site_name = 'unext'
-       unext_structure = HuluStructure.new
-       unext_structure.start
+       unext_structure = UnextStructure.new
+       unext_structure.start(@site_name)
 
      elsif url.include?('apple iTunes')
        @site_name = 'apple_itunes'
-       apple_itunes_structure = HuluStructure.new
-       apple_itunes_structure.start
+       apple_itunes_structure = AppleMusictructure.new
+       apple_itunes_structure.start(@site_name)
 
      elsif url.include?('Microsoft')
        @site_name = 'ms_video'
-       ms_video_structure = HuluStructure.new
-       ms_video_structure.start
+       ms_video_structure = MsVideoStructure.new
+       ms_video_structure.start(@site_name)
 
      elsif url.include?('GooglePlay')
        @site_name = 'googleplay'
-       googleplay_structure = HuluStructure.new
-       googleplay_structure.start
+       googleplay_structure = GooglePlayStructure.new
+       googleplay_structure.start(@site_name)
 
      elsif url.include?('mubi')
        @site_name = 'mubi'
-       mubi_structure = HuluStructure.new
-       mubi_structure.start
+       mubi_structure = MubiStructure.new
+       mubi_structure.start(@site_name)
 
      end
      puts "URLエラー"
    end
-end
 
+end
 
 Dotenv.load
 entry = EntryCrawl.new(ENV["HULU_URL"])
-
-
-entry.site_name
+entry.check_robot(entry.base_url)
+entry.detect_site_name_and_start_crawl(entry.base_url)
 
 
 
