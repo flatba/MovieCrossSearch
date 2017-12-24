@@ -2,14 +2,18 @@
 #
 # 解析（情報収集処理）
 #
-require './database.rb'
-require './crawl.rb'
+# require './database.rb'
+require './crawl/crawl.rb'
 
 
 class Scrape
 
+  attr_reader :movie_master
+
   def initialize
-    # 普通にここにdbの初期化入れたほうが良いか？
+    #def initialize_movie_master
+      @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
+    #end
   end
 
   # 情報を保存する
