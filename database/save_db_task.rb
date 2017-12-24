@@ -4,9 +4,20 @@ require './database/create_database.rb'
 
 class SaveDBTask
 
+    #
     # 保存処理
     #
-     # [DONE]映画コンテンツ保存
+
+      # サイト名称保存
+      def save_site_master_contents(db, site_name)
+        # DBにサイト名称を保存する
+        db.create_movie_master_DB(db, site_name)
+        # 保存したサイト名称のレコードIDを取得する
+        site_id = db.read_movie_master_item('site_master', 'title', site_name)
+        return site_id
+      end
+
+      # 映画コンテンツ保存
       def save_movie_master_contents(db, movie_master)
         # DBに映画コンテンツを保存する
         db.create_movie_master_DB(db, movie_master)
@@ -52,20 +63,27 @@ class SaveDBTask
     #
     # 中間テーブル処理
     #
-      # 中間テーブル処理①# 配列なのを直したい
+
+      # 中間テーブル処理０ # 配列なのを直したい
+      def save_movie_site(db, movie_id, site_id)
+        db.create_movie_site_DB(movie_id, site_id)
+      end
+
+      # 中間テーブル処理１ # 配列なのを直したい
       def save_movie_genre(db, movie_id, genre_id_list)
         db.create_movie_genre_DB(movie_id, genre_id_list)
       end
 
-      # 中間テーブル処理②# 配列なのを直したい
+      # 中間テーブル処理２ # 配列なのを直したい
       def save_movie_director(db, movie_id, director_id_list)
         db.create_movie_director_DB(movie_id, director_id_list)
       end
 
-      #中間テーブル処理③# 配列なのを直したい
+      #中間テーブル処理３ # 配列なのを直したい
       def save_movie_cast(db, movie_id, cast_id_list)
         db.create_movie_cast_DB(movie_id, cast_id_list)
       end
+
     #
 
 end
