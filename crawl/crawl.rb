@@ -11,7 +11,7 @@ class Crawl
 
   def initialize_driver
     # 通常chrome起動
-    # @driver = Selenium::WebDriver.for :chrome
+    @driver = Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
@@ -20,7 +20,9 @@ class Crawl
         args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
       }
     )
-    @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+
+    return @driver
 
   end
 

@@ -27,7 +27,6 @@ class HuluStructure
     @hulu_driver  = @crawl.initialize_driver
     # @movie_master = @scrape.initialize_movie_master
     @movie_master = @scrape.movie_master
-    puts @movie_master.class
     # @db           = @db_task.initialize_data_base(site_name)
 
     # メインページにアクセスしてパースデータを取得する
@@ -61,7 +60,9 @@ class HuluStructure
 
         # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
         puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
-        @crawl.send_key_new_tab(button_element)
+        # @crawl.send_key_new_tab(button_element)
+        button_element.send_keys(:command, :enter)
+        sleep 3
 
         puts "　新規タブにハンドルを移す"
         contents_url = @crawl.change_current_window(@hulu_driver, button_element)
@@ -125,10 +126,10 @@ class HuluStructure
           content_doc = @crawl.open_url(content_url)
           # 映画コンテンツ情報
 
-          puts movie_master_contents = scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
-          puts genre_list = scrape.create_genre_list(@selector, content_doc)
-          puts director_list = scrape.create_director_list(@selector, content_doc)
-          puts cast_list = scrape.create_cast_list(@selector, content_doc)
+          puts movie_master_contents = @scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
+          puts genre_list = @scrape.create_genre_list(@selector, content_doc)
+          puts director_list = @scrape.create_director_list(@selector, content_doc)
+          puts cast_list = @scrape.create_cast_list(@selector, content_doc)
 
           #
           # 保存処理(保存とレコードIDの取得)
