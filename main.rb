@@ -42,33 +42,6 @@ class EntryCrawl
      p robotex.allowed?(url)
    end
 
-   # def initialize_selector(site_name)
-   #   @selector = Selector.new(site_name)
-   # end
-
-   # def initialize_data_base(site_name)
-   #   @db = Database.new(site_name)
-   # end
-
-   # def initialize_movie_master
-   #   @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
-   # end
-
-   # def initialize_driver
-   #   # 通常chrome起動
-   #   # @driver = Selenium::WebDriver.for :chrome
-
-   #   # HeadressChrome起動
-   #   caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-   #     "chromeOptions" => {
-   #       binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-   #       args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-   #     }
-   #   )
-   #   @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
-
-   # end
-
    # クロールするサイトの名称を判断して、
    # メインストラクチャーを実行する
    def detect_site_name_and_start_crawl(url)
@@ -137,12 +110,3 @@ Dotenv.load
 entry = EntryCrawl.new(ENV["HULU_URL"])
 entry.check_robot(entry.base_url)
 entry.detect_site_name_and_start_crawl(entry.base_url)
-
-
-
-
-
-
-
-
-
