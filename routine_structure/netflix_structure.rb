@@ -2,7 +2,7 @@
 
 require "selenium-webdriver"
 
-require './selector.rb'
+require './crawl/selector.rb'
 require './crawl/crawl.rb'
 require './scrape/scrape.rb'
 # require './database/database.rb'
@@ -34,7 +34,7 @@ class NetflixStructure
 
     # ログイン処理
     # ログインする
-    crawl.login()
+    crawl.login(ENV["NETFLIX_LOGIN_ID"], ENV["NETFLIX_LOGIN_PASSWORD"])
     # ログイン後のページのURLを取得する
     # ...この後の処理の流れはログイン後のページを確認しないとなんとも言えない。
 

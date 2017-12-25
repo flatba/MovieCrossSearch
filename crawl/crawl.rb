@@ -45,7 +45,12 @@ class Crawl
   end
 
   # ログイン処理
-  def login
+  def login(login_id, login_password)
+    # ログインのIDフィールドに入力
+
+    # ログインパスワードフィールドに入力
+
+    # ログインボタンを押す
 
   end
 

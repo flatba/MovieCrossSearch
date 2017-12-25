@@ -3,7 +3,7 @@
 require "selenium-webdriver"
 
 # import file
-require './selector.rb'
+require './crawl/selector.rb'
 require './crawl/crawl.rb'
 require './scrape/scrape.rb'
 # require './database/database.rb'

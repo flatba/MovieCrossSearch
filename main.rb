@@ -9,6 +9,8 @@ require 'dotenv'
 # Import File
 # require './entry_crawl.rb'
 # require './routine_stracture.rb'
+require './crawl/selector.rb'
+
 # Structure File
 require './routine_structure/hulu_structure.rb'
 require './routine_structure/netflix_structure.rb'
@@ -82,7 +84,7 @@ class EntryCrawl
 
      elsif url.include?('apple iTunes')
        @site_name = 'apple_itunes'
-       apple_itunes_structure = AppleMusictructure.new
+       apple_itunes_structure = AppleMusicStructure.new
        apple_itunes_structure.start(@site_name)
 
      elsif url.include?('Microsoft')
