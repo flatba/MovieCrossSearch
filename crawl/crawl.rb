@@ -14,12 +14,12 @@ class Crawl
     @driver = Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-      "chromeOptions" => {
-        binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-        args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-      }
-    )
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+    #   "chromeOptions" => {
+    #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+    #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+    #   }
+    # )
     # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
     return @driver

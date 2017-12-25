@@ -2,18 +2,19 @@
 
 require "selenium-webdriver"
 
+# import file
 require './selector.rb'
-# require './entry_crawl.rb'
 require './crawl/crawl.rb'
 require './scrape/scrape.rb'
 # require './database/database.rb'
 # require './database/save_db_task.rb'
 
-
 #
 # Hulu
 #
 class HuluStructure
+
+  attr_reader :crawl, :scrape
 
   def initialize
     @crawl = Crawl.new
@@ -23,14 +24,14 @@ class HuluStructure
 
   def start(url, site_name)
 
-    @selector     = @crawl.initialize_selector(site_name)
-    @hulu_driver  = @crawl.initialize_driver
+    @selector     = crawl.initialize_selector(site_name)
+    @hulu_driver  = crawl.initialize_driver
     # @movie_master = @scrape.initialize_movie_master
-    @movie_master = @scrape.movie_master
+    @movie_master = scrape.movie_master
     # @db           = @db_task.initialize_data_base(site_name)
 
     # メインページにアクセスしてパースデータを取得する
-    main_doc = @crawl.open_url(url)
+    main_doc = crawl.open_url(url)
 
     # [DONE]カテゴリ一覧を取得する
     puts "カテゴリ一覧を取得する"
