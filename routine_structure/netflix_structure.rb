@@ -23,18 +23,16 @@ class NetflixStructure
 
   def start(url, site_name)
 
+    @netflix_driver  = crawl.initialize_driver
     @selector     = crawl.initialize_selector(site_name)
-    @hulu_driver  = crawl.initialize_driver
     # @movie_master = @scrape.initialize_movie_master # DB処理
     @movie_master = scrape.movie_master
     # @db           = @db_task.initialize_data_base(site_name)
 
-    # メインページにアクセスしてパースデータを取得する
-    main_doc = crawl.open_url(url)
-
     # ログイン処理
-    # ログインする
-    crawl.login(ENV["NETFLIX_LOGIN_ID"], ENV["NETFLIX_LOGIN_PASSWORD"])
+    @netflix_driver.get(url)
+    @crawl.login(url, @netflix_driver, ENV["NETFLIX_LOGIN_ID"], ENV["NETFLIX_LOGIN_PASSWORD"])
+
     # ログイン後のページのURLを取得する
     # ...この後の処理の流れはログイン後のページを確認しないとなんとも言えない。
 

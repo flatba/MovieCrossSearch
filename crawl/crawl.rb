@@ -2,29 +2,36 @@
 
 require 'open-uri'
 require 'nokogiri'
-
+require 'webdriver-user-agent'
 
 #
 # クロール（主にページ遷移のための処理）
 #
 class Crawl
 
-  def initialize_driver
-    # 通常chrome起動
-    @driver = Selenium::WebDriver.for :chrome
+    def initialize_driver
+      # 通常chrome起動
+      @driver = Selenium::WebDriver.for :chrome
 
-    # HeadressChrome起動
-    # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-    #   "chromeOptions" => {
-    #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-    #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-    #   }
-    # )
-    # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+      # ここ修正中
+      # @driver = Webdriver::UserAgent.driver(
+      #   :browser     => :chrome,
+      #   :agent       => :iphone,
+      #   :orientation => :landscape
+      # )
 
-    return @driver
+      # HeadressChrome起動
+      # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+      #   "chromeOptions" => {
+      #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+      #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+      #   }
+      # )
+      # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-  end
+      return @driver
+
+    end
 
   def initialize_selector(site_name)
     @selector = Selector.new(site_name)
@@ -45,12 +52,17 @@ class Crawl
   end
 
   # ログイン処理
-  def login(login_id, login_password)
-    # ログインのIDフィールドに入力
+  def login(url, driver, login_id, login_password)
 
-    # ログインパスワードフィールドに入力
-
+    driver.get(url)
+    # パース情報を取得して、ログインフィールドを取得する
+    # emailフィールドに必要な情報をセットする
+    driver.find_elements(:class, '<input class="ui-text-input" name="email" id="email" value="" tabindex="1" autocomplete="email" data-reactid="16">').element[0].send_keys ENV['NETFLIX_LOGIN_ID']
+    # パスワードフィールドに必要な情報をセットする
+    driver.find_elements(:class, '<input type="password" class="ui-text-input" name="password" id="password" tabindex="2" data-reactid="20">').element[1].send_keys ENV['NETFLIX_LOGIN_PASSWORD']
     # ログインボタンを押す
+    driver.find_elements(:class, 'login-button').click
+    # ログイン後のページのURLを取得して返す
 
   end
 

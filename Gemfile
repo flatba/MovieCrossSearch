@@ -13,3 +13,5 @@ gem 'robotex'
 gem 'selenium-webdriver'
 gem 'environment'
 gem 'dotenv'
+
+gem 'webdriver-user-agent'
