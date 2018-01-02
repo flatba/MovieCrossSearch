@@ -9,7 +9,7 @@ require './scrape/scrape.rb'
 # require './database/save_db_task.rb'
 
 #
-# AmazonPrime
+#  GooglePlay
 #
 class GooglePlayStructure
 
