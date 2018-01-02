@@ -112,21 +112,10 @@ class HuluStructure
           puts "現在のタブ情報を保持する"
           current_window = @hulu_driver.window_handles.last
 
-          puts "新規タブを開く"
-          @hulu_driver.execute_script("window.open()")
+          crawl.open_new_window(@hulu_driver, content_url)
 
-          puts "新規タブにハンドルを移す"
-          new_window = @hulu_driver.window_handles.last
-          @hulu_driver.switch_to.window(new_window)
-
-          puts "新規タブでリンクを開く"
-          @hulu_driver.get(content_url)
-
-          puts "　新規タブにハンドルを移す"
-          # パースデータの取得
+          puts "映画コンテンツ情報を取得する"
           content_doc = @crawl.open_url(content_url)
-          # 映画コンテンツ情報
-
           puts movie_master_contents = @scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
           puts genre_list = @scrape.create_genre_list(@selector, content_doc)
           puts director_list = @scrape.create_director_list(@selector, content_doc)

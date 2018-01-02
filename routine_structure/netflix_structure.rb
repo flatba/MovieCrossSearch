@@ -40,9 +40,29 @@ class NetflixStructure
     category.find_elements(:class => 'navigation-tab').each { |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
-      category_url_arr << element.find_element(:tag_name, 'a').attribute('href')
+      category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
+      # category_url_arr << element
     }
-    puts category_url_arr
+
+    # カテゴリを開く
+    category_url_arr.each { |category_url|
+
+      puts "元ページのウィンドウ情報（ハンドル）を記憶"
+      current_window = @netflix_driver.window_handles.last
+
+      crawl.open_new_window(@netflix_driver, category_url)
+
+      # 次は、カテゴリを新規タブで開く
+      # 深いとこに入っていって、動画のみの一覧ページまでアクセスする。
+
+      crawl.close_new_window(@netflix_driver, current_window)
+      sleep 1
+
+    }
+
+
+
+
 
 
     # ここのクロールで重要なのが、おそらく重複してデータを取得してしまう事があると思う。

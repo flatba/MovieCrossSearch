@@ -62,6 +62,19 @@ class Crawl
     # db.close_DB_task # データベースの編集終了
   end
 
+  # 新規ウィンドウを開く
+  def open_new_window(driver, url)
+    # puts "新規タブを開く"
+    # driver.close
+    # puts "　元タブにハンドルを戻す"
+    # driver.switch_to.window(window)
+
+    driver.execute_script("window.open()")
+    new_window = driver.window_handles.last
+    driver.switch_to.window(new_window)
+    driver.get(url)
+  end
+
   # ウィンドウを閉じる
   def close_new_window(driver, window)
     puts "新規タブを閉じる"
