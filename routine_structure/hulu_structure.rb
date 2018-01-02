@@ -115,7 +115,7 @@ class HuluStructure
           crawl.open_new_window(@hulu_driver, content_url)
 
           puts "映画コンテンツ情報を取得する"
-          content_doc = @crawl.open_url(content_url)
+          content_doc = crawl.open_url(content_url)
           puts movie_master_contents = @scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
           puts genre_list = @scrape.create_genre_list(@selector, content_doc)
           puts director_list = @scrape.create_director_list(@selector, content_doc)
