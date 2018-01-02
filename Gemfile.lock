@@ -8,10 +8,13 @@ GEM
     debase-ruby_core_source (0.10.0)
     dotenv (2.2.1)
     environment (0.2.1)
+    facets (3.1.0)
     ffi (1.9.18)
+    json (2.1.0)
     mini_portile2 (2.3.0)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
+    psych (3.0.2)
     rake (12.3.0)
     robotex (1.0.0)
     ruby-debug-ide (0.6.0)
@@ -20,6 +23,11 @@ GEM
     selenium-webdriver (3.7.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
+    webdriver-user-agent (7.4)
+      facets
+      json
+      psych
+      selenium-webdriver
 
 PLATFORMS
   ruby
@@ -32,6 +40,7 @@ DEPENDENCIES
   robotex
   ruby-debug-ide
   selenium-webdriver
+  webdriver-user-agent
 
 BUNDLED WITH
    1.16.0

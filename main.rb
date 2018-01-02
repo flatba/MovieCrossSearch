@@ -9,6 +9,8 @@ require 'dotenv'
 # Import File
 # require './entry_crawl.rb'
 # require './routine_stracture.rb'
+require './crawl/selector.rb'
+
 # Structure File
 require './routine_structure/hulu_structure.rb'
 require './routine_structure/netflix_structure.rb'
@@ -53,7 +55,7 @@ class EntryCrawl
      elsif url.include?('netflix')
        @site_name ='netflix'
        netflix_structure = NetflixStructure.new
-       netflix_structure.start(@site_name)
+       netflix_structure.start(url, @site_name)
 
      elsif url.include?('Prime-Video')
        @site_name = 'amazon_prime'
@@ -82,7 +84,7 @@ class EntryCrawl
 
      elsif url.include?('apple iTunes')
        @site_name = 'apple_itunes'
-       apple_itunes_structure = AppleMusictructure.new
+       apple_itunes_structure = AppleMusicStructure.new
        apple_itunes_structure.start(@site_name)
 
      elsif url.include?('Microsoft')
@@ -107,6 +109,14 @@ class EntryCrawl
 end
 
 Dotenv.load
-entry = EntryCrawl.new(ENV["HULU_URL"])
+# HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
+url = "NETFLIX_URL"
+
+# クローラーのインスタンス化
+entry = EntryCrawl.new(ENV[url])
+
+# サイトのクロール可否のチェック
 entry.check_robot(entry.base_url)
+
+# サイトの種別を判断し、クローラを開始する
 entry.detect_site_name_and_start_crawl(entry.base_url)
