@@ -25,16 +25,21 @@ class NetflixStructure
 
     @netflix_driver  = crawl.initialize_driver
     @selector     = crawl.initialize_selector(site_name)
-    # @movie_master = @scrape.initialize_movie_master # DB処理
     @movie_master = scrape.movie_master
+    # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
 
-    # ログイン処理
-    @netflix_driver.get(url)
-    @crawl.login(url, @netflix_driver, ENV["NETFLIX_LOGIN_ID"], ENV["NETFLIX_LOGIN_PASSWORD"])
+    # ログインして動画一覧のトップページを開く
+    @crawl.login(url, @netflix_driver)
 
     # ログイン後のページのURLを取得する
     # ...この後の処理の流れはログイン後のページを確認しないとなんとも言えない。
+
+    # ログイン後のトップページからの処理
+    ## TV番組／映画／オリジナル作品のカテゴリのURLを取得する
+    ###
+
+
 
 
     # カテゴリ一覧を取得する

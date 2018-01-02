@@ -51,19 +51,16 @@ class Crawl
     return doc
   end
 
-  # ログイン処理
-  def login(url, driver, login_id, login_password)
 
+  def login(url, driver)
+    # 画面を開いて情報をセットしてログインする
     driver.get(url)
-    # パース情報を取得して、ログインフィールドを取得する
-    # emailフィールドに必要な情報をセットする
-    driver.find_elements(:class, '<input class="ui-text-input" name="email" id="email" value="" tabindex="1" autocomplete="email" data-reactid="16">').element[0].send_keys ENV['NETFLIX_LOGIN_ID']
-    # パスワードフィールドに必要な情報をセットする
-    driver.find_elements(:class, '<input type="password" class="ui-text-input" name="password" id="password" tabindex="2" data-reactid="20">').element[1].send_keys ENV['NETFLIX_LOGIN_PASSWORD']
-    # ログインボタンを押す
-    driver.find_elements(:class, 'login-button').click
-    # ログイン後のページのURLを取得して返す
+    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
+    driver.find_element(:name, 'password').send_keysENV['NETFLIX_LOGIN_PASSWORD']
+    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div[2]/div/div/form[1]/button').click
 
+    # ログイン後に視聴ユーザーを選択する
+    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div').click
   end
 
   # クローズ処理
