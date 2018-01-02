@@ -2,7 +2,7 @@
 
 require 'open-uri'
 require 'nokogiri'
-require 'webdriver-user-agent'
+# require 'webdriver-user-agent'
 
 #
 # クロール（主にページ遷移のための処理）
@@ -12,13 +12,6 @@ class Crawl
     def initialize_driver
       # 通常chrome起動
       @driver = Selenium::WebDriver.for :chrome
-
-      # ここ修正中
-      # @driver = Webdriver::UserAgent.driver(
-      #   :browser     => :chrome,
-      #   :agent       => :iphone,
-      #   :orientation => :landscape
-      # )
 
       # HeadressChrome起動
       # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
@@ -37,6 +30,17 @@ class Crawl
     @selector = Selector.new(site_name)
   end
 
+  def login(url, driver, selector)
+    # 画面を開いて情報をセットしてログインする
+    driver.get(url)
+    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
+    driver.find_element(:name, 'password').send_keys ENV['NETFLIX_LOGIN_PASSWORD']
+    driver.find_element(:xpath, selector.select_selector[:login]).click
+
+    # ログイン後に視聴ユーザーを選択する
+    driver.find_element(:xpath, selector.select_selector[:select_user]).click
+  end
+
   # URLからパースデータを取得する
   def open_url(url)
     charset = nil
@@ -49,18 +53,6 @@ class Crawl
     end
     doc = Nokogiri::HTML.parse(html, nil, charset)
     return doc
-  end
-
-
-  def login(url, driver)
-    # 画面を開いて情報をセットしてログインする
-    driver.get(url)
-    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
-    driver.find_element(:name, 'password').send_keysENV['NETFLIX_LOGIN_PASSWORD']
-    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div[2]/div/div/form[1]/button').click
-
-    # ログイン後に視聴ユーザーを選択する
-    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div').click
   end
 
   # クローズ処理
