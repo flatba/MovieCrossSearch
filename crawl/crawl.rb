@@ -114,6 +114,29 @@ class Crawl
 
   end
 
+  def infinit_scroll(driver, sleep_time)
+    puts "**********スクロールの開始**********"
+
+    # 取得したウィンドウの差分で末尾に到達したかを判断する
+    body_dom_height = get_body_dom_height(driver)
+
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    sleep 5
+    new_body_dom_height = get_body_dom_height(driver)
+    cnt = 1
+    while body_dom_height != new_body_dom_height do
+      body_dom_height = get_body_dom_height(driver)
+      puts '%{cnt}スクロール目' % { cnt: cnt }
+      driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
+
+      new_body_dom_height = get_body_dom_height(driver)
+      cnt += 1
+    end
+
+    puts "**********スクロールの終了（末端までスクロールした）**********"
+  end
+
   # bodyの高さを取得する（動的に変動する高さの取得に使用）
   def get_body_dom_height(driver)
     return driver.find_element(:tag_name, 'body').size.height

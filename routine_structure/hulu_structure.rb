@@ -26,8 +26,8 @@ class HuluStructure
 
     @selector     = crawl.initialize_selector(site_name)
     @hulu_driver  = crawl.initialize_driver
-    # @movie_master = @scrape.initialize_movie_master
     @movie_master = scrape.movie_master
+    # @movie_master = @scrape.initialize_movie_master
     # @db           = @db_task.initialize_data_base(site_name)
 
     # メインページにアクセスしてパースデータを取得する
@@ -57,7 +57,7 @@ class HuluStructure
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        current_window = @hulu_driver.window_handles.last
+        remenber_current_window = @hulu_driver.window_handles.last
 
         # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
         puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
@@ -71,7 +71,7 @@ class HuluStructure
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
         unless contents_url.include?("tiles") then
           puts "動画コンテンツが無い"
-          @crawl.close_new_window(@hulu_driver, current_window)
+          @crawl.close_new_window(@hulu_driver, remenber_current_window)
           next
         end
 
@@ -80,21 +80,7 @@ class HuluStructure
         # 動画一覧を取得する
         sleep 5
 #flatba^201712005 細かい情報取得のために一旦コメントアウト
-        # puts "**********スクロールの開始**********"
-        # body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        # @hulu_driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        # sleep 5
-        # new_body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        # cnt = 1
-        # while body_dom_height != new_body_dom_height do
-        #   body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        #   puts '%{cnt}スクロール目' % { cnt: cnt }
-        #   @hulu_driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        #   sleep 3 # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
-        #   new_body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        #   cnt += 1
-        # end
-        # puts "**********スクロールの終了（末端までスクロールした）**********"
+      # crawl.infinit_scroll(@hulu_driver, 3)
 #flatba$
         puts "動画一覧を取得する"
         content_elements = @hulu_driver.find_elements(:css, @selector.select_selector[:content_click])
@@ -138,7 +124,7 @@ class HuluStructure
 
 
           # 新規タブを閉じて元タブにハンドルを戻す
-          @crawl.close_new_window(@hulu_driver, current_window)
+          @crawl.close_new_window(@hulu_driver, remenber_current_window)
 
           sleep 1
 

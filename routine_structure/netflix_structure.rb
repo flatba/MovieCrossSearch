@@ -40,7 +40,6 @@ class NetflixStructure
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
-      # category_url_arr << element
     }
 
     begin
@@ -48,15 +47,15 @@ class NetflixStructure
     category_url_arr.each { |category_url|
 
       puts "元ページのウィンドウ情報（ハンドル）を記憶"
-      current_window = @netflix_driver.window_handles.last
+      remenber_current_window = @netflix_driver.window_handles.last
 
       crawl.open_new_window(@netflix_driver, category_url)
 
-      # 次は、深いとこに入っていって、動画のみの一覧ページまでアクセスする。
+      # [未着手] 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
-      # 動画情報の取得は未着手
+      # [未着手] 動画情報の取得
 
-      crawl.close_new_window(@netflix_driver, current_window)
+      crawl.close_new_window(@netflix_driver, remenber_current_window)
       sleep 1
 
     }
