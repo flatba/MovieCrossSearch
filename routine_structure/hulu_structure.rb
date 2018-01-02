@@ -96,19 +96,20 @@ class HuluStructure
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        current_window = @driver.window_handles.last
+        remenber_current_window = @driver.window_handles.last
 
         puts "**********動画コンテンツ情報取得開始**********"
         # content_elements.each do |element|
         contents_url_arr.each do |content_url|
 
-          puts "現在のタブ情報を保持する"
-          remenber_current_window = @driver.window_handles.last
+          # puts "現在のタブ情報を保持する"
+          # remenber_current_window = @driver.window_handles.last
 
           crawl.open_new_window(@driver, content_url)
 
           puts "映画コンテンツ情報を取得する"
           content_doc = crawl.open_url(content_url)
+
           puts movie_master_contents = @scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
           puts genre_list = @scrape.create_genre_list(@selector, content_doc)
           puts director_list = @scrape.create_director_list(@selector, content_doc)
@@ -129,10 +130,8 @@ class HuluStructure
           # # 中間テーブル処理③ movie_cast
           # db_task.save_movie_cast(@db, movie_id, cast_id_list)
 
-
           # 新規タブを閉じて元タブにハンドルを戻す
-          @crawl.close_new_window(@driver, remenber_current_window)
-
+          crawl.close_new_window(@driver, remenber_current_window)
           sleep 1
 
         end
