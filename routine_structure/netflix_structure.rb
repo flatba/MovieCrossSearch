@@ -1,7 +1,6 @@
 # coding: utf-8
 
 require "selenium-webdriver"
-require 'mechanize'
 
 require './crawl/selector.rb'
 require './crawl/crawl.rb'
