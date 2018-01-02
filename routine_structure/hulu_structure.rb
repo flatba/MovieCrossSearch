@@ -24,10 +24,10 @@ class HuluStructure
 
   def start(url, site_name)
 
+    @driver  = crawl.initialize_driver
     @selector     = crawl.initialize_selector(site_name)
-    @hulu_driver  = crawl.initialize_driver
-    # @movie_master = @scrape.initialize_movie_master
     @movie_master = scrape.movie_master
+    # @movie_master = @scrape.initialize_movie_master
     # @db           = @db_task.initialize_data_base(site_name)
 
     # メインページにアクセスしてパースデータを取得する
@@ -47,17 +47,17 @@ class HuluStructure
 
       # [DONE]カテゴリにアクセスする
       puts "カテゴリにアクセスする"
-      @hulu_driver.get(category_url)
+      @driver.get(category_url)
 
       # [DONE]サブカテゴリを取得する（[もっと見る]ボタンを取得する）
       puts "サブカテゴリを取得する"
-      more_watch_buttons = @hulu_driver.find_elements(:class, 'vod-mod-button')
+      more_watch_buttons = @driver.find_elements(:class, 'vod-mod-button')
 
       more_watch_buttons.each do |button_element|
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        current_window = @hulu_driver.window_handles.last
+        remenber_current_window = @driver.window_handles.last
 
         # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
         puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
@@ -66,12 +66,12 @@ class HuluStructure
         sleep 3
 
         puts "　新規タブにハンドルを移す"
-        contents_url = @crawl.change_current_window(@hulu_driver, button_element)
+        contents_url = @crawl.change_current_window(@driver, button_element)
 
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
         unless contents_url.include?("tiles") then
           puts "動画コンテンツが無い"
-          @crawl.close_new_window(@hulu_driver, current_window)
+          @crawl.close_new_window(@driver, remenber_current_window)
           next
         end
 
@@ -80,53 +80,35 @@ class HuluStructure
         # 動画一覧を取得する
         sleep 5
 #flatba^201712005 細かい情報取得のために一旦コメントアウト
-        # puts "**********スクロールの開始**********"
-        # body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        # @hulu_driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        # sleep 5
-        # new_body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        # cnt = 1
-        # while body_dom_height != new_body_dom_height do
-        #   body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        #   puts '%{cnt}スクロール目' % { cnt: cnt }
-        #   @hulu_driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        #   sleep 3 # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
-        #   new_body_dom_height = @crawl.get_body_dom_height(@hulu_driver)
-        #   cnt += 1
-        # end
-        # puts "**********スクロールの終了（末端までスクロールした）**********"
+      # crawl.infinit_scroll(@driver, 3)
 #flatba$
         puts "動画一覧を取得する"
-        content_elements = @hulu_driver.find_elements(:css, @selector.select_selector[:content_click])
+        contents_url_arr = []
+        content_elements = @driver.find_elements(:css, @selector.select_selector[:content_click])
+        content_elements.each do |element|
+          if element.attribute('href').empty?
+            next
+          end
+          contents_url_arr << element.attribute('href') # URLを取得する
+          # category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
+        end
+        puts contents_url_arr
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        current_window = @hulu_driver.window_handles.last
+        current_window = @driver.window_handles.last
 
         puts "**********動画コンテンツ情報取得開始**********"
-        content_elements.each do |element|
-
-          puts "動画コンテンツのURLを取り出す"
-          content_url = element.attribute('href')
+        # content_elements.each do |element|
+        contents_url_arr.each do |content_url|
 
           puts "現在のタブ情報を保持する"
-          current_window = @hulu_driver.window_handles.last
+          remenber_current_window = @driver.window_handles.last
 
-          puts "新規タブを開く"
-          @hulu_driver.execute_script("window.open()")
+          crawl.open_new_window(@driver, content_url)
 
-          puts "新規タブにハンドルを移す"
-          new_window = @hulu_driver.window_handles.last
-          @hulu_driver.switch_to.window(new_window)
-
-          puts "新規タブでリンクを開く"
-          @hulu_driver.get(content_url)
-
-          puts "　新規タブにハンドルを移す"
-          # パースデータの取得
-          content_doc = @crawl.open_url(content_url)
-          # 映画コンテンツ情報
-
+          puts "映画コンテンツ情報を取得する"
+          content_doc = crawl.open_url(content_url)
           puts movie_master_contents = @scrape.create_movie_master_contents(@selector, content_doc, @movie_master)
           puts genre_list = @scrape.create_genre_list(@selector, content_doc)
           puts director_list = @scrape.create_director_list(@selector, content_doc)
@@ -149,25 +131,26 @@ class HuluStructure
 
 
           # 新規タブを閉じて元タブにハンドルを戻す
-          @crawl.close_new_window(@hulu_driver, current_window)
+          @crawl.close_new_window(@driver, remenber_current_window)
 
           sleep 1
 
         end
+
         puts "**********動画コンテンツ情報取得終了**********"
 
-      end
-
-      # @crawl.close(@hulu_driver, @db)
-
     end
+
+    # @crawl.close(@driver, @db)
+
+  end
 
     rescue RuntimeError => e
       print e.message
       $browser.close
     rescue => e
       print e.message + "\n"
-      # @crawl.close(@hulu_driver, @db)
+      # @crawl.close(@driver, @db)
     end
   end
 

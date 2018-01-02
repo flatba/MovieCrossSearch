@@ -2,7 +2,7 @@
 
 require 'open-uri'
 require 'nokogiri'
-require 'webdriver-user-agent'
+# require 'webdriver-user-agent'
 
 #
 # クロール（主にページ遷移のための処理）
@@ -11,14 +11,7 @@ class Crawl
 
     def initialize_driver
       # 通常chrome起動
-      @driver = Selenium::WebDriver.for :chrome
-
-      # ここ修正中
-      # @driver = Webdriver::UserAgent.driver(
-      #   :browser     => :chrome,
-      #   :agent       => :iphone,
-      #   :orientation => :landscape
-      # )
+      driver = Selenium::WebDriver.for :chrome
 
       # HeadressChrome起動
       # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
@@ -27,14 +20,25 @@ class Crawl
       #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
       #   }
       # )
-      # @driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+      # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-      return @driver
+      return driver
 
     end
 
   def initialize_selector(site_name)
     @selector = Selector.new(site_name)
+  end
+
+  def login(url, driver, selector)
+    # 画面を開いて情報をセットしてログインする
+    driver.get(url)
+    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
+    driver.find_element(:name, 'password').send_keys ENV['NETFLIX_LOGIN_PASSWORD']
+    driver.find_element(:xpath, selector.select_selector[:login]).click
+
+    # ログイン後に視聴ユーザーを選択する
+    driver.find_element(:xpath, selector.select_selector[:select_user]).click
   end
 
   # URLからパースデータを取得する
@@ -51,23 +55,24 @@ class Crawl
     return doc
   end
 
-
-  def login(url, driver)
-    # 画面を開いて情報をセットしてログインする
-    driver.get(url)
-    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
-    driver.find_element(:name, 'password').send_keysENV['NETFLIX_LOGIN_PASSWORD']
-    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div[2]/div/div/form[1]/button').click
-
-    # ログイン後に視聴ユーザーを選択する
-    driver.find_element(:xpath, '//*[@id="appMountPoint"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div').click
-  end
-
   # クローズ処理
   # def close(driver, db)
   def close(driver)
     driver.quit    # ブラウザ終了
     # db.close_DB_task # データベースの編集終了
+  end
+
+  # 新規ウィンドウを開く
+  def open_new_window(driver, url)
+    # puts "新規タブを開く"
+    # driver.close
+    # puts "　元タブにハンドルを戻す"
+    # driver.switch_to.window(window)
+
+    driver.execute_script("window.open()")
+    new_window = driver.window_handles.last
+    driver.switch_to.window(new_window)
+    driver.get(url)
   end
 
   # ウィンドウを閉じる
@@ -107,6 +112,29 @@ class Crawl
 
       return content_url
 
+  end
+
+  def infinit_scroll(driver, sleep_time)
+    puts "**********スクロールの開始**********"
+
+    # 取得したウィンドウの差分で末尾に到達したかを判断する
+    body_dom_height = get_body_dom_height(driver)
+
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    sleep 5
+    new_body_dom_height = get_body_dom_height(driver)
+    cnt = 1
+    while body_dom_height != new_body_dom_height do
+      body_dom_height = get_body_dom_height(driver)
+      puts '%{cnt}スクロール目' % { cnt: cnt }
+      driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
+
+      new_body_dom_height = get_body_dom_height(driver)
+      cnt += 1
+    end
+
+    puts "**********スクロールの終了（末端までスクロールした）**********"
   end
 
   # bodyの高さを取得する（動的に変動する高さの取得に使用）
