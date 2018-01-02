@@ -60,47 +60,47 @@ class EntryCrawl
      elsif url.include?('Prime-Video')
        @site_name = 'amazon_prime'
        amazon_prime_structure = AmazonPrimeStructure.new
-       amazon_prime_structure.start(@site_name)
+       amazon_prime_structure.start(url, @site_name)
 
      elsif url.include?('Amazon')
        @site_name = 'amazon_video'
        amazon_video_structure = AmazonVideoStructure.new
-       amazon_video_structure.start(@site_name)
+       amazon_video_structure.start(url, @site_name)
 
      elsif url.include?('gyao')
        @site_name = 'gyao'
        gyao_structure = GyaoStructure.new
-       gyao_structure.start(@site_name)
+       gyao_structure.start(url, @site_name)
 
      elsif url.include?('dmkt')
        @site_name = 'dtv'
        dtv_structure = DtvStructure.new
-       dtv_structure.start(@site_name)
+       dtv_structure.start(url, @site_name)
 
      elsif url.include?('unext')
        @site_name = 'unext'
        unext_structure = UnextStructure.new
-       unext_structure.start(@site_name)
+       unext_structure.start(url, @site_name)
 
      elsif url.include?('apple iTunes')
        @site_name = 'apple_itunes'
        apple_itunes_structure = AppleMusicStructure.new
-       apple_itunes_structure.start(@site_name)
+       apple_itunes_structure.start(url, @site_name)
 
      elsif url.include?('Microsoft')
        @site_name = 'ms_video'
        ms_video_structure = MsVideoStructure.new
-       ms_video_structure.start(@site_name)
+       ms_video_structure.start(url, @site_name)
 
      elsif url.include?('GooglePlay')
        @site_name = 'googleplay'
        googleplay_structure = GooglePlayStructure.new
-       googleplay_structure.start(@site_name)
+       googleplay_structure.start(url, @site_name)
 
      elsif url.include?('mubi')
        @site_name = 'mubi'
        mubi_structure = MubiStructure.new
-       mubi_structure.start(@site_name)
+       mubi_structure.start(url, @site_name)
 
      end
      puts "URLエラー"
