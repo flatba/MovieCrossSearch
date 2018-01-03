@@ -22,7 +22,7 @@ class GyaoStructure
  end
 
  def start(url, site_name)
-    @driver   = crawl.initialize_driver
+    @driver        = crawl.initialize_driver
     @selector      = crawl.initialize_selector(site_name)
     @movie_master  = scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理
@@ -33,14 +33,13 @@ class GyaoStructure
 
     puts "get category url"
     category_url_arr = []
-    category = @driver.find_elements(:id, '#new_topNav > ul')
-
-    category.each do |element|
-      category_url = element.attribute('href')
+    @driver.find_elements(:css, '#new_topNav > ul > li').each do |element|
+      category_url = element.find_element(:tag_name, 'a').attribute('href')
       category_url_arr << category_url
     end
     puts category_url_arr
 
+    # ↑カテゴリーURLの取得まで完了↑
 
 
 
