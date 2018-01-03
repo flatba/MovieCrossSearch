@@ -10,9 +10,11 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.2.1)
     environment (0.2.1)
+    facets (3.1.0)
     ffi (1.9.18)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    json (2.1.0)
     mechanize (2.7.5)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0)
@@ -31,6 +33,7 @@ GEM
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     ntlm-http (0.1.1)
+    psych (3.0.2)
     rake (12.3.0)
     robotex (1.0.0)
     ruby-debug-ide (0.6.0)
@@ -42,6 +45,11 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
+    webdriver-user-agent (7.4)
+      facets
+      json
+      psych
+      selenium-webdriver
     webrobots (0.1.2)
 
 PLATFORMS
@@ -56,6 +64,7 @@ DEPENDENCIES
   robotex
   ruby-debug-ide
   selenium-webdriver
+  webdriver-user-agent
 
 BUNDLED WITH
    1.16.0

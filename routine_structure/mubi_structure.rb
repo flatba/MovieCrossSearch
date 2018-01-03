@@ -13,25 +13,28 @@ require './scrape/scrape.rb'
 #
 class MubiStructure
 
- attr_reader :crawl, :scrape
+  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
- def initialize
-   @crawl  = Crawl.new
-   @scrape = Scrape.new
-   # @db_task = SaveDBTask.new
- end
+  def initialize
+    @crawl  = Crawl.new
+    @scrape = Scrape.new
+    # @db_task = SaveDBTask.new
 
- def start(url, site_name)
-    @Mubi_driver    = crawl.initialize_driver
-    @selector       = crawl.initialize_selector(site_name)
-    @movie_master   = scrape.movie_master
+    @driver       = @crawl.initialize_driver
+    @selector     = @crawl.initialize_selector(site_name)
+    @movie_master = @scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
 
-    # [未着手]
-    # ...
+    start(url, site_name)
 
+  end
 
- end
+  def start(url, site_name)
+
+      # [未着手]
+      # ...
+
+  end
 
 end

@@ -15,4 +15,4 @@ gem 'environment'
 gem 'dotenv'
 gem 'mechanize'
 
-# gem 'webdriver-user-agent'
+gem 'webdriver-user-agent'

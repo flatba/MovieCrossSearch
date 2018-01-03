@@ -13,27 +13,30 @@ require './scrape/scrape.rb'
 #
 class GyaoStructure
 
- attr_reader :crawl, :scrape
+ attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
- def initialize
-   @crawl  = Crawl.new
-   @scrape = Scrape.new
-   # @db_task = SaveDBTask.new
- end
+ def initialize(url, site_name)
+    @crawl  = Crawl.new
+    @scrape = Scrape.new
+    # @db_task = SaveDBTask.new
 
- def start(url, site_name)
-    @driver        = crawl.initialize_driver
-    @selector      = crawl.initialize_selector(site_name)
-    @movie_master  = scrape.movie_master
+    @driver        = @crawl.initialize_driver
+    @selector      = @crawl.initialize_selector(site_name)
+    @movie_master  = @scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
 
+    start(url, site_name)
+ end
+
+ def start(url, site_name)
+
     puts "open top page"
-    @driver.get(url)
+    driver.get(url)
 
     puts "get category url"
     category_url_arr = []
-    @driver.find_elements(:css, '#new_topNav > ul > li').each do |element|
+    driver.find_elements(:css, '#new_topNav > ul > li').each do |element|
       category_url = element.find_element(:tag_name, 'a').attribute('href')
       category_url_arr << category_url
     end

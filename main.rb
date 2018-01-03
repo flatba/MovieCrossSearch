@@ -49,60 +49,49 @@ class EntryCrawl
    def detect_site_name_and_start_crawl(url)
      if url.include?('happyon')
        @site_name = 'hulu'
-       hulu_structure = HuluStructure.new
-       hulu_structure.start(url, @site_name)
+       HuluStructure.new(url, @site_name)
 
      elsif url.include?('netflix')
        @site_name ='netflix'
-       netflix_structure = NetflixStructure.new
-       netflix_structure.start(url, @site_name)
+       NetflixStructure.new(url, @site_name)
 
      elsif url.include?('Prime-Video')
        @site_name = 'amazon_prime'
-       amazon_prime_structure = AmazonPrimeStructure.new
-       amazon_prime_structure.start(url, @site_name)
+       AmazonPrimeStructure.new(url, @site_name)
 
      elsif url.include?('Amazon')
        @site_name = 'amazon_video'
-       amazon_video_structure = AmazonVideoStructure.new
-       amazon_video_structure.start(url, @site_name)
+       AmazonVideoStructure.new(url, @site_name)
 
      elsif url.include?('gyao')
        @site_name = 'gyao'
-       gyao_structure = GyaoStructure.new
-       gyao_structure.start(url, @site_name)
+       GyaoStructure.new(url, @site_name)
 
      elsif url.include?('dmkt')
        @site_name = 'dtv'
-       dtv_structure = DTvStructure.new
-       dtv_structure.start(url, @site_name)
+      DTvStructure.new(url, @site_name)
 
      elsif url.include?('unext')
        @site_name = 'unext'
-       unext_structure = UNextStructure.new
-       unext_structure.start(url, @site_name)
+       UNextStructure.new(url, @site_name)
 
      elsif url.include?('apple iTunes')
        @site_name = 'apple_itunes'
-       apple_itunes_structure = AppleMusicStructure.new
-       apple_itunes_structure.start(url, @site_name)
+       AppleMusicStructure.new(url, @site_name)
 
      elsif url.include?('Microsoft')
        @site_name = 'ms_video'
-       ms_video_structure = MsVideoStructure.new
-       ms_video_structure.start(url, @site_name)
+       MsVideoStructure.new(url, @site_name)
 
      elsif url.include?('GooglePlay')
        @site_name = 'googleplay'
-       googleplay_structure = GooglePlayStructure.new
-       googleplay_structure.start(url, @site_name)
+       GooglePlayStructure.new(url, @site_name)
 
      elsif url.include?('mubi')
        @site_name = 'mubi'
-       mubi_structure = MubiStructure.new
-       mubi_structure.start(url, @site_name)
+       MubiStructure.new(url, @site_name)
 
-     end
+      end
      puts "URLエラー"
    end
 
