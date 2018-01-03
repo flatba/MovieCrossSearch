@@ -22,13 +22,13 @@ class GooglePlayStructure
  end
 
  def start(url, site_name)
-    @GooglePlay_driver   = crawl.initialize_driver
+    @driver   = crawl.initialize_driver
     @selector            = crawl.initialize_selector(site_name)
     @movie_master        = scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
 
-
+    # [未着手]
     # ...
 
 

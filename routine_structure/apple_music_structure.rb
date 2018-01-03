@@ -22,7 +22,7 @@ class AappleMusicStructure
  end
 
  def start(url, site_name)
-    @AappleMusic_driver  = crawl.initialize_driver
+    @driver  = crawl.initialize_driver
     @selector            = crawl.initialize_selector(site_name)
     @movie_master        = scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理

@@ -39,7 +39,7 @@ class AmazonPrimeStructure
       category_url_arr << 'https://www.amazon.co.jp' + element.attribute('href')
     end
 
-    # カテゴリーURLの取得まで完了
+    # ↑カテゴリーURLの取得まで完了↑
 
     # [未着手]カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|

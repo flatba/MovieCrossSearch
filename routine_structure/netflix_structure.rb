@@ -42,6 +42,8 @@ class NetflixStructure
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
     end
 
+    # ↑カテゴリーURLの取得まで完了↑
+
     begin
     # カテゴリを開く
     category_url_arr.each { |category_url|

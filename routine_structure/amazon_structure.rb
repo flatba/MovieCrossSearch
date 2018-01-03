@@ -28,7 +28,7 @@ class AmazonStructure
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
 
-
+    # [未着手]
     # ...
 
 

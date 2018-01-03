@@ -43,7 +43,7 @@ class DTvStructure
     end
     puts category_url_arr
 
-    # カテゴリーURLの取得まで完了
+    # ↑カテゴリーURLの取得まで完了↑
 
     # [未着手] 動画情報の取得
     # ...
