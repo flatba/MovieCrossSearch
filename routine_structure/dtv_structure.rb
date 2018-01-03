@@ -33,24 +33,37 @@ class DTvStructure
 
   def start(url, site_name)
 
-      puts "open top page"
-      driver.get(url)
+    # トップページを開く
+    driver.get(url)
 
-      puts "get category url"
-      category_url_arr = []
-      category = driver.find_elements(:class, 'sitemap_content')
+    # カテゴリURLを取得
+    category_url_arr = []
+    category = driver.find_elements(:class, 'sitemap_content')
+    # ジャンル別／50音順／作品種別の内、ジャンル別のみ取得するので[0]指定
+    category[0].find_element(:class => 'sitemap_list').find_elements(:tag_name, 'a').each do |element|
+      category_url = element.attribute('href')
+      category_url_arr << category_url
+    end
+    puts category_url_arr
 
-      # ジャンル別／50音順／作品種別の内、ジャンル別のみ取得するので[0]指定
-      category[0].find_element(:class => 'sitemap_list').find_elements(:tag_name, 'a').each do |element|
-        category_url = element.attribute('href')
-        category_url_arr << category_url
-      end
-      puts category_url_arr
+    # ↑カテゴリーURLの取得まで完了↑
 
-      # ↑カテゴリーURLの取得まで完了↑
+    # [未着手]カテゴリにアクセスして、動画情報を取得する
+    category_url_arr.each do |category_url|
 
-      # [未着手] 動画情報の取得
-      # ...
+      # 新規タブを開く
+
+      # 新規タブでcategory_urlを開く
+
+      # 新規タブを開く
+
+      # 動画コンテンツを開く
+
+      # 情報を取得する
+
+      # 取得したらタブを閉じる
+
+    end
 
 
   end

@@ -34,12 +34,9 @@ class HuluStructure
 
   def start(url, site_name)
 
-    # メインページにアクセスしてパースデータを取得する
-    main_doc = crawl.open_url(url)
-
-    # [DONE]カテゴリ一覧を取得する
-    puts "カテゴリ一覧を取得する"
+    # カテゴリURLの取得
     category_url_arr = []
+    main_doc = crawl.open_url(url)
     main_doc.css(selector.select_selector[:category_selector]).each { |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL

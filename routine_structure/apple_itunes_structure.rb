@@ -36,8 +36,7 @@ class AappleiTunesStructure
     # トップページを開く
     driver.get(url)
 
-    # トップページにアクセスしてカテゴリURLを取得する
-    puts "カテゴリ一覧を取得する"
+    # カテゴリURLを取得
     category_url_arr = []
     category = driver.find_element(:css, '#genre-nav > div').find_element(:class, 'list').find_elements(:tag_name, 'a')
     category.each do |element|
@@ -46,8 +45,22 @@ class AappleiTunesStructure
     end
     puts category_url_arr
 
-    # 各動画情報の取得
-    # ...
+    # [未着手]カテゴリにアクセスして、動画情報を取得する
+    category_url_arr.each do |category_url|
+
+      # 新規タブを開く
+
+      # 新規タブでcategory_urlを開く
+
+      # 新規タブを開く
+
+      # 動画コンテンツを開く
+
+      # 情報を取得する
+
+      # 取得したらタブを閉じる
+
+    end
 
   end
 
