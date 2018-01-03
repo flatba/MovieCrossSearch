@@ -9,7 +9,7 @@ require './scrape/scrape.rb'
 # require './database/save_db_task.rb'
 
 #
-# AappleMusic
+# AappleiTunes
 #
 class AappleiTunesStructure
 
@@ -33,11 +33,20 @@ class AappleiTunesStructure
 
   def start(url, site_name)
 
-      # 特殊なので後にまわす？
-      # https://itunes.apple.com/jp/genre/%E6%98%A0%E7%94%BB/id33
-      # これならいけるかも。
-      # ...
+    # トップページを開く
+    driver.get(url)
 
+    # トップページにアクセスしてカテゴリURLを取得する
+    puts "カテゴリ一覧を取得する"
+    category_url_arr = []
+    category = driver.find_element(:css, '#genre-nav > div').find_element(:class, 'list').find_elements(:tag_name, 'a')
+    category.each do |element|
+      url = element.attribute('href')
+      category_url_arr << url
+    end
+
+    # 各動画情報の取得
+    # ...
 
   end
 
