@@ -74,12 +74,12 @@ class EntryCrawl
 
      elsif url.include?('dmkt')
        @site_name = 'dtv'
-       dtv_structure = DtvStructure.new
+       dtv_structure = DTvStructure.new
        dtv_structure.start(url, @site_name)
 
      elsif url.include?('unext')
        @site_name = 'unext'
-       unext_structure = UnextStructure.new
+       unext_structure = UNextStructure.new
        unext_structure.start(url, @site_name)
 
      elsif url.include?('apple iTunes')
@@ -110,7 +110,7 @@ end
 
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "AMAZON_PRIME_URL"
+url = "DTV_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[url])

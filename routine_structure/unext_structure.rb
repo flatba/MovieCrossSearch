@@ -9,9 +9,9 @@ require './scrape/scrape.rb'
 # require './database/save_db_task.rb'
 
 #
-# Amazon
+# UNEXT
 #
-class AmazonStructure
+class UNextStructure
 
  attr_reader :crawl, :scrape
 
@@ -22,7 +22,7 @@ class AmazonStructure
  end
 
  def start(url, site_name)
-    @driver         = crawl.initialize_driver
+    @driver  = crawl.initialize_driver
     @selector       = crawl.initialize_selector(site_name)
     @movie_master   = scrape.movie_master
     # @movie_master = @scrape.initialize_movie_master # DB処理
