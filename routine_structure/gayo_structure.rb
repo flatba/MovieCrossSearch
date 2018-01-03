@@ -16,6 +16,7 @@ class GyaoStructure
  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
  def initialize(url, site_name)
+
     @crawl  = Crawl.new
     @scrape = Scrape.new
     # @db_task = SaveDBTask.new
@@ -27,6 +28,7 @@ class GyaoStructure
     # @db           = @db_task.initialize_data_base(site_name)
 
     start(url, site_name)
+
  end
 
  def start(url, site_name)

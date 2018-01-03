@@ -11,11 +11,12 @@ require './scrape/scrape.rb'
 #
 # AappleMusic
 #
-class AappleMusicStructure
+class AappleiTunesStructure
 
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
-  def initialize
+  def initialize(url, site_name)
+
     @crawl  = Crawl.new
     @scrape = Scrape.new
     # @db_task = SaveDBTask.new

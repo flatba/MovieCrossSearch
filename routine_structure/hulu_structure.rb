@@ -16,7 +16,7 @@ class HuluStructure
 
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
-  def initialize
+  def initialize(url, site_name)
 
     @crawl = Crawl.new
     @scrape = Scrape.new
