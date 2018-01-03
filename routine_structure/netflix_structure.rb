@@ -13,52 +13,58 @@ require './scrape/scrape.rb'
 #
 class NetflixStructure
 
-  attr_reader :crawl, :scrape
+  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
-  def initialize
+  def initialize(url, site_name)
+
     @crawl = Crawl.new
     @scrape = Scrape.new
     # @db_task = SaveDBTask.new
+
+    @driver       = @crawl.initialize_driver
+    @selector     = @crawl.initialize_selector(site_name)
+    @movie_master = @scrape.movie_master
+    # @movie_master = @scrape.initialize_movie_master # DB処理
+    # @db           = @db_task.initialize_data_base(site_name)
+
+    start(url, site_name)
+
   end
 
   def start(url, site_name)
 
-    @driver  = crawl.initialize_driver
-    @selector     = @crawl.initialize_selector(site_name)
-    @movie_master = scrape.movie_master
-    # @movie_master = @scrape.initialize_movie_master # DB処理
-    # @db           = @db_task.initialize_data_base(site_name)
-
     # ログインしてトップページを開く
-    crawl.login(url, @driver, @selector)
+    crawl.login(url, driver, selector)
 
     # トップページにアクセスしてカテゴリURLを取得する
     puts "カテゴリ一覧を取得する"
     category_url_arr = []
-    category = @driver.find_element(:class, 'tabbed-primary-navigation')
+    category = driver.find_element(:class, 'tabbed-primary-navigation')
     category.find_elements(:class => 'navigation-tab').each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
     end
 
+    # ↑カテゴリーURLの取得まで完了↑
+
     begin
     # カテゴリを開く
     category_url_arr.each { |category_url|
 
       puts "元ページのウィンドウ情報（ハンドル）を記憶"
-      remenber_current_window = @driver.window_handles.last
+      remenber_current_window = driver.window_handles.last
 
-      crawl.open_new_window(@driver, category_url)
+      crawl.open_new_window(driver, category_url)
 
       # [未着手] 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
       # スクロールで読み込めるコンテンツがある場合スクロールする
-      # crawl.infinit_scroll(@driver, 3)
+      # crawl.infinit_scroll(driver, 3)
 
       # [未着手] 動画情報の取得
 
-      crawl.close_new_window(@driver, remenber_current_window)
+      crawl.close_new_window(driver, remenber_current_window)
       sleep 1
 
     }
