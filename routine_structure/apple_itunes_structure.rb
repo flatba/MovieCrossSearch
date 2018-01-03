@@ -44,6 +44,7 @@ class AappleiTunesStructure
       url = element.attribute('href')
       category_url_arr << url
     end
+    puts category_url_arr
 
     # 各動画情報の取得
     # ...

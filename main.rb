@@ -83,7 +83,7 @@ class EntryCrawl
       @site_name = 'ms_video'
       MsVideoStructure.new(url, @site_name)
 
-    elsif url.include?('GooglePlay')
+    elsif url.include?('google')
       @site_name = 'googleplay'
       GooglePlayStructure.new(url, @site_name)
 
@@ -98,7 +98,7 @@ end
 
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "APPLE_ITUNES_URL"
+url = "GOOGLEPLAY_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[url])
