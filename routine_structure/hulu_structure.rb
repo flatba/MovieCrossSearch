@@ -117,6 +117,8 @@ class HuluStructure
           puts director_list = @scrape.create_director_list(selector, content_doc)
           puts cast_list = @scrape.create_cast_list(selector, content_doc)
 
+          # 映画ページのURLを取得する
+
           #
           # 保存処理(保存とレコードIDの取得)
           #

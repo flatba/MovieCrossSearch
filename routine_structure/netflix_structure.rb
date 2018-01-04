@@ -75,6 +75,7 @@ class NetflixStructure
       genre_url_arr = []
       genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
       genre_arr.each do |genre|
+        puts genre.text
         genre_url_arr << genre.attribute('href')
       end
       puts genre_url_arr
@@ -89,10 +90,6 @@ class NetflixStructure
         # 別のジャンルに同じidの動画グループがあるので、一度回ったidは記憶しておく必要などして処理を回す必要あり。
         # 基本は全てにアクセスするが、URIのidが同じだったら飛ばす。
         # 時間はかかるが、確実と思う。
-
-
-
-
 
         sleep 1
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。

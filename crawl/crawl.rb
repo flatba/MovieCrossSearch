@@ -31,14 +31,18 @@ class Crawl
   end
 
   def login(url, driver, selector, id, pw)
+
     # 画面を開いて情報をセットしてログインする
     driver.get(url)
     driver.find_element(:name, 'email').send_keys id
     driver.find_element(:name, 'password').send_keys pw
     driver.find_element(:xpath, selector.select_selector[:login]).click
 
-    # ログイン後に視聴ユーザーを選択する
-    driver.find_element(:xpath, selector.select_selector[:select_user]).click
+    if url.include?('netflix')
+      # ログイン後に視聴ユーザーを選択する
+      driver.find_element(:xpath, selector.select_selector[:select_user]).click
+    end
+
   end
 
   # URLからパースデータを取得する
@@ -129,7 +133,7 @@ class Crawl
       body_dom_height = get_body_dom_height(driver)
       puts '%{cnt}スクロール目' % { cnt: cnt }
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
+      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象が起こり得るため、スクロールする箇所によって調整する
 
       new_body_dom_height = get_body_dom_height(driver)
       cnt += 1
