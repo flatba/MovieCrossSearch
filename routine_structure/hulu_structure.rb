@@ -37,11 +37,11 @@ class HuluStructure
     # カテゴリURLの取得
     category_url_arr = []
     main_doc = crawl.open_url(url)
-    main_doc.css(selector.select_selector[:category_selector]).each { |element|
+    main_doc.css(selector.select_selector[:category_selector]).each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.attr('href')
-    }
+    end
 
     begin
     category_url_arr.each do |category_url|
@@ -58,7 +58,7 @@ class HuluStructure
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        remenber_current_window = driver.window_handles.last
+        remenber_current_window_handle = driver.window_handles.last
 
         # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
         puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
@@ -97,16 +97,17 @@ class HuluStructure
 
         # [DONE]元ページのウィンドウ情報（ハンドル）を記憶
         puts "元ページのウィンドウ情報（ハンドル）を記憶"
-        remenber_current_window = driver.window_handles.last
+        remenber_current_window_handle = driver.window_handles.last
 
         puts "**********動画コンテンツ情報取得開始**********"
         # content_elements.each do |element|
         contents_url_arr.each do |content_url|
 
           # puts "現在のタブ情報を保持する"
-          # remenber_current_window = driver.window_handles.last
+          # remenber_current_window_handle = driver.window_handles.last
 
-          crawl.open_new_window(driver, content_url)
+          crawl.open_new_tab_then_move_handle(driver)
+          driver.get(content_url)
 
           puts "映画コンテンツ情報を取得する"
           content_doc = crawl.open_url(content_url)
