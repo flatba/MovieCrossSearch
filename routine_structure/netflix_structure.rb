@@ -82,8 +82,21 @@ class NetflixStructure
       # ジャンルページを開く
       remenber_category_window_handle = get_current_handle_then_open_new_tab(driver)
       genre_url_arr.each do |genre_url|
+
         driver.get(genre_url)
+
+        # 各ジャンルの動画グループは階層が複雑だが、URIのidのかぶりがある。
+        # 別のジャンルに同じidの動画グループがあるので、一度回ったidは記憶しておく必要などして処理を回す必要あり。
+        # 基本は全てにアクセスするが、URIのidが同じだったら飛ばす。
+        # 時間はかかるが、確実と思う。
+
+
+
+
+
         sleep 1
+        # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
+
       end
 
       puts "a"
