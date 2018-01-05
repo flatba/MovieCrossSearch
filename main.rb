@@ -69,7 +69,7 @@ class EntryCrawl
 
     elsif url.include?('dmkt')
       @site_name = 'dtv'
-    DTvStructure.new(url, @site_name)
+      DTvStructure.new(url, @site_name)
 
     elsif url.include?('unext')
       @site_name = 'unext'
@@ -79,11 +79,11 @@ class EntryCrawl
       @site_name = 'apple_itunes'
       AappleiTunesStructure.new(url, @site_name)
 
-    elsif url.include?('Microsoft')
+    elsif url.include?('microsoft')
       @site_name = 'ms_video'
-      MsVideoStructure.new(url, @site_name)
+      MicrosoftStructure.new(url, @site_name)
 
-    elsif url.include?('GooglePlay')
+    elsif url.include?('google')
       @site_name = 'googleplay'
       GooglePlayStructure.new(url, @site_name)
 
@@ -91,14 +91,20 @@ class EntryCrawl
       @site_name = 'mubi'
       MubiStructure.new(url, @site_name)
 
+    elsif
+      puts "URLエラー"
+
     end
-    puts "URLエラー"
+
+    puts "処理完了"
+
   end
 end
 
+
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "NETFLIX_URL"
+url = "AMAZON_PRIME_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[url])

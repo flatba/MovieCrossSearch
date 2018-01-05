@@ -31,10 +31,17 @@ class NetflixStructure
 
   end
 
+  # 元ページのウィンドウ情報（ハンドル）を返して新規タブを開く
+  def get_current_handle_then_open_new_tab(driver)
+      remenber_current_window_handle = driver.window_handles.last
+      crawl.open_new_tab_then_move_handle(driver)
+      return remenber_current_window_handle
+  end
+
   def start(url, site_name)
 
     # ログインしてトップページを開く
-    crawl.login(url, driver, selector)
+    crawl.login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
 
     # トップページにアクセスしてカテゴリURLを取得する
     puts "カテゴリ一覧を取得する"
@@ -45,29 +52,62 @@ class NetflixStructure
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
     end
+    puts category_url_arr
 
-    # ↑カテゴリーURLの取得まで完了↑
+    # ----------------↑カテゴリーURLの取得まで完了↑-------------
 
-    begin
     # カテゴリを開く
-    category_url_arr.each { |category_url|
+    begin
+    category_url_arr.each do |category_url|
 
-      puts "元ページのウィンドウ情報（ハンドル）を記憶"
-      remenber_current_window = driver.window_handles.last
+      # カテゴリではなくホームなので飛ばす
+      if category_url === 'https://www.netflix.com/browse'
+        next
+      end
 
-      crawl.open_new_window(driver, category_url)
+      remenber_current_window_handle = get_current_handle_then_open_new_tab(driver)
+      driver.get(category_url)
 
-      # [未着手] 深いとこに入っていって動画のみの一覧ページまでアクセスする
+      # ジャンルをクリックする
+      driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div').click
+
+      # ジャンルURLの取得
+      genre_url_arr = []
+      genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
+      genre_arr.each do |genre|
+        puts genre.text
+        genre_url_arr << genre.attribute('href')
+      end
+      puts genre_url_arr
+
+      # ジャンルページを開く
+      remenber_category_window_handle = get_current_handle_then_open_new_tab(driver)
+      genre_url_arr.each do |genre_url|
+
+        driver.get(genre_url)
+
+        # 各ジャンルの動画グループは階層が複雑だが、URIのidのかぶりがある。
+        # 別のジャンルに同じidの動画グループがあるので、一度回ったidは記憶しておく必要などして処理を回す必要あり。
+        # 基本は全てにアクセスするが、URIのidが同じだったら飛ばす。
+        # 時間はかかるが、確実と思う。
+
+        sleep 1
+        # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
+
+      end
+
+      puts "a"
+      # TODO(flatba) 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
       # スクロールで読み込めるコンテンツがある場合スクロールする
-      # crawl.infinit_scroll(driver, 3)
+      # crawl.infinit_scroll(driver, 3) # 1ページスクロールするごとに sleep 3 させる
 
-      # [未着手] 動画情報の取得
+      # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
 
-      crawl.close_new_window(driver, remenber_current_window)
+      crawl.close_new_window(driver, remenber_current_window_handle)
       sleep 1
 
-    }
+    end
 
     # ここのクロールで重要なのが、おそらく重複してデータを取得してしまう事があると思う。
     # ので、重複した場合に追加しない処理を入れないといけない。

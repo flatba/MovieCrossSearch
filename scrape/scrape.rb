@@ -79,7 +79,7 @@ class Scrape
     end
 
     # 例外処理
-    # rescue
+    # rescue StandardError
     #   puts contents
     #   puts driver.current_url + "内で要素がなかったかも"
     #   driver.navigate().back()

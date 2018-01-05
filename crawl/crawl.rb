@@ -22,7 +22,7 @@ class Crawl
       # )
       # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-      return driver
+      driver
 
     end
 
@@ -30,15 +30,19 @@ class Crawl
     @selector = Selector.new(site_name)
   end
 
-  def login(url, driver, selector)
+  def login(url, driver, selector, id, pw)
+
     # 画面を開いて情報をセットしてログインする
     driver.get(url)
-    driver.find_element(:name, 'email').send_keys ENV['NETFLIX_LOGIN_ID']
-    driver.find_element(:name, 'password').send_keys ENV['NETFLIX_LOGIN_PASSWORD']
+    driver.find_element(:name, 'email').send_keys id
+    driver.find_element(:name, 'password').send_keys pw
     driver.find_element(:xpath, selector.select_selector[:login]).click
 
-    # ログイン後に視聴ユーザーを選択する
-    driver.find_element(:xpath, selector.select_selector[:select_user]).click
+    if url.include?('netflix')
+      # ログイン後に視聴ユーザーを選択する
+      driver.find_element(:xpath, selector.select_selector[:select_user]).click
+    end
+
   end
 
   # URLからパースデータを取得する
@@ -52,7 +56,6 @@ class Crawl
       f.read
     end
     doc = Nokogiri::HTML.parse(html, nil, charset)
-    return doc
   end
 
   # クローズ処理
@@ -62,13 +65,15 @@ class Crawl
     # db.close_DB_task # データベースの編集終了
   end
 
-  # 新規ウィンドウを開く
-  def open_new_window(driver, url)
-    # puts "新規タブを開く"
-    # driver.close
-    # puts "　元タブにハンドルを戻す"
-    # driver.switch_to.window(window)
+  # 新規タブを開いてハンドルを新規タブに移す
+  def open_new_tab_then_move_handle(driver)
+    driver.execute_script("window.open()")
+    new_window = driver.window_handles.last
+    driver.switch_to.window(new_window)
+  end
 
+  # 新規タブを開いてハンドルを新規タブに移し、受け取ったURLを新規タブで開く
+  def open_new_tab(driver, url)
     driver.execute_script("window.open()")
     new_window = driver.window_handles.last
     driver.switch_to.window(new_window)
@@ -128,7 +133,7 @@ class Crawl
       body_dom_height = get_body_dom_height(driver)
       puts '%{cnt}スクロール目' % { cnt: cnt }
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象ありのためsleep 3秒
+      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象が起こり得るため、スクロールする箇所によって調整する
 
       new_body_dom_height = get_body_dom_height(driver)
       cnt += 1
