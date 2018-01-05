@@ -52,9 +52,11 @@ class NetflixStructure < BaseStructure
     category_url_arr.each do |category_url|
 
       # カテゴリではなくホームなので飛ばす
-      if category_url === 'https://www.netflix.com/browse'
-        next
-      end
+      # if category_url === 'https://www.netflix.com/browse'
+      #   next
+      # end
+      category_url === 'https://www.netflix.com/browse' ? next : puts 'カテゴリURLを開く'
+
 
       remenber_current_window_handle = get_current_handle_then_open_new_tab(driver)
       driver.get(category_url)
