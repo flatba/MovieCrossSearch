@@ -11,25 +11,25 @@ require './scrape/scrape.rb'
 #
 # Netflix
 #
-class NetflixStructure
+class NetflixStructure < BaseStructure
 
-  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
+  # attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
-  def initialize(url, site_name)
+  # def initialize(url, site_name)
 
-    @crawl = Crawl.new
-    @scrape = Scrape.new
-    # @db_task = SaveDBTask.new
+  #   @crawl = Crawl.new
+  #   @scrape = Scrape.new
+  #   # @db_task = SaveDBTask.new
 
-    @driver       = @crawl.initialize_driver
-    @selector     = @crawl.initialize_selector(site_name)
-    @movie_master = @scrape.movie_master
-    # @movie_master = @scrape.initialize_movie_master # DB処理
-    # @db           = @db_task.initialize_data_base(site_name)
+  #   @driver       = @crawl.initialize_driver
+  #   @selector     = @crawl.initialize_selector(site_name)
+  #   @movie_master = @scrape.movie_master
+  #   # @movie_master = @scrape.initialize_movie_master # DB処理
+  #   # @db           = @db_task.initialize_data_base(site_name)
 
-    start(url, site_name)
+  #   start(url, site_name)
 
-  end
+  # end
 
   # 元ページのウィンドウ情報（ハンドル）を返して新規タブを開く
   def get_current_handle_then_open_new_tab(driver)
