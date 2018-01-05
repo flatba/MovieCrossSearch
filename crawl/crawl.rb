@@ -1,4 +1,8 @@
 # coding: utf-8
+
+require './crawl/selector.rb'
+require './crawl/crawl.rb'
+
 #
 # クロール（主にページ遷移のための処理）
 #
@@ -76,14 +80,7 @@ class Crawl
     driver.get(url)
   end
 
-  # ウィンドウを閉じる
-  def close_new_window(driver, window)
-    puts "新規タブを閉じる"
-    driver.close
-    puts "　元タブにハンドルを戻す"
-    driver.switch_to.window(window)
-  end
-
+  # 疑似キーボード操作で新規タブを開く
   def send_key_new_tab(element)
     puts "新規タブでリンクを開く"
     element.send_keys(:command, :enter)
@@ -92,7 +89,6 @@ class Crawl
 
   # ウィンドウのハンドルを後から開いたタブに移す
   def change_current_window(driver, element)
-
       # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
       # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
       # puts "新規タブでリンクを開く"
@@ -112,7 +108,19 @@ class Crawl
       content_url = driver.current_url
 
       return content_url
+  end
 
+  # ウィンドウを閉じる
+  def close_new_window(driver, window)
+    puts "新規タブを閉じる"
+    driver.close
+    puts "　元タブにハンドルを戻す"
+    driver.switch_to.window(window)
+  end
+
+  # bodyの高さを取得する（動的に変動する高さの取得に使用）
+  def get_body_dom_height(driver)
+    return driver.find_element(:tag_name, 'body').size.height
   end
 
   def infinit_scroll(driver, sleep_time)
@@ -129,18 +137,16 @@ class Crawl
       body_dom_height = get_body_dom_height(driver)
       puts '%{cnt}スクロール目' % { cnt: cnt }
       driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-      sleep sleep_time # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象が起こり得るため、スクロールする箇所によって調整する
+
+      # スクロールがDOMのサイズ取得に追いついてしまって途中までしかスクロールしてない事象が起こり得るため、
+      # スクロールする箇所によって調整する
+      sleep sleep_time
 
       new_body_dom_height = get_body_dom_height(driver)
       cnt += 1
     end
 
     puts "**********スクロールの終了（末端までスクロールした）**********"
-  end
-
-  # bodyの高さを取得する（動的に変動する高さの取得に使用）
-  def get_body_dom_height(driver)
-    return driver.find_element(:tag_name, 'body').size.height
   end
 
   def screenshot(driver)

@@ -62,7 +62,7 @@ class HuluStructure < BaseStructure
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
         unless contents_url.include?("tiles") then
           puts "動画コンテンツが無い"
-          @crawl.close_new_window(driver, remenber_current_window)
+          @crawl.close_new_window(driver, remenber_current_window_handle)
           next
         end
 
@@ -70,7 +70,7 @@ class HuluStructure < BaseStructure
 
         # 動画一覧を取得する
         sleep 5
-#flatba^201712005 細かい情報取得のために一旦コメントアウト
+#flatba^ 201712005 細かい情報取得のために一旦コメントアウト
       # crawl.infinit_scroll(driver, 3)
 #flatba$
         puts "動画一覧を取得する"

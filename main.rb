@@ -9,8 +9,6 @@ require "date"
 require 'dotenv'
 
 # Import File
-require './crawl/selector.rb'
-require './crawl/crawl.rb'
 require './scrape/scrape.rb'
 # require './database/database.rb'
 # require './database/save_db_task.rb'
@@ -43,14 +41,13 @@ class EntryCrawl
     @cast_master     = []
   end
 
+  # クロール可能サイトかどうかチェックする
   def check_robot(url)
-    # クロール可能サイトかどうかチェックする
     robotex = Robotex.new
     p robotex.allowed?(url)
   end
 
-  # クロールするサイトの名称を判断して、
-  # メインストラクチャーを実行する
+  # クロールするサイトの名称を判断してメインストラクチャーを実行する
   def detect_site_name_and_start_crawl(url)
     if url.include?('happyon')
       @site_name = 'hulu'
@@ -107,9 +104,12 @@ class EntryCrawl
 end
 
 
+#
+# main
+#
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "AMAZON_PRIME_URL"
+url = "HULU_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[url])
