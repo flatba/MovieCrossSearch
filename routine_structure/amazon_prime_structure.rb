@@ -24,7 +24,7 @@ class AmazonPrimeStructure < BaseStructure
 
   def start(url, site_name)
 
-    driver.get("https://www.amazon.co.jp/s/ref=sr_rot_p_n_ways_to_watch_0?fst=as%3Aoff&rh=n%3A2351649051%2Cp_n_ways_to_watch%3A3746328051&bbn=2351649051&ie=UTF8&qid=1515058940&rnid=3746327051")
+    driver.get(url)
 
     # プライム会員特典 映画リスト
     prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
@@ -35,6 +35,8 @@ class AmazonPrimeStructure < BaseStructure
       result_url_arr << result_url.attribute('href')
     end
     puts result_url_arr
+    puts result_url_arr.size
+    # 不要なURLも取得しているので条件を狭める必要あり。
 
 
 

@@ -57,13 +57,17 @@ class EntryCrawl
       @site_name ='netflix'
       NetflixStructure.new(url, @site_name)
 
-    elsif url.include?('Prime-Video')
+    # elsif url.include?('Prime-Video')
+    #   @site_name = 'amazon_prime'
+    #   AmazonPrimeStructure.new(url, @site_name)
+
+    # elsif url.include?('Amazon')
+    #   @site_name = 'amazon_video'
+    #   AmazonVideoStructure.new(url, @site_name)
+
+    elsif url.include?('amazon')
       @site_name = 'amazon_prime'
       AmazonPrimeStructure.new(url, @site_name)
-
-    elsif url.include?('Amazon')
-      @site_name = 'amazon_video'
-      AmazonVideoStructure.new(url, @site_name)
 
     elsif url.include?('gyao')
       @site_name = 'gyao'
@@ -109,7 +113,7 @@ end
 #
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "HULU_URL"
+url = "AMAZON_PRIME_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[url])
