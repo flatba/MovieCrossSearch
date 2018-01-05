@@ -1,13 +1,4 @@
 # coding: utf-8
-
-require "selenium-webdriver"
-
-require './crawl/selector.rb'
-require './crawl/crawl.rb'
-require './scrape/scrape.rb'
-# require './database/database.rb'
-# require './database/save_db_task.rb'
-
 #
 # AmazonPrime
 #
@@ -43,6 +34,7 @@ class AmazonPrimeStructure < BaseStructure
     driver.find_element(:css, '#s-results-list-atf').find_elements(:tag_name, 'a').each do |result_url|
       result_url_arr << result_url.attribute('href')
     end
+    puts result_url_arr
 
 
 
@@ -98,6 +90,6 @@ class AmazonPrimeStructure < BaseStructure
 
   #   end
 
-  # end
+  end
 
 end

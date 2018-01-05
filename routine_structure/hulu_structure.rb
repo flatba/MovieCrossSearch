@@ -1,14 +1,4 @@
 # coding: utf-8
-
-require "selenium-webdriver"
-
-# import file
-require './crawl/selector.rb'
-require './crawl/crawl.rb'
-require './scrape/scrape.rb'
-# require './database/database.rb'
-# require './database/save_db_task.rb'
-
 #
 # Hulu
 #

@@ -1,9 +1,4 @@
 # coding: utf-8
-
-require 'open-uri'
-require 'nokogiri'
-# require 'webdriver-user-agent'
-
 #
 # クロール（主にページ遷移のための処理）
 #
@@ -56,6 +51,7 @@ class Crawl
       f.read
     end
     doc = Nokogiri::HTML.parse(html, nil, charset)
+    doc
   end
 
   # クローズ処理

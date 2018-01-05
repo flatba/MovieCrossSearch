@@ -1,17 +1,22 @@
 # coding: utf-8
 
+require 'open-uri'
+require 'nokogiri'
 require 'robotex'
+require "selenium-webdriver"
 # require 'sqlite3'
-
 require "date"
 require 'dotenv'
 
 # Import File
-# require './entry_crawl.rb'
-# require './routine_stracture.rb'
 require './crawl/selector.rb'
+require './crawl/crawl.rb'
+require './scrape/scrape.rb'
+# require './database/database.rb'
+# require './database/save_db_task.rb'
 
 # Structure File
+require './routine_structure/base_structure.rb'
 require './routine_structure/hulu_structure.rb'
 require './routine_structure/netflix_structure.rb'
 require './routine_structure/amazon_prime_structure.rb'
