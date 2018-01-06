@@ -7,6 +7,7 @@ require './crawl/crawl.rb'
 
 
 class Scrape
+  include Selector
 
   attr_reader :movie_master
 
@@ -28,30 +29,30 @@ class Scrape
     # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
 
     # [DONE]トップ画像
-    unless check_contents_item(doc.css(selector.select_selector[:thumbnail]))
-      # contents.thumbnail = doc.css(selector.select_selector[:thumbnail]).attr('src').to_s
-      thumbnail = doc.css(selector.select_selector[:thumbnail]).attr('src').to_s
+    unless check_contents_item(doc.css(select_selector[:thumbnail]))
+      # contents.thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
+      thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
     else
       thumbnail = ""
     end
 
     # [DONE]映画タイトル
-    unless check_contents_item(doc.css(selector.select_selector[:title]).text)
-      # contents.title = doc.css(selector.select_selector[:title]).text
-      title = doc.css(selector.select_selector[:title]).text
+    unless check_contents_item(doc.css(select_selector[:title]).text)
+      # contents.title = doc.css(select_selector[:title]).text
+      title = doc.css(select_selector[:title]).text
     else
       title = ""
     end
 
     # 原題
-    # unless check_contents_item(doc.css(@selector.select_selector[:original_title]))
-    #   puts contents.original_title = doc.css(@selector.select_selector[:original_title])
+    # unless check_contents_item(doc.css(select_selector[:original_title]))
+    #   puts contents.original_title = doc.css(select_selector[:original_title])
     # end
     original_title = ""
 
     # [一旦DONE]公開年 # <= 年で取得できないサイトもあるかもなので要検討
-    unless check_contents_item(doc.css(selector.select_selector[:release_year]).text)
-      release_year_tmp = doc.css(selector.select_selector[:release_year]).text
+    unless check_contents_item(doc.css(select_selector[:release_year]).text)
+      release_year_tmp = doc.css(select_selector[:release_year]).text
       tail_num = release_year_tmp.rindex('年')
       # puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
       release_year = release_year_tmp[tail_num-4..tail_num-1]
@@ -61,8 +62,8 @@ class Scrape
 
     # 上映時間
     # 「時間0分、/ 7分、, 3分」になっている箇所などあり要修正
-    unless check_contents_item(doc.css(selector.select_selector[:running_time]).text)
-      running_time_tmp = doc.css(selector.select_selector[:running_time]).text
+    unless check_contents_item(doc.css(select_selector[:running_time]).text)
+      running_time_tmp = doc.css(select_selector[:running_time]).text
       tail_num = running_time_tmp.rindex('分')
       # puts contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
       running_time = running_time_tmp[tail_num-3..tail_num].strip
@@ -71,9 +72,9 @@ class Scrape
     end
 
     # あらすじ
-    unless check_contents_item(doc.css(selector.select_selector[:summary]))
-      # contents.summary = doc.css(selector.select_selector[:summary]).text
-      summary = doc.css(selector.select_selector[:summary]).text
+    unless check_contents_item(doc.css(select_selector[:summary]))
+      # contents.summary = doc.css(select_selector[:summary]).text
+      summary = doc.css(select_selector[:summary]).text
     else
       summary = ""
     end
@@ -96,8 +97,8 @@ class Scrape
   # ジャンル一覧取得
   def create_genre_list(selector, doc)
     genre_list = []
-    unless check_contents_item(doc.css(selector.select_selector[:genre]).children)
-      doc.css(selector.select_selector[:genre]).children.each do |genre|
+    unless check_contents_item(doc.css(select_selector[:genre]).children)
+      doc.css(select_selector[:genre]).children.each do |genre|
         genre_list.push(genre.text)
       end
     end
@@ -107,9 +108,9 @@ class Scrape
   # 監督一覧取得
   def create_director_list(selector, doc)
     director_list = []
-    unless check_contents_item(doc.css(selector.select_selector[:director]))
+    unless check_contents_item(doc.css(select_selector[:director]))
       # ここ未調整のため直す。2監督いる場合に対応する
-      doc.css(selector.select_selector[:director]).each do |director|
+      doc.css(select_selector[:director]).each do |director|
         director_list.push(director.text)
       end
     end
@@ -119,8 +120,8 @@ class Scrape
   # キャスト一覧取得
   def create_cast_list(selector, doc)
     cast_list = []
-    unless check_contents_item(doc.css(selector.select_selector[:cast]))
-      doc.css(selector.select_selector[:cast]).children.each do |cast|
+    unless check_contents_item(doc.css(select_selector[:cast]))
+      doc.css(select_selector[:cast]).children.each do |cast|
         cast_list.push(cast.text)
       end
       return cast_list

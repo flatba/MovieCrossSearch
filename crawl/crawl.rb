@@ -6,27 +6,29 @@ require './crawl/crawl.rb'
 #
 # クロール（主にページ遷移のための処理）
 #
-class Crawl
+module Crawl
+  include Selector
 
-    def initialize_driver
-      # 通常chrome起動
-      driver = Selenium::WebDriver.for :chrome
+  def initialize_driver
+    # 通常chrome起動
+    driver = Selenium::WebDriver.for :chrome
 
-      # HeadressChrome起動
-      # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-      #   "chromeOptions" => {
-      #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-      #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-      #   }
-      # )
-      # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # HeadressChrome起動
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+    #   "chromeOptions" => {
+    #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+    #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+    #   }
+    # )
+    # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
-      driver
+    return driver
 
-    end
+  end
 
   def initialize_selector(site_name)
-    @selector = Selector.new(site_name)
+    # @selector = Selector.new(site_name)
+    setup_selector(site_name)
   end
 
   def login(url, driver, selector, id, pw)
@@ -35,11 +37,11 @@ class Crawl
     driver.get(url)
     driver.find_element(:name, 'email').send_keys id
     driver.find_element(:name, 'password').send_keys pw
-    driver.find_element(:xpath, selector.select_selector[:login]).click
+    driver.find_element(:xpath, select_selector[:login]).click
 
     if url.include?('netflix')
       # ログイン後に視聴ユーザーを選択する
-      driver.find_element(:xpath, selector.select_selector[:select_user]).click
+      driver.find_element(:xpath, select_selector[:select_user]).click
     end
 
   end

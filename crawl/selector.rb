@@ -3,9 +3,9 @@
 # CSSセレクターの記述のまとめ
 # 各動画サイトごとにCSSセレクターを用意
 #
-class Selector
+module Selector
 
-  def initialize(site_name)
+  def setup_selector(site_name)
     if site_name.include?('hulu')
       def select_selector
         return @huluSelector = {

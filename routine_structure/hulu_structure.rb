@@ -4,30 +4,12 @@
 #
 class HuluStructure < BaseStructure
 
-  # attr_reader :crawl, :scrape, :driver, :selector, :movie_master
-
-  # def initialize(url, site_name)
-
-  #   @crawl = Crawl.new
-  #   @scrape = Scrape.new
-  #   # @db_task = SaveDBTask.new
-
-  #   @driver       = @crawl.initialize_driver
-  #   @selector     = @crawl.initialize_selector(site_name)
-  #   @movie_master = @scrape.movie_master
-  #   # @movie_master = @scrape.initialize_movie_master
-  #   # @db           = @db_task.initialize_data_base(site_name)
-
-  #   start(url, site_name)
-
-  # end
-
   def start(url, site_name)
 
     # カテゴリURLの取得
     category_url_arr = []
-    main_doc = crawl.open_url(url)
-    main_doc.css(selector.select_selector[:category_selector]).each do |element|
+    main_doc = open_url(url)
+    main_doc.css(select_selector[:category_selector]).each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.attr('href')
@@ -52,17 +34,17 @@ class HuluStructure < BaseStructure
 
         # [DONE]サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）
         puts "サブカテゴリにアクセスする（[もっと見る]ボタンを新規タブで開いて動画一覧のURLを取得する）"
-        # @crawl.send_key_new_tab(button_element)
+        # send_key_new_tab(button_element)
         button_element.send_keys(:command, :enter)
         sleep 3
 
         puts "　新規タブにハンドルを移す"
-        contents_url = @crawl.change_current_window(driver, button_element)
+        contents_url = change_current_window(driver, button_element)
 
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
         unless contents_url.include?("tiles") then
           puts "動画コンテンツが無い"
-          @crawl.close_new_window(driver, remenber_current_window_handle)
+          close_new_window(driver, remenber_current_window_handle)
           next
         end
 
@@ -71,11 +53,11 @@ class HuluStructure < BaseStructure
         # 動画一覧を取得する
         sleep 5
 #flatba^ 201712005 細かい情報取得のために一旦コメントアウト
-      # crawl.infinit_scroll(driver, 3)
+      # infinit_scroll(driver, 3)
 #flatba$
         puts "動画一覧を取得する"
         contents_url_arr = []
-        content_elements = driver.find_elements(:css, selector.select_selector[:content_click])
+        content_elements = driver.find_elements(:css, select_selector[:content_click])
         content_elements.each do |element|
           if element.attribute('href').empty?
             next
@@ -96,11 +78,11 @@ class HuluStructure < BaseStructure
           # puts "現在のタブ情報を保持する"
           # remenber_current_window_handle = driver.window_handles.last
 
-          crawl.open_new_tab_then_move_handle(driver)
+          open_new_tab_then_move_handle(driver)
           driver.get(content_url)
 
           puts "映画コンテンツ情報を取得する"
-          content_doc = crawl.open_url(content_url)
+          content_doc = open_url(content_url)
 
           puts movie_master_contents = @scrape.create_movie_master_contents(selector, content_doc, @movie_master)
           puts genre_list = @scrape.create_genre_list(selector, content_doc)
@@ -125,7 +107,7 @@ class HuluStructure < BaseStructure
           # db_task.save_movie_cast(@db, movie_id, cast_id_list)
 
           # 新規タブを閉じて元タブにハンドルを戻す
-          crawl.close_new_window(driver, remenber_current_window)
+          close_new_window(driver, remenber_current_window_handle)
           sleep 1
 
         end
@@ -134,7 +116,7 @@ class HuluStructure < BaseStructure
 
     end
 
-    # @crawl.close(driver, @db)
+    # close(driver, @db)
 
   end
 
@@ -143,7 +125,7 @@ class HuluStructure < BaseStructure
       $browser.close
     rescue => e
       print e.message + "\n"
-      # @crawl.close(driver, @db)
+      # close(driver, @db)
     end
   end
 
