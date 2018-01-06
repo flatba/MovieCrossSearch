@@ -113,10 +113,10 @@ end
 #
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-url = "AMAZON_PRIME_URL"
+base_url = "AMAZON_PRIME_URL"
 
 # クローラーのインスタンス化
-entry = EntryCrawl.new(ENV[url])
+entry = EntryCrawl.new(ENV[base_url])
 
 # サイトのクロール可否のチェック
 entry.check_robot(entry.base_url)
