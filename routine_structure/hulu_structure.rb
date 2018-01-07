@@ -84,10 +84,10 @@ class HuluStructure < BaseStructure
           puts "映画コンテンツ情報を取得する"
           content_doc = open_url(content_url)
 
-          puts movie_master_contents = @scrape.create_movie_master_contents(selector, content_doc, @movie_master)
-          puts genre_list = @scrape.create_genre_list(selector, content_doc)
-          puts director_list = @scrape.create_director_list(selector, content_doc)
-          puts cast_list = @scrape.create_cast_list(selector, content_doc)
+          puts movie_master_contents = get_contents_struct(selector, content_doc)
+          puts genre_list = create_genre_list(selector, content_doc)
+          puts director_list = create_director_list(selector, content_doc)
+          puts cast_list = create_cast_list(selector, content_doc)
 
           # 映画ページのURLを取得する
 

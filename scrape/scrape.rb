@@ -6,14 +6,14 @@
 require './crawl/crawl.rb'
 
 
-class Scrape
+module Scrape
   include Selector
 
   attr_reader :movie_master
 
   def initialize
     #def initialize_movie_master
-      @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
+      # @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
     #end
   end
 
@@ -23,14 +23,14 @@ class Scrape
     db.create_contents_DB(contents)
   end
 
-  # 情報を取得してcontents（構造体）に入れて返す
-  # データが存在しない場合は処理を飛ばす
-  def create_movie_master_contents(selector, doc, contents)
+  # 情報を取得して構造体として返す
+  def get_contents_struct(selector, doc)
     # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
+    contents_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
 
     # [DONE]トップ画像
     unless check_contents_item(doc.css(select_selector[:thumbnail]))
-      # contents.thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
+      # thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
       thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
     else
       thumbnail = ""
@@ -38,7 +38,7 @@ class Scrape
 
     # [DONE]映画タイトル
     unless check_contents_item(doc.css(select_selector[:title]).text)
-      # contents.title = doc.css(select_selector[:title]).text
+      # title = doc.css(select_selector[:title]).text
       title = doc.css(select_selector[:title]).text
     else
       title = ""
@@ -46,7 +46,7 @@ class Scrape
 
     # 原題
     # unless check_contents_item(doc.css(select_selector[:original_title]))
-    #   puts contents.original_title = doc.css(select_selector[:original_title])
+    #   puts original_title = doc.css(select_selector[:original_title])
     # end
     original_title = ""
 
@@ -54,7 +54,7 @@ class Scrape
     unless check_contents_item(doc.css(select_selector[:release_year]).text)
       release_year_tmp = doc.css(select_selector[:release_year]).text
       tail_num = release_year_tmp.rindex('年')
-      # puts contents.release_year = release_year_tmp[tail_num-4..tail_num-1]
+      # puts release_year = release_year_tmp[tail_num-4..tail_num-1]
       release_year = release_year_tmp[tail_num-4..tail_num-1]
     else
       release_year = ""
@@ -65,7 +65,7 @@ class Scrape
     unless check_contents_item(doc.css(select_selector[:running_time]).text)
       running_time_tmp = doc.css(select_selector[:running_time]).text
       tail_num = running_time_tmp.rindex('分')
-      # puts contents.running_time = running_time_tmp[tail_num-3..tail_num].strip
+      # puts running_time = running_time_tmp[tail_num-3..tail_num].strip
       running_time = running_time_tmp[tail_num-3..tail_num].strip
     else
       running_time = ""
@@ -73,22 +73,13 @@ class Scrape
 
     # あらすじ
     unless check_contents_item(doc.css(select_selector[:summary]))
-      # contents.summary = doc.css(select_selector[:summary]).text
+      # summary = doc.css(select_selector[:summary]).text
       summary = doc.css(select_selector[:summary]).text
     else
       summary = ""
     end
 
-    # 例外処理
-    # rescue StandardError
-    #   puts contents
-    #   puts driver.current_url + "内で要素がなかったかも"
-    #   driver.navigate().back()
-    # end
-
-    contents = contents.new(thumbnail, title, original_title, release_year, running_time, summary)
-
-    # sleep 1
+    contents = contents_master.new(thumbnail, title, original_title, release_year, running_time, summary)
 
     return contents
 
