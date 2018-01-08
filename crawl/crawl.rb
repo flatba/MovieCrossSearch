@@ -62,20 +62,23 @@ module Crawl
     # db.close_DB_task # データベースの編集終了
   end
 
-  # 新規タブを開いてハンドルを新規タブに移す
+  # 新規タブを開いてハンドルを新規タブに移し、もとページのハンドルを返す
   def open_new_tab_then_move_handle(driver)
+    current_window_handle = driver.window_handles.last
     driver.execute_script("window.open()")
-    new_window = driver.window_handles.last
-    driver.switch_to.window(new_window)
+    new_window_handle = driver.window_handles.last
+    driver.switch_to.window(new_window_handle)
+    return current_window_handle
   end
 
   # 新規タブを開いてハンドルを新規タブに移し、受け取ったURLを新規タブで開く
-  def open_new_tab(driver, url)
-    driver.execute_script("window.open()")
-    new_window = driver.window_handles.last
-    driver.switch_to.window(new_window)
-    driver.get(url)
-  end
+  # 使っていない
+  # def open_new_tab(driver, url)
+  #   driver.execute_script("window.open()")
+  #   new_window = driver.window_handles.last
+  #   driver.switch_to.window(new_window)
+  #   driver.get(url)
+  # end
 
   # 疑似キーボード操作で新規タブを開く
   def send_key_new_tab(element)
@@ -108,11 +111,11 @@ module Crawl
   end
 
   # ウィンドウを閉じる
-  def close_new_window(driver, window)
+  def close_new_window(driver, handle)
     puts "新規タブを閉じる"
     driver.close
     puts "　元タブにハンドルを戻す"
-    driver.switch_to.window(window)
+    driver.switch_to.window(handle)
   end
 
   # bodyの高さを取得する（動的に変動する高さの取得に使用）

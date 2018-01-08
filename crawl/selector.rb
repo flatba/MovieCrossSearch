@@ -45,6 +45,9 @@ module Selector
     elsif site_name.include?('amazon_prime')
       def select_selector
         return @amazonPrimeSelector = {
+
+
+
           :thumbnail => '',
           :title => '',
           :original_title => '',
