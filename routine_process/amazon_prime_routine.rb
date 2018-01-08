@@ -41,7 +41,7 @@ class AmazonPrimeRoutine < BaseRoutine
       # ここで情報取得
       save_contents()
 
-      close_new_window(driver, current_window_handle)
+      close_new_tab(driver, current_window_handle)
       sleep 1
     end
   end
@@ -63,7 +63,7 @@ class AmazonPrimeRoutine < BaseRoutine
     end
   end
 
-  # 処理の開始をしてくれる
+
   def start(url, site_name)
     super
 
