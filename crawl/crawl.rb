@@ -31,7 +31,6 @@ module Crawl
 
   def login(url, driver, selector, id, pw)
     # 画面を開いて情報をセットしてログインする
-    driver.get(url)
     driver.find_element(:name, 'email').send_keys id
     driver.find_element(:name, 'password').send_keys pw
     driver.find_element(:xpath, select_selector[:login]).click

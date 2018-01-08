@@ -6,12 +6,10 @@
 class AmazonRoutine < BaseRoutine
 
   def start(url, site_name)
+    super
 
     # これのほうが速いかも
     # https://www.amazon.co.jp/gp/search/ref=sr_ex_n_1?rh=n%3A2351649051%2Cp_n_format_browse-bin%3A2792332051&bbn=2351649051&ie=UTF8&qid=1515052675
-
-    # トップページを開く
-    driver.get(url)
 
     # TODO(flatba): カテゴリURLの取得
     category_url_arr = []

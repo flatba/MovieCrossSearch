@@ -4,12 +4,11 @@ require 'open-uri'
 require 'nokogiri'
 require 'robotex'
 require "selenium-webdriver"
-# require 'sqlite3'
 require "date"
 require 'dotenv'
+# require 'sqlite3'
 
 # Import File
-
 # require './database/database.rb'
 # require './database/save_db_task.rb'
 
@@ -57,6 +56,7 @@ class EntryCrawl
       @site_name ='netflix'
       NetflixRoutine.new(url, @site_name)
 
+# flatba^ 2017/01/08 一つにまとめられそうなので、一旦コメントアウトする
     # elsif url.include?('Prime-Video')
     #   @site_name = 'amazon_prime'
     #   AmazonPrimeRoutine.new(url, @site_name)
@@ -64,10 +64,10 @@ class EntryCrawl
     # elsif url.include?('Amazon')
     #   @site_name = 'amazon_video'
     #   AmazonVideoRoutine.new(url, @site_name)
-
     elsif url.include?('amazon')
       @site_name = 'amazon_prime'
       AmazonPrimeRoutine.new(url, @site_name)
+# flatba$
 
     elsif url.include?('gyao')
       @site_name = 'gyao'
@@ -98,7 +98,7 @@ class EntryCrawl
       MubiRoutine.new(url, @site_name)
 
     else
-      puts "URLエラー"
+      puts "URL is Unknown..."
 
     end
 
@@ -109,11 +109,11 @@ end
 
 
 #
-# main
+# main routine
 #
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-base_url = "HULU_URL"
+base_url = "AMAZON_PRIME_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[base_url])

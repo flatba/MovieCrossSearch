@@ -5,9 +5,7 @@
 class GyaoRoutine < BaseRoutine
 
  def start(url, site_name)
-
-    puts "open top page"
-    driver.get(url)
+    super
 
     # カテゴリURLを取得
     category_url_arr = []

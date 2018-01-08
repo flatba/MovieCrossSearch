@@ -5,9 +5,7 @@
 class MubiRoutine < BaseRoutine
 
   def start(url, site_name)
-
-    # トップページを開く
-    driver.get(url)
+    super
 
     # TODO(flatba): カテゴリURLの取得
     category_url_arr = []

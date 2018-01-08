@@ -5,9 +5,7 @@
 class AappleiTunesRoutine < BaseRoutine
 
   def start(url, site_name)
-
-    # トップページを開く
-    driver.get(url)
+    super
 
     # カテゴリURLを取得
     category_url_arr = []

@@ -4,26 +4,46 @@
 #
 class AmazonPrimeRoutine < BaseRoutine
 
+  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
+
+  # 開いているページの全てのコンテンツのURLを配列にして返してくれる
+  def get_content_url_list
+    content_url_arr = []
+    page_contents_list = driver.find_element(:css, '#s-results-list-atf').find_elements(:class, 's-access-detail-page')
+    page_contents_list.each do |content_url|
+      content_url_arr << content_url.attribute('href')
+    end
+    return content_url_arr
+  end
+
+  # ページ番号（String）を渡すと次のページのURLの文字列を返してくれる
+  def get_next_page_url(page_num)
+    url = driver.find_element(:css, '#pagn > span:nth-child(3) > a').attribute('href')
+    url_head = url[0..url.index('pg_')+2]
+    url_middle = url[url.index('pg_')+4..url.index('page')+4]
+    url_tail = url[url.index('page=')+6..url.length]
+    page_url = url_head + page_num + url_middle + page_num + url_tail
+    return page_url
+  end
+
+  # 処理の開始をしてくれる
   def start(url, site_name)
+    super
 
-    driver.get(url)
-
-    driver.get("https://www.amazon.co.jp/s/ref=sr_rot_p_n_ways_to_watch_0?fst=as%3Aoff&rh=n%3A2351649051%2Cp_n_ways_to_watch%3A3746328051&bbn=2351649051&ie=UTF8&qid=1515058940&rnid=3746327051")
-    # プライム会員特典 映画リスト
+    # プライム会員特典リストURLを取得して開く
     prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
     driver.get(prime_menber_video_list_url)
 
-    result_url_arr = []
-    driver.find_element(:css, '#s-results-list-atf').find_elements(:tag_name, 'a').each do |result_url|
-      result_url_arr << result_url.attribute('href')
-    end
-    puts result_url_arr
-    puts result_url_arr.size
-    # 不要なURLも取得しているので条件を狭める必要あり。
+    content_url_arr = []
+    content_url_arr = get_content_url_list()
+
+    next_page_url = get_next_page_url(page_num)
 
 
 
-    # レンタル・購入 映画リスト
+    # -----------------------------------------------------
+
+    # レンタル・購入リストURLを取得して開く
     rental_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(3) > span > div').find_element(:tag_name, 'a').attribute('href')
     driver.get(rental_video_list_url)
 

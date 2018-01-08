@@ -7,14 +7,15 @@ class NetflixRoutine < BaseRoutine
   # 元ページのウィンドウ情報（ハンドル）を返して新規タブを開く
   def get_current_handle_then_open_new_tab(driver)
       remenber_current_window_handle = driver.window_handles.last
-      crawl.open_new_tab_then_move_handle(driver)
+      open_new_tab_then_move_handle(driver)
       return remenber_current_window_handle
   end
 
   def start(url, site_name)
+    super
 
     # ログインしてトップページを開く
-    crawl.login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
+    login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
 
     # トップページにアクセスしてカテゴリURLを取得する
     puts "カテゴリ一覧を取得する"
@@ -73,11 +74,11 @@ class NetflixRoutine < BaseRoutine
       # TODO(flatba) 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
       # スクロールで読み込めるコンテンツがある場合スクロールする
-      # crawl.infinit_scroll(driver, 3) # 1ページスクロールするごとに sleep 3 させる
+      # infinit_scroll(driver, 3) # 1ページスクロールするごとに sleep 3 させる
 
       # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
 
-      crawl.close_new_window(driver, remenber_current_window_handle)
+      close_new_window(driver, remenber_current_window_handle)
       sleep 1
 
     end
@@ -106,7 +107,7 @@ class NetflixRoutine < BaseRoutine
       $browser.close
     rescue => e
       print e.message + "\n"
-      # @crawl.close(@hulu_driver, @db)
+      # close(@hulu_driver, @db)
     end
   end
 

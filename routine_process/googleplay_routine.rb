@@ -5,9 +5,7 @@
 class GooglePlayRoutine < BaseRoutine
 
   def start(url, site_name)
-
-    # トップページを開く
-    driver.get(url)
+    super
 
     # jsを動作させないと情報を取得できなさそうなのでクリックしておく
     driver.find_element(:css, '#action-dropdown-parent-ジャンル').click

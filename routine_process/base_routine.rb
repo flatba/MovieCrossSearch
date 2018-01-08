@@ -10,27 +10,31 @@ class BaseRoutine
   include Crawl
   include Scrape
 
-  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
+  attr_accessor :crawl, :scrape, :driver, :selector, :movie_master
 
   def initialize(url, site_name)
-
-    # @crawl  = Crawl.new
-    # @scrape = Scrape.new
-    # @db_task = SaveDBTask.new
-
-    @driver        = initialize_driver
+    @driver        = initialize_driver()
     @selector      = initialize_selector(site_name)
-    @movie_master  = movie_master
+    @movie_master  = movie_master()
+    # @db_task = SaveDBTask.new
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
-
     start(url, site_name)
-
   end
 
   # サブクラスで必ず実装しておいて欲しい。
   def start(url, site_name)
-    raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+    # envファイルで指定している読み込み開始のトップページを開く
+    # 各継承先でsuperで呼び出して実行する
+    driver.get(url)
+  end
+
+  def get_category_list()
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
+  def get_content_item_list()
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
 end
