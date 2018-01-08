@@ -89,54 +89,6 @@ class AmazonPrimeRoutine < BaseRoutine
     last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
     page_crawler(base_page_url, last_page_num)
 
-
-# flatba^ 2017/01/06 取得方法変更のため一旦コメントアウト
-  #   # トップページを開く
-  #   driver.get(url)
-
-  #   # メインページにアクセスしてパースデータを取得する
-  #   category_url_arr = []
-  #   main_doc = crawl.open_url(url)
-  #   main_doc.css('#nav-subnav > a.nav-a').each do |element|
-  #     category_url_arr << 'https://www.amazon.co.jp' + element.attribute('href')
-  #   end
-  #   # puts category_url_arr
-
-  #   # ↑カテゴリーURLの取得まで完了↑
-
-  #   # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
-  #   contents_url_arr = []
-  #   category_url_arr.each do |category_url|
-
-  #     # # 新規タブを開く
-  #     # crawl.open_new_tab_then_move_handle(driver)
-  #     # # 新規タブでcategory_urlを開く
-  #     # driver.get(category_url)
-  #     # # ページ末尾までスクロールを済ませておく
-  #     # crawl.infinit_scroll(driver, 3)
-  #     # # 動画一覧URLを取得する
-  #     # contents = driver.find_element(:css, '#content').find_elements(:tag_name, 'a')
-  #     # contents.each do |content|
-  #     #   puts content.text
-  #     #   contents_url_arr << content.attribute('href')
-  #     # end
-  #     # puts contents_url_arr
-
-  #     # 方法１
-  #     # 全てのコンテンツを取得しようとしていたが、間違いで、全て見るのリンクだけ取得すればよかったのでは？
-  #     # そうすれば、動画一覧ページに飛ぶので、そこからまたページネーションで次ページ...って感じで情報どんどん取得できたのでは？
-  #     # というかカテゴリ分けされているトップページからクロールする必要はあるのか？
-
-  #     # 新規タブを開く
-
-  #     # 動画コンテンツを開く
-
-  #     # 情報を取得する
-
-  #     # 取得したらタブを閉じる
-
-  #   end
-# flatba$
   end
 
 end
