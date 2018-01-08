@@ -50,7 +50,7 @@ class AmazonPrimeRoutine < BaseRoutine
     # TODO(flatba): 動画情報を取得する
   end
 
-  #
+  # ページネーションのクロール
   def page_crawler(base_page_url, last_page_num)
     for page_num in 1..last_page_num do
       next_page_url = make_next_page_url(base_page_url, page_num.to_s)
@@ -90,5 +90,4 @@ class AmazonPrimeRoutine < BaseRoutine
     page_crawler(base_page_url, last_page_num)
 
   end
-
 end
