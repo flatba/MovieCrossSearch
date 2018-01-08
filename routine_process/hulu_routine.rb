@@ -2,7 +2,7 @@
 #
 # Hulu
 #
-class HuluStructure < BaseStructure
+class HuluRoutine < BaseRoutine
 
   def start(url, site_name)
 

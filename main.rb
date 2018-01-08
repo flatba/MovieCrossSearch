@@ -9,22 +9,22 @@ require "date"
 require 'dotenv'
 
 # Import File
-require './scrape/scrape.rb'
+
 # require './database/database.rb'
 # require './database/save_db_task.rb'
 
-# Structure File
-require './routine_structure/base_structure.rb'
-require './routine_structure/hulu_structure.rb'
-require './routine_structure/netflix_structure.rb'
-require './routine_structure/amazon_prime_structure.rb'
-require './routine_structure/amazon_structure.rb'
-require './routine_structure/gayo_structure.rb'
-require './routine_structure/dtv_structure.rb'
-require './routine_structure/apple_itunes_structure.rb'
-require './routine_structure/microsoft_structure.rb'
-require './routine_structure/googleplay_structure.rb'
-require './routine_structure/mubi_structure.rb'
+# Routine File
+require './routine_process/base_routine.rb'
+require './routine_process/hulu_routine.rb'
+require './routine_process/netflix_routine.rb'
+require './routine_process/amazon_prime_routine.rb'
+require './routine_process/amazon_routine.rb'
+require './routine_process/gayo_routine.rb'
+require './routine_process/dtv_routine.rb'
+require './routine_process/apple_itunes_routine.rb'
+require './routine_process/microsoft_routine.rb'
+require './routine_process/googleplay_routine.rb'
+require './routine_process/mubi_routine.rb'
 
 
 class EntryCrawl
@@ -51,53 +51,53 @@ class EntryCrawl
   def detect_site_name_and_start_crawl(url)
     if url.include?('happyon')
       @site_name = 'hulu'
-      HuluStructure.new(url, @site_name)
+      HuluRoutine.new(url, @site_name)
 
     elsif url.include?('netflix')
       @site_name ='netflix'
-      NetflixStructure.new(url, @site_name)
+      NetflixRoutine.new(url, @site_name)
 
     # elsif url.include?('Prime-Video')
     #   @site_name = 'amazon_prime'
-    #   AmazonPrimeStructure.new(url, @site_name)
+    #   AmazonPrimeRoutine.new(url, @site_name)
 
     # elsif url.include?('Amazon')
     #   @site_name = 'amazon_video'
-    #   AmazonVideoStructure.new(url, @site_name)
+    #   AmazonVideoRoutine.new(url, @site_name)
 
     elsif url.include?('amazon')
       @site_name = 'amazon_prime'
-      AmazonPrimeStructure.new(url, @site_name)
+      AmazonPrimeRoutine.new(url, @site_name)
 
     elsif url.include?('gyao')
       @site_name = 'gyao'
-      GyaoStructure.new(url, @site_name)
+      GyaoRoutine.new(url, @site_name)
 
     elsif url.include?('dmkt')
       @site_name = 'dtv'
-      DTvStructure.new(url, @site_name)
+      DTvRoutine.new(url, @site_name)
 
     elsif url.include?('unext')
       @site_name = 'unext'
-      UNextStructure.new(url, @site_name)
+      UNextRoutine.new(url, @site_name)
 
     elsif url.include?('apple')
       @site_name = 'apple_itunes'
-      AappleiTunesStructure.new(url, @site_name)
+      AappleiTunesRoutine.new(url, @site_name)
 
     elsif url.include?('microsoft')
       @site_name = 'ms_video'
-      MicrosoftStructure.new(url, @site_name)
+      MicrosoftRoutine.new(url, @site_name)
 
     elsif url.include?('google')
       @site_name = 'googleplay'
-      GooglePlayStructure.new(url, @site_name)
+      GooglePlayRoutine.new(url, @site_name)
 
     elsif url.include?('mubi')
       @site_name = 'mubi'
-      MubiStructure.new(url, @site_name)
+      MubiRoutine.new(url, @site_name)
 
-    elsif
+    else
       puts "URLエラー"
 
     end

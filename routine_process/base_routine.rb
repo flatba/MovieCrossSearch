@@ -2,7 +2,11 @@
 #
 # 全てのクローラーの親となるルーチン
 #
-class BaseStructure
+require './crawl/crawl.rb'
+require './crawl/selector.rb'
+require './scrape/scrape.rb'
+
+class BaseRoutine
   include Crawl
   include Scrape
 

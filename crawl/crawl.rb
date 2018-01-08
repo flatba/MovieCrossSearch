@@ -23,16 +23,13 @@ module Crawl
     # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
     return driver
-
   end
 
   def initialize_selector(site_name)
-    # @selector = Selector.new(site_name)
     setup_selector(site_name)
   end
 
   def login(url, driver, selector, id, pw)
-
     # 画面を開いて情報をセットしてログインする
     driver.get(url)
     driver.find_element(:name, 'email').send_keys id
@@ -43,7 +40,6 @@ module Crawl
       # ログイン後に視聴ユーザーを選択する
       driver.find_element(:xpath, select_selector[:select_user]).click
     end
-
   end
 
   # URLからパースデータを取得する
@@ -91,25 +87,25 @@ module Crawl
 
   # ウィンドウのハンドルを後から開いたタブに移す
   def change_current_window(driver, element)
-      # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
-      # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
-      # puts "新規タブでリンクを開く"
-      # element.send_keys(:command, :enter)
+    # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
+    # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
+    # puts "新規タブでリンクを開く"
+    # element.send_keys(:command, :enter)
 
-      # 新規で開いたタブのハンドルを取得
-      puts "新規で開いたタブのハンドルを取得"
-      new_window = driver.window_handles.last
+    # 新規で開いたタブのハンドルを取得
+    puts "新規で開いたタブのハンドルを取得"
+    new_window = driver.window_handles.last
 
-      # 新規タブにハンドルを移す
-      puts "新規タブにハンドルを移す"
-      driver.switch_to.window(new_window)
-      driver.window_handle
+    # 新規タブにハンドルを移す
+    puts "新規タブにハンドルを移す"
+    driver.switch_to.window(new_window)
+    driver.window_handle
 
-      # 新規タブのURLを取得する
-      puts "新規タブのURLを取得する"
-      content_url = driver.current_url
+    # 新規タブのURLを取得する
+    puts "新規タブのURLを取得する"
+    content_url = driver.current_url
 
-      return content_url
+    return content_url
   end
 
   # ウィンドウを閉じる

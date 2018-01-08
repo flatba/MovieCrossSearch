@@ -1,8 +1,8 @@
 # coding: utf-8
 #
-#  GooglePlay
+# DTV
 #
-class GooglePlayStructure < BaseStructure
+class DTvRoutine < BaseRoutine
 
   # attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
@@ -12,13 +12,13 @@ class GooglePlayStructure < BaseStructure
   #   @scrape = Scrape.new
   #   # @db_task = SaveDBTask.new
 
-  #   @driver       = @crawl.initialize_driver
-  #   @selector     = @crawl.initialize_selector(site_name)
-  #   @movie_master = @scrape.movie_master
+  #   @driver        = @crawl.initialize_driver
+  #   @selector      = @crawl.initialize_selector(site_name)
+  #   @movie_master  = @scrape.movie_master
   #   # @movie_master = @scrape.initialize_movie_master # DB処理
   #   # @db           = @db_task.initialize_data_base(site_name)
 
-  #  start(url, site_name)
+  #   start(url, site_name)
 
   # end
 
@@ -27,16 +27,17 @@ class GooglePlayStructure < BaseStructure
     # トップページを開く
     driver.get(url)
 
-    # jsを動作させないと情報を取得できなさそうなのでクリックしておく
-    driver.find_element(:css, '#action-dropdown-parent-ジャンル').click
-
-    # カテゴリURLの取得
+    # カテゴリURLを取得
     category_url_arr = []
-    category = driver.find_element(:css, '#action-dropdown-children-ジャンル > div > ul').find_elements(:tag_name, 'a')
-    category.each do |element|
-      category_url_arr << element.attribute('href')
+    category = driver.find_elements(:class, 'sitemap_content')
+    # ジャンル別／50音順／作品種別の内、ジャンル別のみ取得するので[0]指定
+    category[0].find_element(:class => 'sitemap_list').find_elements(:tag_name, 'a').each do |element|
+      category_url = element.attribute('href')
+      category_url_arr << category_url
     end
     puts category_url_arr
+
+    # ↑カテゴリーURLの取得まで完了↑
 
     # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|
@@ -54,6 +55,7 @@ class GooglePlayStructure < BaseStructure
       # 取得したらタブを閉じる
 
     end
+
 
   end
 

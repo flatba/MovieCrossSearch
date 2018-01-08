@@ -9,14 +9,6 @@ require './crawl/crawl.rb'
 module Scrape
   include Selector
 
-  attr_reader :movie_master
-
-  def initialize
-    #def initialize_movie_master
-      # @movie_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
-    #end
-  end
-
   # 情報を保存する
   def save_contents(db, contents)
     puts "情報を保存する"
@@ -119,7 +111,6 @@ module Scrape
     end
   end
 
-
   # # 情報を取得する
   # def get_contents_all(content_url, selector)
   #   puts "情報を取得する"
@@ -128,7 +119,6 @@ module Scrape
   #   # contents = new_contents(selector, content_doc)
   #   return contents
   # end
-
 
   private
   # 情報取得の項目があるかどうかのチェック（new_contentsメソッドで使用）

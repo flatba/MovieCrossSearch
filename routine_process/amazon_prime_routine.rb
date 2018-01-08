@@ -1,13 +1,14 @@
 # coding: utf-8
 #
-# AmazonPrime
+# Amazon Prime
 #
-class AmazonPrimeStructure < BaseStructure
+class AmazonPrimeRoutine < BaseRoutine
 
   def start(url, site_name)
 
     driver.get(url)
 
+    driver.get("https://www.amazon.co.jp/s/ref=sr_rot_p_n_ways_to_watch_0?fst=as%3Aoff&rh=n%3A2351649051%2Cp_n_ways_to_watch%3A3746328051&bbn=2351649051&ie=UTF8&qid=1515058940&rnid=3746327051")
     # プライム会員特典 映画リスト
     prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
     driver.get(prime_menber_video_list_url)
@@ -27,7 +28,7 @@ class AmazonPrimeStructure < BaseStructure
     driver.get(rental_video_list_url)
 
 
-
+# flatba^ 2017/01/06 取得方法変更のため一旦コメントアウト
   #   # トップページを開く
   #   driver.get(url)
 
@@ -73,7 +74,7 @@ class AmazonPrimeStructure < BaseStructure
   #     # 取得したらタブを閉じる
 
   #   end
-
+# flatba$
   end
 
 end
