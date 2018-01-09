@@ -113,10 +113,9 @@ module Crawl
 
   # タブを閉じる
   def close_new_tab(driver, handle)
-    puts "新規タブを閉じる"
     driver.close
-    puts "　元タブにハンドルを戻す"
     driver.switch_to.window(handle)
+    puts "タブを閉じた"
   end
 
   # bodyの高さを取得する（動的に変動する高さの取得に使用）

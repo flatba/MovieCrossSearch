@@ -93,25 +93,34 @@ class NetflixRoutine < BaseRoutine
         # 各動画コンテンツのidを取得して、コンテンツページを開く
         contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
         contents_list.each do |content|
+
+          no_crawl_contents = ["Netflixで人気の作品", "視聴中コンテンツ", "マイリスト", "話題の作品", "あなたにイチオシ", "こちらもオススメ"]
+          if no_crawl_contents.include?(content.text)
+            break
+          end
+
+          # コンテンツURLの取得
           content_link = content.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
           content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
           content_url = "https://www.netflix.com/title/" + content_id
 
-          # 各動画コンテンツにアクセスできるようになったけどなんかのたいみんぐで落ちる
-
+          # URLを新規タブで開く
           remenber_genre_window_handle = open_new_tab_then_move_handle(driver)
           driver.get(content_url)
-          close_new_tab(driver, remenber_genre_window_handle)
 
+          # TODO(flatba): [調査]各動画コンテンツにアクセスできるようになったけどなんかのタイミングで落ちる
+
+          # 情報を取得する
           save_contents()
+
+          # タブを閉じる
+          close_new_tab(driver, remenber_genre_window_handle)
           sleep 1
         end
-
 
         # ジャンルページに入ったら、row-header-titleを取得する
         # header_titleとして保存しつつ（これはいらないかも。）、各映画情報を取得していく
         # driver.find_element(:css, '#appMountPoint > div > div > div.mainView > div > div.aro-genre > div').find_elements(:class, 'lolomoRow')
-
 
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
         close_new_tab(driver, remenber_category_window_handle)

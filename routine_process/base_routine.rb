@@ -33,6 +33,10 @@ class BaseRoutine
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
+  def get_genre_list()
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
   def get_content_item_list()
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
