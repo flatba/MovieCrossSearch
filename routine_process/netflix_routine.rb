@@ -64,19 +64,10 @@ class NetflixRoutine < BaseRoutine
     @genre_id_list = [] # クロール中、ジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
     category_url_arr.each do |category_url|
 
-<<<<<<< HEAD
-      # カテゴリではなくホームなので飛ばす
-      # if category_url === 'https://www.netflix.com/browse'
-      #   next
-      # end
-      category_url === 'https://www.netflix.com/browse' ? next : puts 'カテゴリURLを開く'
-
-=======
       # カテゴリではなくトップページならば飛ばす
       if category_url === 'https://www.netflix.com/browse'
         next
       end
->>>>>>> develop
 
       remenber_current_window_handle = open_new_tab_then_move_handle(driver)
       driver.get(category_url)
