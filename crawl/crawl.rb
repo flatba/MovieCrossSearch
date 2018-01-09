@@ -89,7 +89,8 @@ module Crawl
   end
 
   # ウィンドウのハンドルを後から開いたタブに移す
-  def change_current_tab(driver, element)
+  # def change_current_tab(driver, element)
+  def change_current_tab(driver)
     # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
     # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
     # puts "新規タブでリンクを開く"
@@ -105,10 +106,10 @@ module Crawl
     driver.window_handle
 
     # 新規タブのURLを取得する
-    puts "新規タブのURLを取得する"
-    content_url = driver.current_url
+    # puts "新規タブのURLを取得する"
+    # content_url = driver.current_url
 
-    return content_url
+    # return content_url
   end
 
   # タブを閉じる
