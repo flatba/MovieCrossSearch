@@ -29,6 +29,7 @@ module Crawl
     setup_selector(site_name)
   end
 
+  # ログインしてトップページを開く
   def login(url, driver, selector, id, pw)
     # 画面を開いて情報をセットしてログインする
     driver.find_element(:name, 'email').send_keys id
@@ -88,7 +89,7 @@ module Crawl
   end
 
   # ウィンドウのハンドルを後から開いたタブに移す
-  def change_current_window(driver, element)
+  def change_current_tab(driver, element)
     # elementを新規タブで開く（環境によりkeyが異なるみたいなのでサーバーではどうなる？）
     # mac chromeの場合、新規タブのショートカットキーがcommand + クリック
     # puts "新規タブでリンクを開く"
@@ -110,8 +111,8 @@ module Crawl
     return content_url
   end
 
-  # ウィンドウを閉じる
-  def close_new_window(driver, handle)
+  # タブを閉じる
+  def close_new_tab(driver, handle)
     puts "新規タブを閉じる"
     driver.close
     puts "　元タブにハンドルを戻す"

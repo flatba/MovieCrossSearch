@@ -4,21 +4,10 @@
 #
 class NetflixRoutine < BaseRoutine
 
-  # 元ページのウィンドウ情報（ハンドル）を返して新規タブを開く
-  def get_current_handle_then_open_new_tab(driver)
-      remenber_current_window_handle = driver.window_handles.last
-      open_new_tab_then_move_handle(driver)
-      return remenber_current_window_handle
-  end
+  attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
-  def start(url, site_name)
-    super
-
-    # ログインしてトップページを開く
-    login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
-
-    # トップページにアクセスしてカテゴリURLを取得する
-    puts "カテゴリ一覧を取得する"
+  # カテゴリURLを取得する
+  def get_category_url()
     category_url_arr = []
     category = driver.find_element(:class, 'tabbed-primary-navigation')
     category.find_elements(:class => 'navigation-tab').each do |element|
@@ -26,83 +15,130 @@ class NetflixRoutine < BaseRoutine
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
     end
-    puts category_url_arr
+    return category_url_arr
+  end
 
-    # ----------------↑カテゴリーURLの取得まで完了↑-------------
+  # ジャンルURLを取得する
+  def get_genre_url
+    genre_url_arr = []
+    genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
+    genre_arr.each do |genre|
+      puts genre.text
+      genre_url_arr << genre.attribute('href')
+    end
+    return genre_url_arr
+  end
 
-    # カテゴリを開く
+  # URLからジャンルIDを切り出す
+  def get_genre_id(genre_url)
+    return genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+  end
+
+  # 読み込もうとしているジャンルidが読み込み済でないかチェックする
+  # def check_duplicate_genre_id(genre_url)
+    # genre_id = get_genre_id(genre_url)
+    # if @genre_id_list.include?(genre_id)
+    #   true
+    # else
+    #   @genre_id_list << genre_id
+    # end
+  # end
+
+  def save_contents
+    # TODO(flatba): 動画情報を取得する
+    # ジャンルidが同じ場合は飛ばしても良い
+    # ただし、映画一本に複数のジャンルidが紐づくことは考慮する必要あり。
+  end
+
+
+  def start(url, site_name)
+    super
+
+    login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
+
+    category_url_arr = []
+    category_url_arr = get_category_url()
+
+    # カテゴリページを開く
     begin
+    @genre_id_list = [] # クロール中、ジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
     category_url_arr.each do |category_url|
 
+<<<<<<< HEAD
       # カテゴリではなくホームなので飛ばす
       # if category_url === 'https://www.netflix.com/browse'
       #   next
       # end
       category_url === 'https://www.netflix.com/browse' ? next : puts 'カテゴリURLを開く'
 
+=======
+      # カテゴリではなくトップページならば飛ばす
+      if category_url === 'https://www.netflix.com/browse'
+        next
+      end
+>>>>>>> develop
 
-      remenber_current_window_handle = get_current_handle_then_open_new_tab(driver)
+      remenber_current_window_handle = open_new_tab_then_move_handle(driver)
       driver.get(category_url)
 
-      # ジャンルをクリックする
+      # ジャンルをクリックする（クリックしておかないと値を取得できない）
       driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div').click
 
-      # ジャンルURLの取得
-      genre_url_arr = []
-      genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
-      genre_arr.each do |genre|
-        puts genre.text
-        genre_url_arr << genre.attribute('href')
-      end
-      puts genre_url_arr
-
       # ジャンルページを開く
-      remenber_category_window_handle = get_current_handle_then_open_new_tab(driver)
+      # remenber_category_window_handle = open_new_tab_then_move_handle(driver)
+
+      genre_url_arr = get_genre_url()
       genre_url_arr.each do |genre_url|
 
+        # クロール中に一度でも読み込んだジャンルidは処理を飛ばす
+        genre_id = get_genre_id(genre_url)
+        if @genre_id_list.include?(genre_id)
+          next
+        end
+        @genre_id_list << genre_id
+        remenber_category_window_handle = open_new_tab_then_move_handle(driver)
         driver.get(genre_url)
 
-        # 各ジャンルの動画グループは階層が複雑だが、URIのidのかぶりがある。
-        # 別のジャンルに同じidの動画グループがあるので、一度回ったidは記憶しておく必要などして処理を回す必要あり。
-        # 基本は全てにアクセスするが、URIのidが同じだったら飛ばす。
-        # 時間はかかるが、確実と思う。
+        # 各動画コンテンツのidを取得して、コンテンツページを開く
+        contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
+        contents_list.each do |content|
+          content_link = content.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
+          content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
+          content_url = "https://www.netflix.com/title/" + content_id
 
-        sleep 1
+          # 各動画コンテンツにアクセスできるようになったけどなんかのたいみんぐで落ちる
+
+          remenber_genre_window_handle = open_new_tab_then_move_handle(driver)
+          driver.get(content_url)
+          close_new_tab(driver, remenber_genre_window_handle)
+
+          save_contents()
+          sleep 1
+        end
+
+
+        # ジャンルページに入ったら、row-header-titleを取得する
+        # header_titleとして保存しつつ（これはいらないかも。）、各映画情報を取得していく
+        # driver.find_element(:css, '#appMountPoint > div > div > div.mainView > div > div.aro-genre > div').find_elements(:class, 'lolomoRow')
+
+
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
-
+        close_new_tab(driver, remenber_category_window_handle)
+        sleep 1
       end
 
-      puts "a"
-      # TODO(flatba) 深いとこに入っていって動画のみの一覧ページまでアクセスする
+      # TODO(flatba): 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
       # スクロールで読み込めるコンテンツがある場合スクロールする
       # infinit_scroll(driver, 3) # 1ページスクロールするごとに sleep 3 させる
 
       # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
 
-      close_new_window(driver, remenber_current_window_handle)
+      close_new_tab(driver, remenber_current_window_handle)
       sleep 1
-
     end
 
-    # ここのクロールで重要なのが、おそらく重複してデータを取得してしまう事があると思う。
-    # ので、重複した場合に追加しない処理を入れないといけない。
-    # ただ、アクセスの負荷を検知されないか不安あり。
-
-    # ログイン後のトップページからの処理
-      # TV番組／映画／オリジナル作品のカテゴリのURLを取得する
-        # TV番組のジャンルを取得する
-          # 各ジャンルにアクセスする
-            # 見出しごとにアクセスして深い階層に入っていく
-            # [Netflixで人気の作品]は飛ばす？
-              #
-
-        # 映画のジャンルを取得する
-          # 各ジャンルにアクセスする
-            # [Netflixで人気の作品]は飛ばす？
-
-        # オリジナル作品
-          # 見出しごとにアクセスする
+    @genre_id_list.clear
 
     rescue RuntimeError => e
       print e.message

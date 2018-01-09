@@ -39,12 +39,12 @@ class HuluRoutine < BaseRoutine
         sleep 3
 
         puts "　新規タブにハンドルを移す"
-        contents_url = change_current_window(driver, button_element)
+        contents_url = change_current_tab(driver, button_element)
 
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
         unless contents_url.include?("tiles") then
           puts "動画コンテンツが無い"
-          close_new_window(driver, remenber_current_window_handle)
+          close_new_tab(driver, remenber_current_window_handle)
           next
         end
 
@@ -82,12 +82,11 @@ class HuluRoutine < BaseRoutine
           driver.get(content_url)
 
           puts "映画コンテンツ情報を取得する"
-          content_doc = open_url(content_url)
-
-          puts movie_master_contents = get_contents_struct(selector, content_doc)
-          puts genre_list = create_genre_list(selector, content_doc)
-          puts director_list = create_director_list(selector, content_doc)
-          puts cast_list = create_cast_list(selector, content_doc)
+          # content_doc = open_url(content_url)
+          # puts movie_master_contents = get_contents_struct(selector, content_doc)
+          # puts genre_list = create_genre_list(selector, content_doc)
+          # puts director_list = create_director_list(selector, content_doc)
+          # puts cast_list = create_cast_list(selector, content_doc)
 
           # 映画ページのURLを取得する
 
@@ -107,7 +106,7 @@ class HuluRoutine < BaseRoutine
           # db_task.save_movie_cast(@db, movie_id, cast_id_list)
 
           # 新規タブを閉じて元タブにハンドルを戻す
-          close_new_window(driver, remenber_current_window_handle)
+          close_new_tab(driver, remenber_current_window_handle)
           sleep 1
 
         end
