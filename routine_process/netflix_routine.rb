@@ -29,6 +29,28 @@ class NetflixRoutine < BaseRoutine
     return genre_url_arr
   end
 
+  # URLからジャンルIDを切り出す
+  def get_genre_id(genre_url)
+    return genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+  end
+
+  # 読み込もうとしているジャンルidが読み込み済でないかチェックする
+  # def check_duplicate_genre_id(genre_url)
+    # genre_id = get_genre_id(genre_url)
+    # if @genre_id_list.include?(genre_id)
+    #   true
+    # else
+    #   @genre_id_list << genre_id
+    # end
+  # end
+
+  def save_contents
+    # TODO(flatba): 動画情報を取得する
+    # ジャンルidが同じ場合は飛ばしても良い
+    # ただし、映画一本に複数のジャンルidが紐づくことは考慮する必要あり。
+  end
+
+
   def start(url, site_name)
     super
 
@@ -39,7 +61,7 @@ class NetflixRoutine < BaseRoutine
 
     # カテゴリページを開く
     begin
-    @genre_id_list = [] # 異なるカテゴリーでもidが重複した場合処理を飛ばす
+    @genre_id_list = [] # クロール中、ジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
     category_url_arr.each do |category_url|
 
       # カテゴリではなくトップページならば飛ばす
@@ -59,23 +81,41 @@ class NetflixRoutine < BaseRoutine
       genre_url_arr = get_genre_url()
       genre_url_arr.each do |genre_url|
 
-        # 一度でも読み込んだジャンルidは処理を飛ばす
-        genre_id = genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+        # クロール中に一度でも読み込んだジャンルidは処理を飛ばす
+        genre_id = get_genre_id(genre_url)
         if @genre_id_list.include?(genre_id)
-          puts "next"
           next
         end
         @genre_id_list << genre_id
-
+        remenber_category_window_handle = open_new_tab_then_move_handle(driver)
         driver.get(genre_url)
 
-        # 各ジャンルの動画グループは階層が複雑だが、URIのidのかぶりがある。
-        # 別のジャンルに同じidの動画グループがあるので、一度回ったidは記憶しておく必要などして処理を回す必要あり。
-        # 基本は全てにアクセスするが、URIのidが同じだったら飛ばす。
-        # 時間はかかるが、確実と思う。
+        # 各動画コンテンツのidを取得して、コンテンツページを開く
+        contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
+        contents_list.each do |content|
+          content_link = content.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
+          content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
+          content_url = "https://www.netflix.com/title/" + content_id
 
-        sleep 1
+          # 各動画コンテンツにアクセスできるようになったけどなんかのたいみんぐで落ちる
+
+          remenber_genre_window_handle = open_new_tab_then_move_handle(driver)
+          driver.get(content_url)
+          close_new_tab(driver, remenber_genre_window_handle)
+
+          save_contents()
+          sleep 1
+        end
+
+
+        # ジャンルページに入ったら、row-header-titleを取得する
+        # header_titleとして保存しつつ（これはいらないかも。）、各映画情報を取得していく
+        # driver.find_element(:css, '#appMountPoint > div > div > div.mainView > div > div.aro-genre > div').find_elements(:class, 'lolomoRow')
+
+
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
+        close_new_tab(driver, remenber_category_window_handle)
+        sleep 1
       end
 
       # TODO(flatba): 深いとこに入っていって動画のみの一覧ページまでアクセスする
