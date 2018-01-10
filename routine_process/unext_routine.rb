@@ -11,8 +11,10 @@ class UNextRoutine < BaseRoutine
     category_url_arr = []
     # ...
 
-    # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
+    # TODO(flatba): カテゴリにアクセスする
     category_url_arr.each do |category_url|
+
+      # TODO(flatba): 映画コンテンツページにアクセスする
 
       # 新規タブを開く
 

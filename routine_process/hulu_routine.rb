@@ -39,10 +39,14 @@ class HuluRoutine < BaseRoutine
         sleep 3
 
         puts "　新規タブにハンドルを移す"
-        contents_url = change_current_tab(driver, button_element)
+#y.hiraba^ 2018/01/09 リファクタリング中
+        # contents_url = change_current_tab(driver, button_element)
+        contents_url = change_current_tab(driver)
 
         # [DONE]クリックしてアクセスした先のリンクに動画情報がなかったら次のボタンに移る
-        unless contents_url.include?("tiles") then
+        # unless contents_url.include?("tiles") then
+        unless driver.current_url.include?("tiles") then
+#y.hiraba$
           puts "動画コンテンツが無い"
           close_new_tab(driver, remenber_current_window_handle)
           next
