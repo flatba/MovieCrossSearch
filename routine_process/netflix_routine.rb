@@ -50,7 +50,9 @@ class NetflixRoutine < BaseRoutine
     # ただし、映画一本に複数のジャンルidが紐づくことは考慮する必要あり。
   end
 
-
+  #
+  # main routine
+  #
   def start(url, site_name)
     super
 

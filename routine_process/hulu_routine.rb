@@ -63,7 +63,7 @@ class HuluRoutine < BaseRoutine
     end
   end
 
-  # 動画コンテンツが無いページへのアクセスをしたらタブを閉じる
+  # 動画コンテンツが無いページへのアクセスをしたら何もしないでタブを閉じる
   def check_having_contents_or_not(url, handle)
     unless url.include?("tiles") then
       close_new_tab(driver, handle)
@@ -72,7 +72,7 @@ class HuluRoutine < BaseRoutine
     return false
   end
 
-  def sub_category_routine(more_watch_buttons)
+  def crawl_sub_category_routine(more_watch_buttons)
     more_watch_buttons.each do |more_watch_button|
       remenber_current_window_handle = driver.window_handles.last
       more_watch_button.send_keys(:command, :enter) # 新規タブで開く
@@ -91,14 +91,19 @@ class HuluRoutine < BaseRoutine
     end
   end
 
+  #
+  # main routine
+  #
   def start(url, site_name)
     category_url_arr = []
     category_url_arr = get_category_list(url)
     begin
       category_url_arr.each do |category_url|
+        # カテゴリーページを開く
         driver.get(category_url)
+        # [もっと見る]ボタンを取得してルーチンに引き渡す
         more_watch_buttons = driver.find_elements(:class, 'vod-mod-button')
-        sub_category_routine(more_watch_buttons)
+        crawl_sub_category_routine(more_watch_buttons)
       end
       # close(driver, @db)
     rescue RuntimeError => e
