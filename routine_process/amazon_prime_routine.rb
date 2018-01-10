@@ -67,27 +67,47 @@ class AmazonPrimeRoutine < BaseRoutine
   def start(url, site_name)
     super
 
+
     #
     # プライム会員特典リストURLを取得して開く
     #
-    prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
-    driver.get(prime_menber_video_list_url)
+    begin
 
-    # 各ページの動画ページにアクセスする
-    base_page_url = get_next_page_url()
-    last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
-    page_crawler(base_page_url, last_page_num)
+      prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
+      driver.get(prime_menber_video_list_url)
+
+      # 各ページの動画ページにアクセスする
+      base_page_url = get_next_page_url()
+      last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
+      page_crawler(base_page_url, last_page_num)
+
+    rescue RuntimeError => e
+      print e.message
+      $browser.close
+    rescue => e
+      print e.message + "\n"
+    end
+
 
     #
     # レンタル・購入リストURLを取得して開く
     #
-    rental_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(3) > span > div').find_element(:tag_name, 'a').attribute('href')
-    driver.get(rental_video_list_url)
+    begin
 
-    # 各ページの動画ページにアクセスする
-    base_page_url = get_next_page_url()
-    last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
-    page_crawler(base_page_url, last_page_num)
+      rental_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(3) > span > div').find_element(:tag_name, 'a').attribute('href')
+      driver.get(rental_video_list_url)
 
+      # 各ページの動画ページにアクセスする
+      base_page_url = get_next_page_url()
+      last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
+      page_crawler(base_page_url, last_page_num)
+
+    rescue RuntimeError => e
+      print e.message
+      $browser.close
+    rescue => e
+      print e.message + "\n"
+    end
   end
+
 end

@@ -63,6 +63,7 @@ class NetflixRoutine < BaseRoutine
     # カテゴリURLを取得する
     category_url_arr = []
     category_url_arr = get_category_url()
+
     # カテゴリページを開く
     begin
     @genre_id_list = [] # クロール中にジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
@@ -95,8 +96,8 @@ class NetflixRoutine < BaseRoutine
 
         # 各動画コンテンツのidを取得して、コンテンツページを開く
         contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
-        contents_list.each do |content|
-
+        contents_list.each do |contents|
+          row_header_title = contents.find_element(:class, "row-header-title").text
           # ユーザーに依存するコンテンツは読み込ませない
           no_crawl_contents = [
             "Netflixで人気の作品",
@@ -106,18 +107,12 @@ class NetflixRoutine < BaseRoutine
             "あなたにイチオシ",
             "こちらもオススメ"
           ]
-          header_title = content.find_element(:class, "row-header-title").text
-          no_crawl_contents.each do |ng_genre|
-            if header_title.start_with?(ng_genre)
-              break
-            end
+          if no_crawl_contents.include?(row_header_title)
+            next
           end
-          p "header_title　" + header_title + "　"
-
-          puts content.text
-
+          puts contents.text
           # コンテンツURLの取得
-          content_link = content.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
+          content_link = contents.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
           content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
           content_url = "https://www.netflix.com/title/" + content_id
 
@@ -140,7 +135,7 @@ class NetflixRoutine < BaseRoutine
         # driver.find_element(:css, '#appMountPoint > div > div > div.mainView > div > div.aro-genre > div').find_elements(:class, 'lolomoRow')
 
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
-        close_new_tab(driver)
+        # close_new_tab(driver)
         sleep 1
       end
 

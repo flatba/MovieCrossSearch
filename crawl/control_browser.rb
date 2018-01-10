@@ -1,5 +1,13 @@
-module PageOperation
+# coding: utf-8
+#
+# ブラウザ操作全般
+#
+# require './crawl/selector.rb'
 
+module ControlBrowser
+  # include Selector
+
+  public
   # 新規タブを開いてハンドル（操作権）も新規タブに移動する
   def open_new_tab(driver)
     driver.execute_script("window.open()")

@@ -86,7 +86,7 @@ class HuluRoutine < BaseRoutine
       end
       sleep 5
 #flatba^ 201712005 検証のため一旦コメントアウト
-    # infinit_scroll(driver, 3)
+      # infinit_scroll(driver, 3)
 #flatba$
       contents_url_arr = []
       get_contents_list().empty? ? next : contents_url_arr = get_contents_list()
