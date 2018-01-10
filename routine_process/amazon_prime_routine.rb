@@ -35,13 +35,13 @@ class AmazonPrimeRoutine < BaseRoutine
   # コンテンツページを新規タブで開いて、各動画情報を取得する
   def get_contents_item(content_url_arr)
     content_url_arr.each do |content_url|
-      current_window_handle = open_new_tab_then_move_handle(driver)
+      open_new_tab(driver)
       driver.get(content_url)
 
       # ここで情報取得
       save_contents()
 
-      close_new_tab(driver, current_window_handle)
+      close_new_tab(driver)
       sleep 1
     end
   end

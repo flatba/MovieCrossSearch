@@ -54,11 +54,10 @@ class HuluRoutine < BaseRoutine
 
   def get_content_item(contents_url_arr, remenber_current_window_handle)
     contents_url_arr.each do |content_url|
-      # remenber_current_window_handle = driver.window_handles.last
-      open_new_tab_then_move_handle(driver)
+      open_new_tab(driver)
       driver.get(content_url)
       save_content_item(content_url)
-      close_new_tab(driver, remenber_current_window_handle)
+      close_new_tab(driver)
       sleep 1
     end
   end
@@ -66,7 +65,7 @@ class HuluRoutine < BaseRoutine
   # 動画コンテンツが無いページへのアクセスをしたら何もしないでタブを閉じる
   def check_having_contents_or_not(url, handle)
     unless url.include?("tiles") then
-      close_new_tab(driver, handle)
+      close_new_tab(driver)
       return true
     end
     return false
@@ -76,7 +75,12 @@ class HuluRoutine < BaseRoutine
     more_watch_buttons.each do |more_watch_button|
       remenber_current_window_handle = driver.window_handles.last
       more_watch_button.send_keys(:command, :enter) # 新規タブで開く
-      change_current_tab(driver)
+#flatba^ 20180110 クラス整理のため 修正中
+      new_window = driver.window_handles.last
+      driver.switch_to.window(new_window)
+      driver.window_handle
+      # change_current_tab(driver)
+#flatba$
       if check_having_contents_or_not(driver.current_url, remenber_current_window_handle)
         next
       end
@@ -97,6 +101,7 @@ class HuluRoutine < BaseRoutine
   def start(url, site_name)
     category_url_arr = []
     category_url_arr = get_category_list(url)
+
     begin
       category_url_arr.each do |category_url|
         # カテゴリーページを開く
@@ -105,13 +110,11 @@ class HuluRoutine < BaseRoutine
         more_watch_buttons = driver.find_elements(:class, 'vod-mod-button')
         crawl_sub_category_routine(more_watch_buttons)
       end
-      # close(driver, @db)
     rescue RuntimeError => e
       print e.message
       $browser.close
     rescue => e
       print e.message + "\n"
-      # close(driver, @db)
     end
   end
 end
