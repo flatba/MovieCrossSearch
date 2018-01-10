@@ -63,7 +63,7 @@ class NetflixRoutine < BaseRoutine
 
     # カテゴリページを開く
     begin
-    @genre_id_list = [] # クロール中、ジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
+    @genre_id_list = [] # クロール中にジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
     category_url_arr.each do |category_url|
 
       # カテゴリではなくトップページならば飛ばす
@@ -96,8 +96,9 @@ class NetflixRoutine < BaseRoutine
         contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
         contents_list.each do |content|
 
+          # ユーザーに依存するコンテンツは読み込ませない
           no_crawl_contents = ["Netflixで人気の作品", "視聴中コンテンツ", "マイリスト", "話題の作品", "あなたにイチオシ", "こちらもオススメ"]
-          if no_crawl_contents.include?(content.text)
+          if no_crawl_contents.include?(content.find_element(:class, 'row-header-title').text)
             break
           end
 

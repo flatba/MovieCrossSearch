@@ -113,7 +113,7 @@ end
 #
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-base_url = "HULU_URL"
+base_url = "NETFLIX_URL"
 
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[base_url])
