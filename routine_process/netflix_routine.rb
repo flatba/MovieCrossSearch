@@ -80,6 +80,7 @@ class NetflixRoutine < BaseRoutine
       # ジャンルをクリックする（クリックしておかないと値を取得できない）
       driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div').click
 
+      # ジャンルにアクセスする
       genre_url_arr = get_genre_url()
       genre_url_arr.each do |genre_url|
 
@@ -92,43 +93,36 @@ class NetflixRoutine < BaseRoutine
         open_new_tab(driver)
         driver.get(genre_url)
 
-        puts "-------------------------------"
+        # 映画を一覧表示に切り替える
+        driver.find_element(:css, "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div > div.aro-grid-toggle").click
 
-        # 各動画コンテンツのidを取得して、コンテンツページを開く
-        contents_list = driver.find_element(:class, 'lolomo').find_elements(:class, 'lolomoRow')
-        contents_list.each do |contents|
-          row_header_title = contents.find_element(:class, "row-header-title").text
-          # ユーザーに依存するコンテンツは読み込ませない
-          no_crawl_contents = [
-            "Netflixで人気の作品",
-            "視聴中コンテンツ",
-            "マイリスト",
-            "話題の作品",
-            "あなたにイチオシ",
-            "こちらもオススメ"
-          ]
-          if no_crawl_contents.include?(row_header_title)
-            next
-          end
-          puts contents.text
-          # コンテンツURLの取得
-          content_link = contents.find_element(:class, 'ptrack-content').find_element(:tag_name, 'a').attribute('href')
+        # 並び順を変えるボタンをクリックする
+        driver.find_element(:css, "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div > div.aro-grid-toggle > div.sortGallery > div > div").click
+
+        # 公開年でソートするソートするボタンをクリックする
+        driver.find_element(:css, "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div > div.aro-grid-toggle > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a").click
+
+        # infinite_scrollを追加して末端まで読み込む
+        infinit_scroll(driver, 3)
+
+        # コンテンツの収集を開始する
+        contents_list = genre.find_elements(:class, 'slider-item')
+        contents_list.each_with_index do |content, num|
+          content_link = content.find_element(:tag_name, 'a').attribute('href')
           content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
-          content_url = "https://www.netflix.com/title/" + content_id
-
+          puts content_url = "https://www.netflix.com/title/" + content_id
           # URLを新規タブで開く
           open_new_tab(driver)
           driver.get(content_url)
-
-          # TODO(flatba): [調査]各動画コンテンツにアクセスできるようになったけどなんかのタイミングで落ちる
-
           # 情報を取得する
           save_contents()
-
           # タブを閉じる
           close_new_tab(driver)
-          sleep 5
+          sleep 1
         end
+
+        sleep 5
+      end
 
         # ジャンルページに入ったら、row-header-titleを取得する
         # header_titleとして保存しつつ（これはいらないかも。）、各映画情報を取得していく
@@ -136,8 +130,8 @@ class NetflixRoutine < BaseRoutine
 
         # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
         # close_new_tab(driver)
-        sleep 1
-      end
+      #   sleep 1
+      # end
 
       # TODO(flatba): 深いとこに入っていって動画のみの一覧ページまでアクセスする
 
