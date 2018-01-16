@@ -4,10 +4,13 @@
 #
 require './crawl/crawl.rb'
 require './crawl/selector.rb'
+require './crawl/control_browser.rb'
 require './scrape/scrape.rb'
+
 
 class BaseRoutine
   include Crawl
+  include ControlBrowser
   include Scrape
 
   attr_accessor :crawl, :scrape, :driver, :selector, :movie_master
