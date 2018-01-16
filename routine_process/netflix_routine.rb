@@ -105,10 +105,12 @@ class NetflixRoutine < BaseRoutine
 # flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
         # infinit_scroll(driver, 3)
+
+        # コンテンツ読み込み待ち（読み込みより先にクリックしてしまう）上記有効化までこれで。
+        sleep 5
 # flatba$
 
         # ジャンル内の映画一覧から各コンテンツページにアクセスする
-        # TODO(flatba): なぜかここでブレークポイント貼らないとコンテンツリスト取得を飛ばしてしまう
         galleryContent_list = driver.find_element(:class, 'galleryContent').find_elements(:class, 'rowContainer')
         galleryContent_list.each do |contents|
           contents_list = contents.find_elements(:tag_name, 'a')
@@ -120,7 +122,7 @@ class NetflixRoutine < BaseRoutine
             # ページを開く
             open_new_tab(driver)
             driver.get(content_url)
-            sleep 3
+            sleep 1
             close_new_tab(driver)
             sleep 1
 
