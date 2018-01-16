@@ -65,7 +65,7 @@ class NetflixRoutine < BaseRoutine
     category_url_arr = get_category_url()
 
     # カテゴリページを開く
-    begin
+    # begin
     @genre_id_list = [] # クロール中にジャンルidを保持しておいて同じidにアクセスしようとしたら処理を飛ばす
     category_url_arr.each do |category_url|
 
@@ -102,43 +102,32 @@ class NetflixRoutine < BaseRoutine
         # 公開年でソートするソートするボタンをクリックする
         driver.find_element(:css, "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div > div.aro-grid-toggle > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a").click
 
+# flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
-        infinit_scroll(driver, 3)
+        # infinit_scroll(driver, 3)
+# flatba$
 
-        # コンテンツの収集を開始する
-        contents_list = genre.find_elements(:class, 'slider-item')
-        contents_list.each_with_index do |content, num|
-          content_link = content.find_element(:tag_name, 'a').attribute('href')
-          content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
-          puts content_url = "https://www.netflix.com/title/" + content_id
-          # URLを新規タブで開く
-          open_new_tab(driver)
-          driver.get(content_url)
-          # 情報を取得する
-          save_contents()
-          # タブを閉じる
-          close_new_tab(driver)
-          sleep 1
+        # ジャンル内の映画一覧から各コンテンツページにアクセスする
+        # TODO(flatba): なぜかここでブレークポイント貼らないとコンテンツリスト取得を飛ばしてしまう
+        galleryContent_list = driver.find_element(:class, 'galleryContent').find_elements(:class, 'rowContainer')
+        galleryContent_list.each do |contents|
+          contents_list = contents.find_elements(:tag_name, 'a')
+          contents_list.each do |content|
+            content_link = content.attribute('href')
+            content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
+            puts content_url = "https://www.netflix.com/title/" + content_id
+
+            # ページを開く
+            open_new_tab(driver)
+            driver.get(content_url)
+            sleep 3
+            close_new_tab(driver)
+            sleep 1
+
+          end
         end
 
-        sleep 5
       end
-
-        # ジャンルページに入ったら、row-header-titleを取得する
-        # header_titleとして保存しつつ（これはいらないかも。）、各映画情報を取得していく
-        # driver.find_element(:css, '#appMountPoint > div > div > div.mainView > div > div.aro-genre > div').find_elements(:class, 'lolomoRow')
-
-        # 取得処理中はいちいち閉じなくて良いかも。開きっぱなしでURLを開き直す。
-        # close_new_tab(driver)
-      #   sleep 1
-      # end
-
-      # TODO(flatba): 深いとこに入っていって動画のみの一覧ページまでアクセスする
-
-      # スクロールで読み込めるコンテンツがある場合スクロールする
-      # infinit_scroll(driver, 3) # 1ページスクロールするごとに sleep 3 させる
-
-      # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
 
       close_new_tab(driver)
       sleep 1
@@ -146,12 +135,12 @@ class NetflixRoutine < BaseRoutine
 
     @genre_id_list.clear
 
-    rescue RuntimeError => e
-      print e.message
-      $browser.close
-    rescue => e
-      print e.message + "\n"
-    end
+    # rescue RuntimeError => e
+    #   print e.message
+    #   $browser.close
+    # rescue => e
+    #   print e.message + "\n"
+    # end
   end
 
 end
