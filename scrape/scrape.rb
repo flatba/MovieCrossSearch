@@ -5,7 +5,6 @@
 # require './database.rb'
 require './crawl/crawl.rb'
 
-
 module Scrape
   include Selector
 
@@ -17,8 +16,6 @@ module Scrape
 
   # 情報を取得して構造体として返す
   def get_contents_struct(selector, doc)
-    # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
-    contents_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
 
     # [DONE]トップ画像
     unless check_contents_item(doc.css(select_selector[:thumbnail]))
@@ -71,9 +68,18 @@ module Scrape
       summary = ""
     end
 
-    contents = contents_master.new(thumbnail, title, original_title, release_year, running_time, summary)
+    # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
+    movie_info = []
+    movie_info << {
+      thumbnail: thumbnail,
+      title: title,
+      original_title: original_title,
+      release_year: release_year,
+      running_time: running_time,
+      summary: summary
+      }
 
-    return contents
+    return movie_info
 
   end
 

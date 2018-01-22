@@ -105,9 +105,7 @@ class NetflixRoutine < BaseRoutine
 # flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
         # infinit_scroll(driver, 3)
-
-        # コンテンツ読み込み待ち（読み込みより先にクリックしてしまう）上記有効化までこれで。
-        sleep 5
+        sleep 5 # コンテンツ読み込み待ち（読み込みより先にクリックしてしまう）上記有効化までこれで対応する
 # flatba$
 
         # ジャンル内の映画一覧から各コンテンツページにアクセスする
