@@ -1,10 +1,8 @@
-# coding: utf-8
 #
 # GYAO
 #
 class GyaoRoutine < BaseRoutine
-
- def start(url, site_name)
+  def start(url, site_name)
     super
 
     # カテゴリURLを取得
@@ -19,7 +17,6 @@ class GyaoRoutine < BaseRoutine
 
     # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|
-
       # 新規タブを開く
 
       # 新規タブでcategory_urlを開く
@@ -31,9 +28,6 @@ class GyaoRoutine < BaseRoutine
       # 情報を取得する
 
       # 取得したらタブを閉じる
-
     end
-
- end
-
+  end
 end
