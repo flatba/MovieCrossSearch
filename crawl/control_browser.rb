@@ -9,7 +9,7 @@ module ControlBrowser
 
   # 新規タブを開いてハンドル（操作権）も新規タブに移動する
   def open_new_tab(driver)
-    driver.execute_script("window.open()")
+    driver.execute_script('window.open()')
     driver.switch_to.window(driver.window_handles.last)
   end
 
