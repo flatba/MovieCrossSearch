@@ -124,7 +124,7 @@ end
 
 class MovieInfo
   # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
-  attr_reader :thumbnail, :title, :original_title, :release_year, :running_time, :summary
+  attr_accessor :thumbnail, :title, :original_title, :release_year, :running_time, :summary
 
   def initialize(thumbnail, title, original_title, release_year, running_time, summary)
     @thumbnail = thumbnail,
