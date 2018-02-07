@@ -105,9 +105,7 @@ class NetflixRoutine < BaseRoutine
 # flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
         # infinit_scroll(driver, 3)
-
-        # コンテンツ読み込み待ち（読み込みより先にクリックしてしまう）上記有効化までこれで。
-        sleep 5
+        sleep 5 # コンテンツ読み込み待ち（読み込みより先にクリックしてしまう）上記有効化までこれで対応する
 # flatba$
 
         # ジャンル内の映画一覧から各コンテンツページにアクセスする
@@ -122,6 +120,15 @@ class NetflixRoutine < BaseRoutine
             # ページを開く
             open_new_tab(driver)
             driver.get(content_url)
+
+            # TODO(flatba): 動画情報の取得
+            # ここで処理をゴニョゴニョ書くよりも、
+            # 映画の個別ページが開かれている状態なので、scrapeクラスを呼び出して処理はそっちに任せたほうが良いかも
+            # クラスで返してやって、変数に入れておく
+
+            # TODO(flatba): 取得した動画情報の保存
+            # 情報を取得した変数を動画保存クラスを呼び出して渡してやる
+
             sleep 1
             close_new_tab(driver)
             sleep 1

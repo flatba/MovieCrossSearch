@@ -5,7 +5,6 @@
 # require './database.rb'
 require './crawl/crawl.rb'
 
-
 module Scrape
   include Selector
 
@@ -15,14 +14,13 @@ module Scrape
     db.create_contents_DB(contents)
   end
 
+
+
   # 情報を取得して構造体として返す
   def get_contents_struct(selector, doc)
-    # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
-    contents_master = Struct.new(:thumbnail, :title, :original_title, :release_year, :running_time, :summary)
 
     # [DONE]トップ画像
     unless check_contents_item(doc.css(select_selector[:thumbnail]))
-      # thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
       thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
     else
       thumbnail = ""
@@ -30,7 +28,6 @@ module Scrape
 
     # [DONE]映画タイトル
     unless check_contents_item(doc.css(select_selector[:title]).text)
-      # title = doc.css(select_selector[:title]).text
       title = doc.css(select_selector[:title]).text
     else
       title = ""
@@ -46,7 +43,6 @@ module Scrape
     unless check_contents_item(doc.css(select_selector[:release_year]).text)
       release_year_tmp = doc.css(select_selector[:release_year]).text
       tail_num = release_year_tmp.rindex('年')
-      # puts release_year = release_year_tmp[tail_num-4..tail_num-1]
       release_year = release_year_tmp[tail_num-4..tail_num-1]
     else
       release_year = ""
@@ -57,7 +53,6 @@ module Scrape
     unless check_contents_item(doc.css(select_selector[:running_time]).text)
       running_time_tmp = doc.css(select_selector[:running_time]).text
       tail_num = running_time_tmp.rindex('分')
-      # puts running_time = running_time_tmp[tail_num-3..tail_num].strip
       running_time = running_time_tmp[tail_num-3..tail_num].strip
     else
       running_time = ""
@@ -65,16 +60,14 @@ module Scrape
 
     # あらすじ
     unless check_contents_item(doc.css(select_selector[:summary]))
-      # summary = doc.css(select_selector[:summary]).text
       summary = doc.css(select_selector[:summary]).text
     else
       summary = ""
     end
 
-    contents = contents_master.new(thumbnail, title, original_title, release_year, running_time, summary)
-
-    return contents
-
+    # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
+    movie_info = MovieInfo.new(thumbnail, title, original_title, release_year, running_time, summary)
+    return movie_info
   end
 
   # ジャンル一覧取得
@@ -128,4 +121,19 @@ module Scrape
     end
   end
 
+end
+
+
+class MovieInfo
+  # "トップ画像URL", "タイトル", "原題", "公開年", "時間", "あらすじ"
+  attr_accessor :thumbnail, :title, :original_title, :release_year, :running_time, :summary
+
+  def initialize(thumbnail, title, original_title, release_year, running_time, summary)
+    @thumbnail = thumbnail,
+    @title = title,
+    @original_title = original_title,
+    @release_year = release_year,
+    @running_time = running_time,
+    @summary = summary
+  end
 end
