@@ -103,7 +103,6 @@ class EntryCrawl
     end
 
     puts "処理完了"
-
   end
 end
 

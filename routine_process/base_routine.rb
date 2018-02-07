@@ -39,5 +39,4 @@ class BaseRoutine
   def get_contents_list()
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
-
 end

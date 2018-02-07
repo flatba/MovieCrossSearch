@@ -14,6 +14,8 @@ module Scrape
     db.create_contents_DB(contents)
   end
 
+
+
   # 情報を取得して構造体として返す
   def get_contents_struct(selector, doc)
 
