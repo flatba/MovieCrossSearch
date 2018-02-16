@@ -19,10 +19,16 @@ class DTvRoutine < BaseRoutine
 
     # ↑カテゴリーURLの取得まで完了↑
 
+    body > div.wrapper > main > section > div.titleList_outer > div > div.titleList_card.titleCard.js-editRating.js-editClip.index-card-0.index-group-1 > div > div.titleCard_content > a
+
+
     # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|
+      # 各ジャンルにアクセスして、動画ページにアクセスできる処理を書く
 
       # 新規タブを開く
+      open_new_tab(driver)
+      driver.get(category_url)
 
       # 新規タブでcategory_urlを開く
 

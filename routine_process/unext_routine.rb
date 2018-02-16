@@ -15,6 +15,8 @@ class UNextRoutine < BaseRoutine
     category_url_arr.each do |category_url|
 
       # TODO(flatba): 映画コンテンツページにアクセスする
+      open_new_tab(driver)
+      driver.get(category_url)
 
       # 新規タブを開く
 
