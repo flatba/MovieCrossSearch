@@ -25,13 +25,13 @@ class DTvRoutine < BaseRoutine
       # 新規タブでcategory_urlを開く
       driver.get(category_url)
 
-      # 特定のジャンルは読み込まなで次のジャンルへ移る
+      # 特定のジャンルは読み込まない
       # if title == 'ニュース'
       #   next
       # end
 
       # 無限スクロール
-      # infinit_scroll(driver, 3) # 読み込み速度に応じて調整する
+      # infinit_scroll(driver, 3) # TODO(flatba):読み込み速度に応じて調整する
 
       contents_list = driver.find_element(:css, 'body > div.wrapper > main > section > div.titleList_outer')
       contents_list = contents_list.find_elements(:class, 'titleList_card')
@@ -42,23 +42,13 @@ class DTvRoutine < BaseRoutine
         # 新規タブでcategory_urlを開く
         driver.get(content_url)
 
+        # TODO(flatba):情報を取得する
+        # ...
+
+        # 取得したらタブを閉じる
         close_new_tab(driver)
-
         sleep 1
-
       end
-
-      # 新規タブを開く
-
-      # 動画コンテンツを開く
-
-      # 情報を取得する
-
-      # 取得したらタブを閉じる
-
     end
-
-
   end
-
 end
