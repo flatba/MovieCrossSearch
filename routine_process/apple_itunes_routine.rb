@@ -33,6 +33,7 @@ class AappleiTunesRoutine < BaseRoutine
       # 情報を取得する
 
       # 取得したらタブを閉じる
+      close_new_tab(driver)
 
     end
 

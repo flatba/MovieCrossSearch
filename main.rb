@@ -24,6 +24,7 @@ require './routine_process/apple_itunes_routine.rb'
 require './routine_process/microsoft_routine.rb'
 require './routine_process/googleplay_routine.rb'
 require './routine_process/mubi_routine.rb'
+require './routine_process/unext_routine.rb'
 
 
 class EntryCrawl
@@ -112,7 +113,7 @@ end
 #
 Dotenv.load
 # HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-base_url = "APPLE_ITUNES_URL"
+base_url = "UNEXT_URL"
 # クローラーのインスタンス化
 entry = EntryCrawl.new(ENV[base_url])
 # サイトのクロール可否のチェック
