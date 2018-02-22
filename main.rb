@@ -3,8 +3,8 @@
 require 'open-uri'
 require 'nokogiri'
 require 'robotex'
-require "selenium-webdriver"
-require "date"
+require 'selenium-webdriver'
+require 'date'
 require 'dotenv'
 # require 'sqlite3'
 
@@ -25,7 +25,6 @@ require './routine_process/microsoft_routine.rb'
 require './routine_process/googleplay_routine.rb'
 require './routine_process/mubi_routine.rb'
 require './routine_process/unext_routine.rb'
-
 
 class EntryCrawl
 
@@ -106,7 +105,6 @@ class EntryCrawl
     puts "処理完了"
   end
 end
-
 
 #
 # main routine
