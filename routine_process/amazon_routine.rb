@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 # Amazon
 # prime側で吸収したので、必要なくなるかも。

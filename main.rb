@@ -1,5 +1,3 @@
-# coding: utf-8
-
 require 'open-uri'
 require 'nokogiri'
 require 'robotex'
@@ -27,11 +25,8 @@ require './routine_process/mubi_routine.rb'
 require './routine_process/unext_routine.rb'
 
 class EntryCrawl
+  attr_reader :base_url, :site_name, :selector, :driver
 
-  # attr_reader :base_url, :site_name, :selector, :db, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
-  attr_reader :base_url, :site_name, :selector, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
-
-  # 初期データの生成
   def initialize
     key = ask_standard_input
     env = LoadEnv.new(key)
@@ -43,21 +38,20 @@ class EntryCrawl
   end
 
   def run
-    # サイトのクロール可否のチェック
     check_robot(base_url)
-    # サイト名称を判断し、クローラを開始する
     detect_site_name_and_start_crawl(base_url)
   end
 
   private
 
-  # クロール可能サイトかどうかチェックする
+  # Webサイトのrobot.txtを参照してクロール可否のチェック
   def check_robot(url)
     robotex = Robotex.new
     p robotex.allowed?(url)
   end
 
   # クロールするサイトの名称を判断してメインストラクチャーを実行する
+  # サイト名称を判断し、クローラを開始する
   def detect_site_name_and_start_crawl(url)
     if url.include?('happyon')
       @site_name = 'hulu'
