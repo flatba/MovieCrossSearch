@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 # Amazon
 # prime側で吸収したので、必要なくなるかも。
@@ -16,6 +15,9 @@ class AmazonRoutine < BaseRoutine
 
     # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|
+
+      open_new_tab(driver)
+      driver.get(category_url)
 
     # 新規タブを開く
 

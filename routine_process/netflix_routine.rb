@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 # Netflix
 #
@@ -15,7 +14,7 @@ class NetflixRoutine < BaseRoutine
       # puts a_tag.attr('href') # カテゴリURL
       category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
     end
-    return category_url_arr
+    category_url_arr
   end
 
   # ジャンルURLを取得する
@@ -26,12 +25,12 @@ class NetflixRoutine < BaseRoutine
       puts genre.text
       genre_url_arr << genre.attribute('href')
     end
-    return genre_url_arr
+    genre_url_arr
   end
 
   # URLからジャンルIDを切り出す
   def get_genre_id(genre_url)
-    return genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+    genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
   end
 
   # 読み込もうとしているジャンルidが読み込み済でないかチェックする
@@ -53,11 +52,11 @@ class NetflixRoutine < BaseRoutine
   #
   # main routine
   #
-  def start(url, site_name)
-    super
+  def start
+    super # base_routineの呼び出し
 
     # ログインする
-    login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
+    login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
     # ログイン後に視聴ユーザーを選択する
     driver.find_element(:xpath, select_selector[:select_user]).click
     # カテゴリURLを取得する
@@ -109,13 +108,13 @@ class NetflixRoutine < BaseRoutine
 # flatba$
 
         # ジャンル内の映画一覧から各コンテンツページにアクセスする
-        galleryContent_list = driver.find_element(:class, 'galleryContent').find_elements(:class, 'rowContainer')
-        galleryContent_list.each do |contents|
+        gallery_content_list = driver.find_element(:class, 'galleryContent').find_elements(:class, 'rowContainer')
+        gallery_content_list.each do |contents|
           contents_list = contents.find_elements(:tag_name, 'a')
           contents_list.each do |content|
             content_link = content.attribute('href')
             content_id = content_link[content_link.index('watch/') + ('watch/'.length)..content_link.index('?trackId')-1]
-            puts content_url = "https://www.netflix.com/title/" + content_id
+            puts content_url = 'https://www.netflix.com/title/' + content_id
 
             # ページを開く
             open_new_tab(driver)

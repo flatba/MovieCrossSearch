@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 # AappleiTunes
 #
@@ -19,6 +18,9 @@ class AappleiTunesRoutine < BaseRoutine
     # TODO(flatba): カテゴリにアクセスして動画情報を取得する
     category_url_arr.each do |category_url|
 
+      open_new_tab(driver)
+      driver.get(category_url)
+
       # 新規タブを開く
 
       # 新規タブでcategory_urlを開く
@@ -30,6 +32,7 @@ class AappleiTunesRoutine < BaseRoutine
       # 情報を取得する
 
       # 取得したらタブを閉じる
+      close_new_tab(driver)
 
     end
 

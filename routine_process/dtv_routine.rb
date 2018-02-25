@@ -1,4 +1,3 @@
-# coding: utf-8
 #
 # DTV
 #
@@ -17,26 +16,38 @@ class DTvRoutine < BaseRoutine
     end
     puts category_url_arr
 
-    # ↑カテゴリーURLの取得まで完了↑
-
     # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
     category_url_arr.each do |category_url|
 
       # 新規タブを開く
-
+      open_new_tab(driver)
       # 新規タブでcategory_urlを開く
+      driver.get(category_url)
 
-      # 新規タブを開く
+      # 特定のジャンルは読み込まない
+      # if title == 'ニュース'
+      #   next
+      # end
 
-      # 動画コンテンツを開く
+      # 無限スクロール
+      # infinit_scroll(driver, 3) # TODO(flatba):読み込み速度に応じて調整する
 
-      # 情報を取得する
+      contents_list = driver.find_element(:css, 'body > div.wrapper > main > section > div.titleList_outer')
+      contents_list = contents_list.find_elements(:class, 'titleList_card')
+      contents_list.each do |content|
+        content_url = content.find_element(:class, 'titleCard_link').attribute('href')
+        # 新規タブを開く
+        open_new_tab(driver)
+        # 新規タブでcategory_urlを開く
+        driver.get(content_url)
 
-      # 取得したらタブを閉じる
+        # TODO(flatba):情報を取得する
+        # ...
 
+        # 取得したらタブを閉じる
+        close_new_tab(driver)
+        sleep 1
+      end
     end
-
-
   end
-
 end
