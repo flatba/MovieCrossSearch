@@ -32,7 +32,8 @@ class EntryCrawl
   attr_reader :base_url, :site_name, :selector, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
 
   # 初期データの生成
-  def initialize(key)
+  def initialize
+    key = ask_standard_input
     env = LoadEnv.new(key)
     @base_url = env.base_url
     @site_name = ""
@@ -114,8 +115,33 @@ class EntryCrawl
 
     puts '処理完了'
   end
+
+  # クロールするサイトの選択（標準入力）
+  def ask_standard_input
+    site_list = {
+      0 => 'HULU',
+      1 => 'NETFLIX',
+      2 => 'AMAZON_PRIME',
+      3 => 'AMAZON_VIDEO',
+      4 => 'GYAO',
+      5 => 'DTV',
+      6 => 'UNEXT',
+      7 => 'APPLE_ITUNES',
+      8 => 'MICROSOFT',
+      9 => 'GOOGLEPLAY',
+      10 => 'MUBI'
+    }
+    puts 'クロールしたいサイトの番号を入力してください。'
+    puts '###########################################################################'
+    puts '# 0:HULU / 1:NETFLIX / 2:AMAZON_PRIME / 3:AMAZON_VIDEO / 4:GYAO'
+    puts '# 5:DTV / 6:UNEXT / 7:APPLE_ITUNES / 8:MICROSOFT / 9:GOOGLEPLAY / 10:MUBI'
+    puts '###########################################################################'
+    input = gets
+    site_list[input.to_i]
+  end
 end
 
+# .env（hash形式）ファイルの呼び出し
 class LoadEnv
   attr_reader :base_url
   def initialize(env_key)
@@ -126,19 +152,9 @@ end
 
 #
 # main routine
+# key listのkeyを切り替えると
 #
-#########################################################################################
-# * key list
-# HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL
-# GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-##########################################################################################
-key = 'HULU_URL'
-entry = EntryCrawl.new(key)
+entry = EntryCrawl.new
 entry.run
 
-
-
-# # サイトのクロール可否のチェック
-# entry.check_robot(entry.base_url)
-# # サイト名称を判断し、クローラを開始する
-# entry.detect_site_name_and_start_crawl(entry.base_url)
+# 次にやりたいのは、インスタンスの生成ををサイトごとに作らないで内部で処理するようにする
