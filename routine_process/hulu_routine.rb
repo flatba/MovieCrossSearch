@@ -1,9 +1,7 @@
-# coding: utf-8
 #
-# Hulu（リファクタリング中）
+# Hulu
 #
 class HuluRoutine < BaseRoutine
-
   # カテゴリURLの取得
   def get_category_list(url)
     category_url_arr = []
@@ -11,9 +9,10 @@ class HuluRoutine < BaseRoutine
     main_doc.css(select_selector[:category_selector]).each do |element|
       category_url_arr << element.attr('href')
     end
-    return category_url_arr
+    category_url_arr
   end
 
+  # 映画ページのURLを取得する
   def get_contents_list
     contents_url_arr = []
     content_elements = driver.find_elements(:css, select_selector[:content_click])
@@ -26,6 +25,7 @@ class HuluRoutine < BaseRoutine
     return contents_url_arr
   end
 
+  # 映画の情報を保存する
   def save_content_item(content_url)
 # y.hiraba^ 2018/01/09 DB処理を後回しのため、一旦コメントアウト
     # puts "映画コンテンツ情報を取得する"
@@ -36,6 +36,7 @@ class HuluRoutine < BaseRoutine
     # puts cast_list = create_cast_list(selector, content_doc)
 
     # 映画ページのURLを取得する
+    # ...
 
     # 保存処理(保存とレコードIDの取得)
     # movie_id = db_task.save_movie_master_contents(@db, movie_master_contents)
@@ -52,6 +53,7 @@ class HuluRoutine < BaseRoutine
 #y.hiraba$
   end
 
+  # 映画ページにアクセスする
   def get_content_item(contents_url_arr, remenber_current_window_handle)
     contents_url_arr.each do |content_url|
       open_new_tab(driver)
@@ -68,9 +70,10 @@ class HuluRoutine < BaseRoutine
       close_new_tab(driver)
       return true
     end
-    return false
+    false
   end
 
+  # カテゴリーを開くルーチン処理
   def crawl_sub_category_routine(more_watch_buttons)
     more_watch_buttons.each do |more_watch_button|
       remenber_current_window_handle = driver.window_handles.last
@@ -98,10 +101,8 @@ class HuluRoutine < BaseRoutine
   #
   # main routine
   #
-  def start(url, site_name)
-    category_url_arr = []
+  def start
     category_url_arr = get_category_list(url)
-
     begin
       category_url_arr.each do |category_url|
         # カテゴリーページを開く
@@ -112,9 +113,6 @@ class HuluRoutine < BaseRoutine
       end
     rescue RuntimeError => e
       print e.message
-      $browser.close
-    rescue => e
-      print e.message + "\n"
     end
   end
 end

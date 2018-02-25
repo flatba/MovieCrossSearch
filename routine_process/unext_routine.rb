@@ -12,8 +12,8 @@ class UNextRoutine < BaseRoutine
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
-  def start(url, site_name)
-    super
+  def start
+    super # base_routineの呼び出し
 
     # サイドバーをクリックする（デフォルトのブラウザサイズだと表示されていないため）
     driver.find_element(:css, "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > ul > li.gnav__menu--nav > a > span").click
@@ -25,7 +25,7 @@ class UNextRoutine < BaseRoutine
       category_url = category.find_element(:tag_name, 'a').attribute('href')
 
       # 映画以外のカテゴリだったらページを飛ばす
-      # ...
+      if category_url.include('welcome') then next end
 
       # TODO(flatba): 映画コンテンツページにアクセスする
       open_new_tab(driver) # 新規タブを開く

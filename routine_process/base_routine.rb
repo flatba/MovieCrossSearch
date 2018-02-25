@@ -27,6 +27,7 @@ class BaseRoutine
     start
   end
 
+  # urlをメンバにしたのでロジックが崩れた！
   # サブクラスで必ず実装しておいて欲しい。
   def start
     # envファイルで指定している読み込み開始のトップページを開く

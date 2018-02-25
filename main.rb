@@ -32,13 +32,23 @@ class EntryCrawl
   attr_reader :base_url, :site_name, :selector, :driver, :wait, :movie_master, :genre_master, :director_master, :cast_master
 
   # 初期データの生成
-  def initialize(url)
-    @base_url = url
+  def initialize(key)
+    env = LoadEnv.new(key)
+    @base_url = env.base_url
     @site_name = ""
     @genre_master    = []
     @director_master = []
     @cast_master     = []
   end
+
+  def run
+    # サイトのクロール可否のチェック
+    check_robot(base_url)
+    # サイト名称を判断し、クローラを開始する
+    detect_site_name_and_start_crawl(base_url)
+  end
+
+  private
 
   # クロール可能サイトかどうかチェックする
   def check_robot(url)
@@ -98,23 +108,37 @@ class EntryCrawl
       MubiRoutine.new(url, @site_name)
 
     else
-      puts "URL is Unknown..."
+      puts 'URL is Unknown...'
 
     end
 
-    puts "処理完了"
+    puts '処理完了'
+  end
+end
+
+class LoadEnv
+  attr_reader :base_url
+  def initialize(env_key)
+    Dotenv.load
+    @base_url = ENV[env_key]
   end
 end
 
 #
 # main routine
 #
-Dotenv.load
-# HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
-base_url = "UNEXT_URL"
-# クローラーのインスタンス化
-entry = EntryCrawl.new(ENV[base_url])
-# サイトのクロール可否のチェック
-entry.check_robot(entry.base_url)
-# サイト名称を判断し、クローラを開始する
-entry.detect_site_name_and_start_crawl(entry.base_url)
+#########################################################################################
+# * key list
+# HULU_URL NETFLIX_URL AMAZON_PRIME_URL AMAZON_VIDEO_URL
+# GYAO_URL DTV_URL UNEXT_URL APPLE_ITUNES_URL MICROSOFT_URL GOOGLEPLAY_URL MUBI_URL
+##########################################################################################
+key = 'HULU_URL'
+entry = EntryCrawl.new(key)
+entry.run
+
+
+
+# # サイトのクロール可否のチェック
+# entry.check_robot(entry.base_url)
+# # サイト名称を判断し、クローラを開始する
+# entry.detect_site_name_and_start_crawl(entry.base_url)
