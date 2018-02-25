@@ -56,7 +56,7 @@ class NetflixRoutine < BaseRoutine
     super # base_routineの呼び出し
 
     # ログインする
-    login(url, driver, selector, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
+    login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
     # ログイン後に視聴ユーザーを選択する
     driver.find_element(:xpath, select_selector[:select_user]).click
     # カテゴリURLを取得する

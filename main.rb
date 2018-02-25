@@ -25,88 +25,62 @@ require './routine_process/mubi_routine.rb'
 require './routine_process/unext_routine.rb'
 
 class EntryCrawl
-  attr_reader :base_url, :site_name, :selector, :driver
+  attr_reader :site_key, :site_name, :site_base_url, :site_selector, :driver
 
   def initialize
-    key = ask_standard_input
-    env = LoadEnv.new(key)
-    @base_url = env.base_url
-    @site_name = ""
+    site_info        = ask_standard_input
+    @site_key        = site_info[:site_key]
+    @site_name       = site_info[:site_name]
+    @site_base_url   = site_info[:site_url]
     @genre_master    = []
     @director_master = []
     @cast_master     = []
   end
 
   def run
-    check_robot(base_url)
-    detect_site_name_and_start_crawl(base_url)
+    check_robot
+    # detect_site_name_and_start_crawl
+    begin_crawler
   end
 
   private
 
   # Webサイトのrobot.txtを参照してクロール可否のチェック
-  def check_robot(url)
+  def check_robot
     robotex = Robotex.new
-    p robotex.allowed?(url)
+    p robotex.allowed?(site_base_url)
   end
 
-  # クロールするサイトの名称を判断してメインストラクチャーを実行する
-  # サイト名称を判断し、クローラを開始する
-  def detect_site_name_and_start_crawl(url)
-    if url.include?('happyon')
-      @site_name = 'hulu'
-      HuluRoutine.new(url, @site_name)
-
-    elsif url.include?('netflix')
-      @site_name ='netflix'
-      NetflixRoutine.new(url, @site_name)
-
-# flatba^ 2017/01/08 一つにまとめられそうなので、一旦コメントアウトする
-    # elsif url.include?('Prime-Video')
-    #   @site_name = 'amazon_prime'
-    #   AmazonPrimeRoutine.new(url, @site_name)
-
-    # elsif url.include?('Amazon')
-    #   @site_name = 'amazon_video'
-    #   AmazonVideoRoutine.new(url, @site_name)
-    elsif url.include?('amazon')
-      @site_name = 'amazon_prime'
-      AmazonPrimeRoutine.new(url, @site_name)
-# flatba$
-
-    elsif url.include?('gyao')
-      @site_name = 'gyao'
-      GyaoRoutine.new(url, @site_name)
-
-    elsif url.include?('dmkt')
-      @site_name = 'dtv'
-      DTvRoutine.new(url, @site_name)
-
-    elsif url.include?('unext')
-      @site_name = 'unext'
-      UNextRoutine.new(url, @site_name)
-
-    elsif url.include?('apple')
-      @site_name = 'apple_itunes'
-      AappleiTunesRoutine.new(url, @site_name)
-
-    elsif url.include?('microsoft')
-      @site_name = 'ms_video'
-      MicrosoftRoutine.new(url, @site_name)
-
-    elsif url.include?('google')
-      @site_name = 'googleplay'
-      GooglePlayRoutine.new(url, @site_name)
-
-    elsif url.include?('mubi')
-      @site_name = 'mubi'
-      MubiRoutine.new(url, @site_name)
-
+  # サイト名称を判断し、クローラを開始する。
+  def begin_crawler
+    # BaseRoutine.new(site_base_url, site_name)
+    case site_key
+    when 0 then # HULU
+      HuluRoutine.new(site_base_url, site_name)
+    when 1 then # NETFLIX
+      NetflixRoutine.new(site_base_url, site_name)
+    when 2 then # AMAZON_PRIME
+      AmazonPrimeRoutine.new(site_base_url, site_name)
+    when 3 then # AMAZON_VIDEO
+      # AmazonVideoRoutine.new(site_base_url, site_name)
+      puts '未実装です'
+    when 4 then # GYAO
+      GyaoRoutine.new(site_base_url, site_name)
+    when 5 then # DTV
+      DTvRoutine.new(site_base_url, site_name)
+    when 6 then # UNEXT
+      UNextRoutine.new(site_base_url, site_name)
+    when 7 then # APPLE_ITUNES
+      AappleiTunesRoutine.new(site_base_url, site_name)
+    when 8 then # MICROSOFT
+      MicrosoftRoutine.new(site_base_url, site_name)
+    when 9 then # GOOGLEPLAY
+      GooglePlayRoutine.new(site_base_url, site_name)
+    when 10 then # MUBI
+      MubiRoutine.new(site_base_url, site_name)
     else
       puts 'URL is Unknown...'
-
     end
-
     puts '処理完了'
   end
 
@@ -125,30 +99,35 @@ class EntryCrawl
       9 => 'GOOGLEPLAY',
       10 => 'MUBI'
     }
-    puts 'クロールしたいサイトの番号を入力してください。'
+
+    puts 'クロールしたい動画サイトの番号を入力してください。'
     puts '###########################################################################'
-    puts '# 0:HULU / 1:NETFLIX / 2:AMAZON_PRIME / 3:AMAZON_VIDEO / 4:GYAO'
-    puts '# 5:DTV / 6:UNEXT / 7:APPLE_ITUNES / 8:MICROSOFT / 9:GOOGLEPLAY / 10:MUBI'
+    puts '# 0:Hulu / 1:Netflix / 2:Amazon Prime / 3:Amazon Video / 4:GYAO'
+    puts '# 5:DTV / 6:UNEXT / 7:Apple iTunes / 8:Microsoft / 9:GooglePlay / 10:MUBI'
     puts '###########################################################################'
-    input = gets
-    site_list[input.to_i]
+
+    input = gets.to_i
+    site_name = site_list[input]
+    env_loader = EnvLoader.new
+    { site_key: input, site_name: site_name, site_url: env_loader.get_url(site_name) }
   end
 end
 
 # .env（hash形式）ファイルの呼び出し
-class LoadEnv
-  attr_reader :base_url
-  def initialize(env_key)
+class EnvLoader
+  def initialize
     Dotenv.load
-    @base_url = ENV[env_key]
+  end
+
+  def get_url(env_key)
+    ENV[env_key]
   end
 end
 
 #
 # main routine
-# key listのkeyを切り替えると
 #
 entry = EntryCrawl.new
 entry.run
 
-# 次にやりたいのは、インスタンスの生成ををサイトごとに作らないで内部で処理するようにする
+# 次にやりたいのは、インスタンスの生成をサイトごとに作らないで内部で処理するようにする

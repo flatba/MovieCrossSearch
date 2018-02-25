@@ -11,7 +11,8 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "program": "${workspaceRoot}/main.rb",
-      "useBundler": true
+      "useBundler": true,
+      "console": "integratedTerminal"
     },
     "ruby.lint": {
       "reek": true,
