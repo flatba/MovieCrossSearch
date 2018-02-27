@@ -42,7 +42,8 @@ module Crawl
       charset = f.charset
       f.read
     end
-    doc = Nokogiri::HTML.parse(html, nil, charset)
-    doc
+    Nokogiri::HTML.parse(html, nil, charset)
   end
+
+
 end

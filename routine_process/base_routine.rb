@@ -22,12 +22,12 @@ class BaseRoutine
     # @db_task = SaveDBTask.new
     # @movie_master = @scrape.initialize_movie_master # DB処理
     # @db           = @db_task.initialize_data_base(site_name)
-    start
+
   end
 
   # サブクラスで必ず実装しておいて欲しい。
   # 各継承先でsuperで呼び出して実行する
-  def start
+  def run
     driver.get(url)
   end
 
@@ -37,5 +37,28 @@ class BaseRoutine
 
   def get_contents_list
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
+  def save_content_item
+
+  end
+end
+
+
+class Hulu < BaseRoutine
+  def begin_crawl
+    run
+    get_category_list
+    get_contents_list
+    save_content_item
+  end
+end
+
+class Netflix < BaseRoutine
+  def begin_crawl
+    run
+    get_category_list
+    get_contents_list
+    save_content_item
   end
 end

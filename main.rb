@@ -40,7 +40,7 @@ class EntryCrawl
   def run
     check_robot
     # detect_site_name_and_start_crawl
-    begin_crawler
+    get_instance
   end
 
   private
@@ -52,8 +52,7 @@ class EntryCrawl
   end
 
   # サイト名称を判断し、クローラを開始する。
-  def begin_crawler
-    # BaseRoutine.new(site_base_url, site_name)
+  def get_instance
     case site_key
     when 0 then # HULU
       HuluRoutine.new(site_base_url, site_name)
