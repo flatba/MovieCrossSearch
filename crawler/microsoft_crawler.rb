@@ -1,7 +1,7 @@
 #
 # Microsoft
 #
-class MicrosoftRoutine < BaseRoutine
+class MicrosoftCrawler < BaseCrawler
 
   def start(url, site_name)
     super

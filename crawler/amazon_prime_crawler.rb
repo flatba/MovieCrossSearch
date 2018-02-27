@@ -1,7 +1,7 @@
 #
 # Amazon Prime
 #
-class AmazonPrimeRoutine < BaseRoutine
+class AmazonPrimeCrawler < BaseCrawler
 
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 

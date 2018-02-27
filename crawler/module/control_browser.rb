@@ -1,12 +1,7 @@
-# coding: utf-8
 #
-# ブラウザ操作全般
+# webdriverを利用したブラウザ操作全般
 #
-# require './crawl/selector.rb'
-
 module ControlBrowser
-  # include Selector
-
   # 新規タブを開いてハンドル（操作権）も新規タブに移動する
   def open_new_tab(driver)
     driver.execute_script('window.open()')
@@ -29,7 +24,7 @@ module ControlBrowser
     driver.switch_to.window(driver.window_handles.last)
   end
 
-  # 無限スクロールを動的にスクロールする
+  # 動的に無限スクロールを行なう
   def infinit_scroll(driver, sleep_time)
     body_dom_height = get_body_dom_height(driver)
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
@@ -54,9 +49,17 @@ module ControlBrowser
     driver.save_screenshot default_dir_path + DateTime.now.strftime('%Y%m%d%H%M%S') + file_name + extension
   end
 
+  # ログインする
+  def login(driver, id, pw)
+    # 画面を開いて情報をセットしてログインする
+    driver.find_element(:name, 'email').send_keys id
+    driver.find_element(:name, 'password').send_keys pw
+    driver.find_element(:xpath, select_selector[:login]).click
+  end
+
   private
 
-  # bodyの高さを取得する（動的に変動する高さの取得に使用）
+  # bodyの高さを取得する（動的に変動する高さの取得）<= 無限スクロールに使用
   def get_body_dom_height(driver)
     driver.find_element(:tag_name, 'body').size.height
   end

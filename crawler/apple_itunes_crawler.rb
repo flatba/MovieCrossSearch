@@ -1,7 +1,7 @@
 #
 # AappleiTunes
 #
-class AappleiTunesRoutine < BaseRoutine
+class AappleiTunesCrawler < BaseCrawler
 
   def start(url, site_name)
     super
