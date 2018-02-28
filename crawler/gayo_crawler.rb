@@ -1,7 +1,7 @@
 #
 # GYAO
 #
-class GyaoRoutine < BaseRoutine
+class GyaoCrawler < BaseCrawler
   def start(url, site_name)
     super
 

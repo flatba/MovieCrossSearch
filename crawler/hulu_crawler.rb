@@ -1,7 +1,7 @@
 #
 # Hulu
 #
-class HuluRoutine < BaseRoutine
+class HuluCrawler < BaseCrawler
   # カテゴリURLの取得
   def get_category_list(url)
     category_url_arr = []

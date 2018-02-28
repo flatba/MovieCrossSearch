@@ -1,7 +1,7 @@
 #
 # UNEXT
 #
-class UNextRoutine < BaseRoutine
+class UNextCrawler < BaseCrawler
 
   def get_category_list()
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
@@ -18,7 +18,6 @@ class UNextRoutine < BaseRoutine
     driver.find_element(:css, "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > ul > li.gnav__menu--nav > a > span").click
 
     # TODO(flatba): カテゴリURLの取得
-    category_url_arr = []
     category_list = driver.find_element(:css, 'body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > nav > div').find_elements(:class, 'gnav__item')
     category_list.each do |category|
       category_url = category.find_element(:tag_name, 'a').attribute('href')

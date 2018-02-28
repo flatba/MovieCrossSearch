@@ -1,7 +1,7 @@
 #
 # Netflix
 #
-class NetflixRoutine < BaseRoutine
+class NetflixCrawler < BaseCrawler
 
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 

@@ -1,7 +1,7 @@
 #
 # DTV
 #
-class DTvRoutine < BaseRoutine
+class DTvCrawler < BaseCrawler
 
   def start(url, site_name)
     super

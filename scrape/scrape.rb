@@ -3,7 +3,6 @@
 # 解析（情報収集処理）
 #
 # require './database.rb'
-require './crawl/crawl.rb'
 
 module Scrape
   include Selector

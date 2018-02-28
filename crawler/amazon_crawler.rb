@@ -2,7 +2,7 @@
 # Amazon
 # prime側で吸収したので、必要なくなるかも。
 #
-class AmazonRoutine < BaseRoutine
+class AmazonCrawler < BaseCrawler
 
   def start(url, site_name)
     super
