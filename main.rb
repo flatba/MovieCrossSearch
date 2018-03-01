@@ -38,7 +38,8 @@ class EntryCrawler
   end
 
   def run
-    @crawler = BaseCrawler.new
+    crawler = BaseCrawler.new
+    crawler.initialize_crawler_instance
   end
 end
 

@@ -3,12 +3,12 @@
 #
 require './crawler/module/selector.rb'
 require './crawler/module/control_browser.rb'
-require './crawler/module/env_loader.rb'
+require './crawler/module/data_loader.rb'
 require './scrape/scrape.rb'
 
 class BaseCrawler
   include ControlBrowser
-  include EnvLoader
+  include DataLoader
   include Selector
   include Scrape
 
@@ -24,6 +24,7 @@ class BaseCrawler
     # 利用モジュール
     @driver     = initialize_driver
     @selector   = initialize_selector
+
     # @movie_master  = movie_master
     # @db_task = SaveDBTask.new
     # @movie_master = @scrape.initialize_movie_master # DB処理
@@ -71,10 +72,6 @@ class BaseCrawler
     # Selenium::WebDriver.for :chrome, desired_capabilities: caps
   end
 
-  def initialize_selector
-    setup_selector(site_name)
-  end
-
   def initialize_crawler_instance
     case site_key
     when 0 then # HULU
@@ -106,6 +103,13 @@ class BaseCrawler
     puts '処理完了'
   end
 
+  def initialize_selector
+    # setup_selector(site_name)
+    selector_hash_data = json_loader
+    selector_list = selector_hash_data['website']
+    selector_list[site_name]
+  end
+
   # クロールするサイトの選択（標準入力）
   def ask_standard_input
     site_list = {
@@ -123,10 +127,11 @@ class BaseCrawler
     }
     print_first_question
 
-    # input = gets.to_i # 標準入力
-    input = 0
-    site_name = site_list[input]
-    { site_key: input, site_name: site_name, site_url: get_url(site_name) }
+    # site_code = gets.to_i # 標準入力
+    site_code = 0
+    site_name = site_list[site_code]
+    url = get_env_info(site_name)
+    { site_key: site_code, site_name: site_name, site_url: url }
   end
 
   def print_first_question
