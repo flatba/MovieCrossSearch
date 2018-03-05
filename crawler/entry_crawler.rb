@@ -94,26 +94,26 @@ class EntryCrawler
     when 0 then # HULU
       HuluCrawler.new(site_url, initialize_driver, initialize_selector)
     when 1 then # NETFLIX
-      NetflixCrawler.new
+      NetflixCrawler.new(site_url, initialize_driver, initialize_selector)
     when 2 then # AMAZON_PRIME
-      AmazonPrimeCrawler.new
+      AmazonPrimeCrawler.new(site_url, initialize_driver, initialize_selector)
     when 3 then # AMAZON_VIDEO
-      # AmazonVideoCrawler.new
+      # AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)
       puts '未実装です'
     when 4 then # GYAO
-      GyaoCrawler.new
+      GyaoCrawler.new(site_url, initialize_driver, initialize_selector)
     when 5 then # DTV
-      DTvCrawler.new
+      DTvCrawler.new(site_url, initialize_driver, initialize_selector)
     when 6 then # UNEXT
-      UNextCrawler.new
+      UNextCrawler.new(site_url, initialize_driver, initialize_selector)
     when 7 then # APPLE_ITUNES
-      AappleiTunesCrawler.new
+      AappleiTunesCrawler.new(site_url, initialize_driver, initialize_selector)
     when 8 then # MICROSOFT
-      MicrosoftCrawler.new
+      MicrosoftCrawler.new(site_url, initialize_driver, initialize_selector)
     when 9 then # GOOGLEPLAY
-      GooglePlayCrawler.new
+      GooglePlayCrawler.new(site_url, initialize_driver, initialize_selector)
     when 10 then # MUBI
-      MubiCrawler.new
+      MubiCrawler.new(site_url, initialize_driver, initialize_selector)
     else
       puts 'URL is Unknown...'
     end
@@ -138,7 +138,7 @@ class EntryCrawler
     print_first_question
 
     # input = gets.to_i # 標準入力
-    input = 0
+    input = 1
     site_name = site_list[input]
     site_url = get_url(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }
