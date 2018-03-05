@@ -4,6 +4,7 @@
 require './crawler/module/selector.rb'
 require './crawler/module/control_browser.rb'
 require './crawler/module/env_loader.rb'
+require './crawler/module/data_loader.rb'
 require './scrape/scrape.rb'
 
 class BaseCrawler
