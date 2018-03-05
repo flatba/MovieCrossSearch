@@ -1,12 +1,14 @@
 #
 # Hulu
 #
-class HuluCrawler < BaseCrawler
+# class HuluCrawler < BaseCrawler
+class HuluCrawler
   # カテゴリURLの取得
   def get_category_list(url)
     category_url_arr = []
     main_doc = open_url(url)
-    main_doc.css(select_selector[:category_selector]).each do |element|
+    # main_doc.css(selector[:category_selector]).each do |element|
+    main_doc.css(selector['HULU']['original_selector']['category_selector']).each do |element|
       category_url_arr << element.attr('href')
     end
     category_url_arr
@@ -15,7 +17,7 @@ class HuluCrawler < BaseCrawler
   # 映画ページのURLを取得する
   def get_contents_list
     contents_url_arr = []
-    content_elements = driver.find_elements(:css, select_selector[:content_click])
+    content_elements = driver.find_elements(:css, selector['HULU']['original_selector']['content_click'])
     content_elements.each do |element|
       if element.attribute('href').empty?
         return
@@ -102,7 +104,7 @@ class HuluCrawler < BaseCrawler
   # main routine
   #
   def start
-    category_url_arr = get_category_list(url)
+    category_url_arr = get_category_list(site_url)
     begin
       category_url_arr.each do |category_url|
         # カテゴリーページを開く

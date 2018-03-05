@@ -10,7 +10,6 @@ module Selector
     if site_name == 'HULU'
       # def select_selector
         @selector = {
-          :category_selector =>  'div.vod-frm--user01 > header > div > div > nav > ul > li > a',
           :content_click => 'body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div > a',
           :thumbnail => 'body > div.vod-frm--user01 > main > div.vod-mod-key-visual > div > img',
           :title => 'body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > h2',
