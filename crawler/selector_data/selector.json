@@ -21,7 +21,11 @@
       "original_selector": {
         "login": "//*[@id=\"appMountPoint\"]/div/div[2]/div/div/form[1]/button",
         "select_user": "//*[@id=\"appMountPoint\"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div",
-        "category_selector": "#appMountPoint > div > div > div.pinning-header > div > div.main-header.has-billboard > ul"
+        "category_selector": "#appMountPoint > div > div > div.pinning-header > div > div.main-header.has-billboard > ul",
+        "genre_button": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div",
+        "show_list": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle > div.aro-grid > div",
+        "sort_button": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div",
+        "sort_display_release_year": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a"
       },
       "common_selector": {
         "thumbnail": "",
@@ -88,6 +92,12 @@
       }
     },
     "UNEXT": {
+      "original_selector": {
+        "sidebar_button": "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > ul > li.gnav__menu--nav > a > span",
+        "category_list": "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > nav > div",
+        "show_list": "body > div.app-container.js-app-container > div > div > div:nth-child(3) > div > div > ul > li:nth-child(1) > div > div > div > a > div > div.ui-searchcategory__icon > div",
+        "contents_list": "body > div.app-container.js-app-container > div > div > div.flexible-box.mt-32 > div.list-colllections.mt-16.js-list-colllection-wrap > div > ul"
+      },
       "common_selector": {
         "thumbnail": "",
         "title": "",

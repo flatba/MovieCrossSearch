@@ -57,6 +57,10 @@ module ControlBrowser
     driver.find_element(:xpath, selector['NETFLIX']['original_selector']['login']).click
   end
 
+  def get_a_tag_element(element)
+    element.find_element(:tag_name, 'a').attribute('href')
+  end
+
   private
 
   # bodyの高さを取得する（動的に変動する高さの取得）<= 無限スクロールに使用

@@ -12,7 +12,7 @@ class NetflixCrawler < BaseCrawler
     category.find_elements(:class => 'navigation-tab').each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
-      category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
+      category_url_arr << get_a_tag_element(element) # URLを取得する
     end
     category_url_arr
   end
@@ -53,7 +53,7 @@ class NetflixCrawler < BaseCrawler
   # main routine
   #
   def start
-    super # base_routineの呼び出し
+    super # base_crawlerの呼び出し
 
     # ログインする
     login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
@@ -77,7 +77,7 @@ class NetflixCrawler < BaseCrawler
       driver.get(category_url)
 
       # ジャンルをクリックする（クリックしておかないと値を取得できない）
-      driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div').click
+      driver.find_element(:css, selector['NETFLIX']['original_selector']['genre_button']).click
       # ジャンルにアクセスする
       genre_url_arr = get_genre_url()
       genre_url_arr.each do |genre_url|
@@ -92,11 +92,11 @@ class NetflixCrawler < BaseCrawler
         driver.get(genre_url)
 
         # 映画を一覧表示に切り替える
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle > div.aro-grid > div').click
+        driver.find_element(:css, selector['NETFLIX']['original_selector']['show_list']).click
         # 並び順を変えるボタンをクリックする
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div').click
+        driver.find_element(:css, selector['NETFLIX']['original_selector']['sort_button']).click
         # 公開年でソートするソートするボタンをクリックする
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a').click
+        driver.find_element(:css, selector['NETFLIX']['original_selector']['sort_display_release_year']).click
 
 # flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
