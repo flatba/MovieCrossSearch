@@ -33,9 +33,6 @@ class AappleiTunesCrawler < BaseCrawler
 
       # 取得したらタブを閉じる
       close_new_tab(driver)
-
     end
-
   end
-
 end

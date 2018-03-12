@@ -1,11 +1,11 @@
 {
   "website": {
     "HULU": {
-      "original_selector": {
+      "original": {
         "category_selector": "div.vod-frm--user01 > header > div > div > nav > ul > li > a",
         "content_click": "body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div > a"
       },
-      "common_selector": {
+      "common": {
         "thumbnail": "body > div.vod-frm--user01 > main > div.vod-mod-key-visual > div > img",
         "title": "body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > h2",
         "original_title": "",
@@ -18,7 +18,7 @@
       }
     },
     "NETFLIX": {
-      "original_selector": {
+      "original": {
         "login": "//*[@id=\"appMountPoint\"]/div/div[2]/div/div/form[1]/button",
         "select_user": "//*[@id=\"appMountPoint\"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div",
         "category_selector": "#appMountPoint > div > div > div.pinning-header > div > div.main-header.has-billboard > ul",
@@ -27,7 +27,7 @@
         "sort_button": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div",
         "sort_display_release_year": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a"
       },
-      "common_selector": {
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -40,7 +40,10 @@
       }
     },
     "AMAZON_PRIME": {
-      "common_selector": {
+      "original": {
+        "prime_menber_video_list": "#refinementsOnTop > ul > li:nth-child(2) > span > div"
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -53,7 +56,10 @@
       }
     },
     "AMAZON_VIDEO": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -66,7 +72,10 @@
       }
     },
     "GYAO": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -79,7 +88,10 @@
       }
     },
     "DTV": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -92,13 +104,13 @@
       }
     },
     "UNEXT": {
-      "original_selector": {
+      "original": {
         "sidebar_button": "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > ul > li.gnav__menu--nav > a > span",
         "category_list": "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > nav > div",
         "show_list": "body > div.app-container.js-app-container > div > div > div:nth-child(3) > div > div > ul > li:nth-child(1) > div > div > div > a > div > div.ui-searchcategory__icon > div",
         "contents_list": "body > div.app-container.js-app-container > div > div > div.flexible-box.mt-32 > div.list-colllections.mt-16.js-list-colllection-wrap > div > ul"
       },
-      "common_selector": {
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -111,7 +123,10 @@
       }
     },
     "APPLE_ITUNES": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -124,7 +139,10 @@
       }
     },
     "MICROSOFT": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -137,7 +155,10 @@
       }
     },
     "GOOGLEPLAY": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",
@@ -150,7 +171,10 @@
       }
     },
     "MUBI": {
-      "common_selector": {
+      "original": {
+
+      },
+      "common": {
         "thumbnail": "",
         "title": "",
         "original_title": "",

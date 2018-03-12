@@ -8,7 +8,7 @@ class HuluCrawler
     category_url_arr = []
     main_doc = open_url(url)
     # main_doc.css(selector[:category_selector]).each do |element|
-    main_doc.css(selector['HULU']['original_selector']['category_selector']).each do |element|
+    main_doc.css(selector['HULU']['original']['category_selector']).each do |element|
       category_url_arr << element.attr('href')
     end
     category_url_arr
@@ -17,7 +17,7 @@ class HuluCrawler
   # 映画ページのURLを取得する
   def get_contents_list
     contents_url_arr = []
-    content_elements = driver.find_elements(:css, selector['HULU']['original_selector']['content_click'])
+    content_elements = driver.find_elements(:css, selector['HULU']['original']['content_click'])
     content_elements.each do |element|
       if element.attribute('href').empty?
         return

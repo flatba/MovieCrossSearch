@@ -57,7 +57,7 @@ module ControlBrowser
     driver.find_element(:xpath, selector['NETFLIX']['original_selector']['login']).click
   end
 
-  def get_a_tag_element(element)
+  def get_a_tag_href_element(element)
     element.find_element(:tag_name, 'a').attribute('href')
   end
 

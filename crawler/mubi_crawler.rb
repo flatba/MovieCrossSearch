@@ -1,5 +1,6 @@
 #
 # Mubi
+# 海外サイトのためちょっとわからん。
 #
 class MubiCrawler < BaseCrawler
 

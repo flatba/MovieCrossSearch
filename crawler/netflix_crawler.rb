@@ -6,13 +6,13 @@ class NetflixCrawler < BaseCrawler
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
   # カテゴリURLを取得する
-  def get_category_url()
+  def get_category_url
     category_url_arr = []
     category = driver.find_element(:class, 'tabbed-primary-navigation')
-    category.find_elements(:class => 'navigation-tab').each do |element|
+    category.find_elements(:class, 'navigation-tab').each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
-      category_url_arr << get_a_tag_element(element) # URLを取得する
+      category_url_arr << get_a_tag_href_element(element) # URLを取得する
     end
     category_url_arr
   end
@@ -20,8 +20,8 @@ class NetflixCrawler < BaseCrawler
   # ジャンルURLを取得する
   def get_genre_url
     genre_url_arr = []
-    genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
-    genre_arr.each do |genre|
+    genre_list = driver.find_element(:css, selector['NETFLIX']['original_selector']['genre_list']).find_elements(:tag_name, 'a')
+    genre_list.each do |genre|
       puts genre.text
       genre_url_arr << genre.attribute('href')
     end
@@ -30,7 +30,9 @@ class NetflixCrawler < BaseCrawler
 
   # URLからジャンルIDを切り出す
   def get_genre_id(genre_url)
-    genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+    head = genre_url.rindex('genre/') + ('genre/'.length)
+    tail = genre_url.length
+    genre_url[head..tail]
   end
 
   # 読み込もうとしているジャンルidが読み込み済でないかチェックする
@@ -49,19 +51,22 @@ class NetflixCrawler < BaseCrawler
     # ただし、映画一本に複数のジャンルidが紐づくことは考慮する必要あり。
   end
 
-  #
-  # main routine
-  #
-  def start
-    super # base_crawlerの呼び出し
-
+  def show_top_page
     # ログインする
     login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
     # ログイン後に視聴ユーザーを選択する
     driver.find_element(:xpath, selector['NETFLIX']['original_selector']['select_user']).click
+  end
+
+  #
+  # main routine
+  #
+  def start
+    super
+    show_top_page
     # カテゴリURLを取得する
-    category_url_arr = []
-    category_url_arr = get_category_url()
+    # category_url_arr = []
+    category_url_arr = get_category_url
 
     # カテゴリページを開く
     # begin
@@ -132,12 +137,9 @@ class NetflixCrawler < BaseCrawler
             sleep 1
             close_new_tab(driver)
             sleep 1
-
           end
         end
-
       end
-
       close_new_tab(driver)
       sleep 1
     end
@@ -151,5 +153,4 @@ class NetflixCrawler < BaseCrawler
     #   print e.message + "\n"
     # end
   end
-
 end
