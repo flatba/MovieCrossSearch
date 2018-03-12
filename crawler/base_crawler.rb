@@ -32,6 +32,7 @@ class BaseCrawler
   # サブクラスで必ず実装しておいて欲しい。
   # 各継承先でsuperで呼び出して実行する
   def start
+    puts '================ crawl start ================'
     driver.get(site_url)
   end
 
@@ -43,7 +44,7 @@ class BaseCrawler
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
-  def save_content_item
+  def scrape_content_item_info
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 

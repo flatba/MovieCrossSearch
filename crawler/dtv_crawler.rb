@@ -38,7 +38,7 @@ class DTvCrawler < BaseCrawler
         content_url = content.find_element(:class, 'titleCard_link').attribute('href')
         # 新規タブを開く
         open_new_tab(driver)
-        # 新規タブでcategory_urlを開く
+        # 新規タブでcontent_urlを開く
         driver.get(content_url)
 
         # TODO(flatba):情報を取得する
