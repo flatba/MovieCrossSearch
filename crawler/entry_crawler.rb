@@ -15,7 +15,7 @@ require './crawler/base_crawler.rb'
 require './crawler/hulu_crawler.rb'
 require './crawler/netflix_crawler.rb'
 require './crawler/amazon_prime_crawler.rb'
-require './crawler/amazon_crawler.rb'
+require './crawler/amazon_video_crawler.rb'
 require './crawler/gayo_crawler.rb'
 require './crawler/dtv_crawler.rb'
 require './crawler/apple_itunes_crawler.rb'
@@ -98,8 +98,7 @@ class EntryCrawler
     when 2 then # AMAZON_PRIME
       AmazonPrimeCrawler.new(site_url, initialize_driver, initialize_selector)
     when 3 then # AMAZON_VIDEO
-      # AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)
-      puts '未実装です'
+      AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)
     when 4 then # GYAO
       GyaoCrawler.new(site_url, initialize_driver, initialize_selector)
     when 5 then # DTV
@@ -138,7 +137,7 @@ class EntryCrawler
     print_first_question
 
     # input = gets.to_i # 標準入力
-    input = 7
+    input = 2
     site_name = site_list[input]
     site_url = get_url(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }

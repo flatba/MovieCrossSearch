@@ -83,8 +83,6 @@ class GyaoCrawler < BaseCrawler
   end
 
   def get_page_url(num)
-    BASE_PAGE_URL_HEAD = "https://gyao.yahoo.co.jp/list/pg/movie/all/all?dlv=now&title=99&sort=update&rs=down&b="
-    BASE_PAGE_URL_HEAD.freeze
-    list_url = BASE_PAGE_URL_HEAD + num.to_s
+    list_url = 'https://gyao.yahoo.co.jp/list/pg/movie/all/all?dlv=now&title=99&sort=update&rs=down&b=' + num.to_s
   end
 end

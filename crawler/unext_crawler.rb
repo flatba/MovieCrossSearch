@@ -67,7 +67,7 @@ class UNextCrawler < BaseCrawler
     end
   end
 
-  def scrape_content_item_info()
+  def scrape_content_item_info
     # ...
     # selector['']['common']['']
   end

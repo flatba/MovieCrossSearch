@@ -57,7 +57,7 @@
     },
     "AMAZON_VIDEO": {
       "original": {
-
+        "rental_video_list": "#refinementsOnTop > ul > li:nth-child(3) > span > div"
       },
       "common": {
         "thumbnail": "",

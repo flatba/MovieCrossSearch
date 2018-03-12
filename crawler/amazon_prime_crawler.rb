@@ -5,11 +5,11 @@
 class AmazonPrimeCrawler < BaseCrawler
   def start
     super
-    prime_menber_video_list_url = driver.find_element(:css, selector['AMAZON_PRIME']['original']['prime_menber_video_list']).find_element(:tag_name, 'a').attribute('href')
+    prime_menber_video_list_url = get_prime_menber_video_list_url
     driver.get(prime_menber_video_list_url)
 
     # 各ページの動画ページにアクセスする
-    base_page_url = get_next_page_url()
+    base_page_url = get_next_page_url
     last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
     pagenation_crawler(base_page_url, last_page_num)
   end
@@ -27,7 +27,7 @@ class AmazonPrimeCrawler < BaseCrawler
   end
 
   # ページURLのベースになるURLを返す
-  def get_next_page_url()
+  def get_next_page_url
     url = driver.find_element(:css, '#pagn > span > a').attribute('href')
     url_head   = url[0..url.index('pg_')+2]
     url_middle = url[url.index('pg_')+4..url.index('page')+4]
@@ -67,9 +67,13 @@ class AmazonPrimeCrawler < BaseCrawler
       driver.get(next_page_url)
 
       content_url_arr = []
-      content_url_arr = get_content_url_list()
+      content_url_arr = get_content_url_list
 
       get_contents_item(content_url_arr)
     end
+  end
+
+  def get_prime_menber_video_list_url
+    driver.find_element(:css, selector['AMAZON_PRIME']['original']['prime_menber_video_list']).find_element(:tag_name, 'a').attribute('href')
   end
 end
