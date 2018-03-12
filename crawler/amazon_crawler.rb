@@ -3,37 +3,38 @@
 # prime側で吸収したので、必要なくなるかも。
 #
 class AmazonCrawler < BaseCrawler
-
-  def start(url, site_name)
+  def start
     super
 
-    # これのほうが速いかも
-    # https://www.amazon.co.jp/gp/search/ref=sr_ex_n_1?rh=n%3A2351649051%2Cp_n_format_browse-bin%3A2792332051&bbn=2351649051&ie=UTF8&qid=1515052675
+    #
+    # レンタル・購入リストURLを取得して開く
+    #
+    begin
+      rental_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(3) > span > div').find_element(:tag_name, 'a').attribute('href')
+      driver.get(rental_video_list_url)
 
-    # TODO(flatba): カテゴリURLの取得
-    category_url_arr = []
+      # 各ページの動画ページにアクセスする
+      base_page_url = get_next_page_url()
+      last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
+      pagenation_crawler(base_page_url, last_page_num)
 
-    # TODO(flatba): カテゴリにアクセスして、動画情報を取得する
-    category_url_arr.each do |category_url|
+      # 新規タブを開く
 
-      open_new_tab(driver)
-      driver.get(category_url)
+      # 新規タブでcategory_urlを開く
 
-    # 新規タブを開く
+      # 新規タブを開く
 
-    # 新規タブでcategory_urlを開く
+      # 動画コンテンツを開く
 
-    # 新規タブを開く
+      # 情報を取得する
 
-    # 動画コンテンツを開く
+      # 取得したらタブを閉じる
 
-    # 情報を取得する
-
-    # 取得したらタブを閉じる
-
+    rescue RuntimeError => e
+      print e.message
+      $browser.close
+    rescue => e
+      print e.message + "\n"
     end
-
-
   end
-
 end

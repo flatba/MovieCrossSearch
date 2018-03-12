@@ -45,12 +45,12 @@ class AmazonPrimeCrawler < BaseCrawler
     end
   end
 
-  def save_contents
+  def scrape_content_info
     # TODO(flatba): 動画情報を取得する
   end
 
   # ページネーションのクロール
-  def page_crawler(base_page_url, last_page_num)
+  def pagenation_crawler(base_page_url, last_page_num)
     for page_num in 1..last_page_num do
       next_page_url = make_next_page_url(base_page_url, page_num.to_s)
       driver.get(next_page_url)
@@ -62,23 +62,19 @@ class AmazonPrimeCrawler < BaseCrawler
     end
   end
 
-
-  def start(url, site_name)
+  def start
     super
-
-
     #
     # プライム会員特典リストURLを取得して開く
     #
     begin
-
-      prime_menber_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(2) > span > div').find_element(:tag_name, 'a').attribute('href')
+      prime_menber_video_list_url = driver.find_element(:css, selector['AMAZON_PRIME']['original']['prime_menber_video_list']).find_element(:tag_name, 'a').attribute('href')
       driver.get(prime_menber_video_list_url)
 
       # 各ページの動画ページにアクセスする
       base_page_url = get_next_page_url()
       last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
-      page_crawler(base_page_url, last_page_num)
+      pagenation_crawler(base_page_url, last_page_num)
 
     rescue RuntimeError => e
       print e.message
@@ -86,27 +82,4 @@ class AmazonPrimeCrawler < BaseCrawler
     rescue => e
       print e.message + "\n"
     end
-
-
-    #
-    # レンタル・購入リストURLを取得して開く
-    #
-    begin
-
-      rental_video_list_url = driver.find_element(:css, '#refinementsOnTop > ul > li:nth-child(3) > span > div').find_element(:tag_name, 'a').attribute('href')
-      driver.get(rental_video_list_url)
-
-      # 各ページの動画ページにアクセスする
-      base_page_url = get_next_page_url()
-      last_page_num = (driver.find_element(:class, "pagnDisabled").text).to_i
-      page_crawler(base_page_url, last_page_num)
-
-    rescue RuntimeError => e
-      print e.message
-      $browser.close
-    rescue => e
-      print e.message + "\n"
-    end
-  end
-
 end
