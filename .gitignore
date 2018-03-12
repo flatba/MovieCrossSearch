@@ -55,3 +55,6 @@ memo.txt
 /db/
 .env
 /.vscode/
+crawler/.DS_Store
+.DS_Store
+crawler/selector_data/.DS_Store
