@@ -2,6 +2,13 @@
 # UNEXT
 #
 class UNextCrawler < BaseCrawler
+  def start
+    super # base_routineの呼び出し
+    category_list = get_category_list
+    get_contents_list(category_list)
+  end
+
+  private
 
   def get_category_list
     # サイドバーをクリックする（デフォルトのブラウザサイズだと表示されていないため）
@@ -63,12 +70,6 @@ class UNextCrawler < BaseCrawler
   def scrape_content_item_info()
     # ...
     # selector['']['common']['']
-  end
-
-  def start
-    super # base_routineの呼び出し
-    category_list = get_category_list
-    get_contents_list(category_list)
   end
 end
 

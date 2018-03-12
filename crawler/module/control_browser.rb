@@ -54,7 +54,7 @@ module ControlBrowser
     # 画面を開いて情報をセットしてログインする
     driver.find_element(:name, 'email').send_keys id
     driver.find_element(:name, 'password').send_keys pw
-    driver.find_element(:xpath, selector['NETFLIX']['original_selector']['login']).click
+    driver.find_element(:xpath, selector['NETFLIX']['original']['login']).click
   end
 
   def get_a_tag_href_element(element)
