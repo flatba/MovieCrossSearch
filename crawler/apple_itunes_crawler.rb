@@ -5,52 +5,76 @@ class AappleiTunesCrawler < BaseCrawler
   def start
     super
 
-    # カテゴリURLを取得
-    category_url_arr = get_category_list
+    category_url_list = get_category_url_list
 
-    # TODO(flatba): カテゴリにアクセスして動画情報を取得する
-    category_url_arr.each do |category_url|
+    category_url_list.each do |category_url|
       open_new_tab(driver)
       driver.get(category_url)
 
-      # 新規タブを開く
+      content_url_list = get_contents_list
 
-      # 新規タブでcategory_urlを開く
-
-      # 新規タブを開く
-
-      # 動画コンテンツを開く
-
-      # 情報を取得する
-
-      # 取得したらタブを閉じる
-      close_new_tab(driver)
+      content_url_list.each do |content_url|
+        open_new_tab(driver)
+        driver.get(content_url)
+        # ページネーションがうまくいっていない
+        close_new_tab(driver)
+        sleep 3
+      end
     end
   end
 
   private
 
-  def get_category_list
-    category_url_arr = []
+  # カテゴリURLを取得
+  def get_category_url_list
+    category_url_list = []
     category = driver.find_element(:css, '#genre-nav > div').find_element(:class, 'list').find_elements(:tag_name, 'a')
     category.each do |element|
       url = element.attribute('href')
-      category_url_arr << url
+      category_url_list << url
     end
-    category_url_arr
+    category_url_list
   end
 
   def get_contents_list
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+    content_url_list = []
+    # [A,B,C,...,Z,#]のリストを取得する
+    alphabet_nation_list = driver.find_elements(:css, '#selectedgenre > ul.list.alpha')
+    alphabet_nation_list.each do |alphabet|
+      # アルファベットページネーションにアクセスする
+      alphabet_url = get_a_tag_href_element(alphabet)
+      driver.get(alphabet_url)
+      # ページネーションを取得する
+      page_nation = driver.find_elements(:css, '#selectedgenre > ul:nth-child(5)')
+      page_nation.each do |page|
+        # ページネーションにアクセスする
+        page_url = get_a_tag_href_element(page)
+        driver.get(page_url)
+        # コンテンツリストを取得する
+        contents_list = driver.find_element(:css, '#selectedcontent').find_elements(:tag_name, 'li')
+        # コンテンツURLを取得する
+        contents_list.each do |content|
+          content_url_list << get_a_tag_href_element(content)
+        end
+      end
+    end
+    content_url_list
   end
 
   def scrape_content_item_info
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
-  def opentab(category_url)
+  def open_tab(category_url)
     open_new_tab(driver)
     driver.get(category_url)
   end
 
+  def scroll
+    open_new_tab(driver)
+    driver.get(content_url)
+    close_new_tab(driver)
+    sleep 3
+  end
 end

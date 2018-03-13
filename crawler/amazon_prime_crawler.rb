@@ -16,6 +16,22 @@ class AmazonPrimeCrawler < BaseCrawler
 
   private
 
+  def get_prime_menber_video_list_url
+    driver.find_element(:css, selector['AMAZON_PRIME']['original']['prime_menber_video_list']).find_element(:tag_name, 'a').attribute('href')
+  end
+
+  def get_category_list
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
+  def get_contents_list
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
+  def scrape_content_item_info
+    # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
+  end
+
   # 開いているページの全てのコンテンツのURLを配列にして返してくれる
   def get_content_url_list
     content_url_arr = []
@@ -71,9 +87,5 @@ class AmazonPrimeCrawler < BaseCrawler
 
       get_contents_item(content_url_arr)
     end
-  end
-
-  def get_prime_menber_video_list_url
-    driver.find_element(:css, selector['AMAZON_PRIME']['original']['prime_menber_video_list']).find_element(:tag_name, 'a').attribute('href')
   end
 end

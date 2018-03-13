@@ -52,14 +52,13 @@ class EntryCrawler
 
   # Webサイトのrobot.txtを参照してクロール可否のチェック
   def check_robot
-    # site_url.nil? if puts '================ URL Error ================'
     robotex = Robotex.new
     if robotex.allowed?(site_url)
       puts 'クロールが許可されたサイト'
-      puts site_url
     else
       puts 'クロールが許可されていないサイト'
     end
+    puts site_url
   end
 
   def initialize_driver
@@ -137,7 +136,7 @@ class EntryCrawler
     print_first_question
 
     # input = gets.to_i # 標準入力
-    input = 2
+    input = 7
     site_name = site_list[input]
     site_url = get_url(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }
