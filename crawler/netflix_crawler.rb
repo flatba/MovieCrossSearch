@@ -136,6 +136,7 @@ class NetflixCrawler < BaseCrawler
 
             # TODO(flatba): 取得した動画情報の保存
             # 情報を取得した変数を動画保存クラスを呼び出して渡してやる
+            # (仮)SaveInformation.new(scraping_infomation)
 
             sleep 1
             close_new_tab(driver)

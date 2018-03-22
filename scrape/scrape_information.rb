@@ -93,6 +93,9 @@ class ScrapingInfomation
   end
 
   def get_cast_information
+
+    # amazon primeは、[starring_cast]と[support_cast]に分けられている
+
     cast_list = []
     cast_elements = driver.find_elements(:css, selector['common']['cast'])
     cast_elements.each do |cast|
