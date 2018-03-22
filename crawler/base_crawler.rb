@@ -6,6 +6,7 @@ require './crawler/module/control_browser.rb'
 require './crawler/module/env_loader.rb'
 require './crawler/module/data_loader.rb'
 require './scrape/scrape.rb'
+require './scrape/scrape_information.rb'
 
 class BaseCrawler
   include ControlBrowser

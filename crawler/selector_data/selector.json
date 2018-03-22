@@ -23,6 +23,7 @@
         "select_user": "//*[@id=\"appMountPoint\"]/div/div/div[2]/div/div/ul/li[1]/div/a/div/div",
         "category_selector": "#appMountPoint > div > div > div.pinning-header > div > div.main-header.has-billboard > ul",
         "genre_button": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div",
+        "genre_list": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div > div > div.sub-menu.theme-lakira",
         "show_list": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle > div.aro-grid > div",
         "sort_button": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div",
         "sort_display_release_year": "#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a"

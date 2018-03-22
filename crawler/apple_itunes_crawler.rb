@@ -28,9 +28,9 @@ class AappleiTunesCrawler < BaseCrawler
   # カテゴリURLを取得
   def get_category_url_list
     category_url_list = []
-    category = driver.find_element(:css, '#genre-nav > div').find_element(:class, 'list').find_elements(:tag_name, 'a')
+    category = driver.find_element(:css, '#genre-nav > div').find_elements(:tag_name, 'li')
     category.each do |element|
-      url = element.attribute('href')
+      url = get_a_tag_href_element(element)
       category_url_list << url
     end
     category_url_list

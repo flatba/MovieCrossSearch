@@ -18,14 +18,14 @@ module Scrape
   # 情報を取得して構造体として返す
   def get_contents_struct(selector, doc)
 
-    # [DONE]トップ画像
+    # トップ画像
     unless check_contents_item(doc.css(select_selector[:thumbnail]))
       thumbnail = doc.css(select_selector[:thumbnail]).attr('src').to_s
     else
       thumbnail = ""
     end
 
-    # [DONE]映画タイトル
+    # 映画タイトル
     unless check_contents_item(doc.css(select_selector[:title]).text)
       title = doc.css(select_selector[:title]).text
     else
