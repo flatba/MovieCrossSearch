@@ -118,7 +118,7 @@ class ScrapingInfomation
 
   # 情報取得の項目があるかどうかのチェック（new_contentsメソッドで使用）
   def check_content_info(info)
-    if info.empty? || info.nil?
+    if info.nil?
       return false
     end
     true

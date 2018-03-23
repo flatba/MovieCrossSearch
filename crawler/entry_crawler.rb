@@ -137,7 +137,7 @@ class EntryCrawler
     print_first_question
 
     # input = gets.to_i # 標準入力
-    input = 9
+    input = 7
     site_name = site_list[input]
     site_url = get_url(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }
