@@ -11,25 +11,26 @@ class AappleiTunesCrawler < BaseCrawler
       open_new_tab(driver)
       driver.get(genre_url)
 
-      # ABC...のURL取得
+      # ABC...順にページを開く
       alphabet_nation_url_arr = get_alphabet_nation_url_arr
       alphabet_nation_url_arr.each do |alphabet_nation_url|
+
         open_new_tab(driver)
         driver.get(alphabet_nation_url)
-        # ABC..ごとにページを開く
-        # ページネーションを取得する
+
+        # ページネーション順にページを開く
         page_nation_url_arr = get_page_nation_url_arr(alphabet_nation_url)
         page_nation_url_arr.each do |page_nation_url|
-          # 映画URLを取得する
+
+          # 映画個別ページを開く
           content_url_list = get_contents_list(page_nation_url)
           content_url_list.each do |content_url|
             open_new_tab(driver)
             driver.get(content_url)
 
-            # scrape_content_item_info()
+            # 映画情報を取得する
             scrape = ScrapingInfomation.new(driver, selector)
             scraping_infomation = scrape.run # <= class構造体
-            # TODO(flatba): この構造体が取れるところまでがスクレイピング
 
             close_new_tab(driver)
             sleep 1

@@ -15,7 +15,8 @@
         "genre": "body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__information > div > div.vod-mod-detail-info02__header > div.vod-mod-detail-info02__navi > ul > li",
         "cast": "div.vod-mod-detail-info02__credit-col:nth-child(1) > ul > li",
         "director": "div.vod-mod-detail-info02__credit-col:nth-child(2) > ul:nth-child(4) > li > a",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "NETFLIX": {
@@ -39,7 +40,8 @@
         "genre": "#pane-Overview > div > div > div > div.ptrack-content > div > div.meta-lists > p.genres.inline-list",
         "director": "",
         "cast": "#pane-Overview > div > div > div > div.ptrack-content > div > div.meta-lists > p.cast.inline-list",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "AMAZON_PRIME": {
@@ -57,7 +59,8 @@
         "director": "#dv-center-features > div:nth-child(1) > div > table > tbody > tr:nth-child(2) > td > a",
         "starring_cast": "#dv-center-features > div:nth-child(1) > div > table > tbody > tr:nth-child(3) > td",
         "support_cast": "#dv-center-features > div:nth-child(1) > div > table > tbody > tr:nth-child(4) > td",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "AMAZON_VIDEO": {
@@ -75,7 +78,8 @@
         "director": "#dv-center-features > div > div > table > tbody > tr:nth-child(2) > td",
         "starring_cast": "#dv-center-features > div > div > table > tbody > tr:nth-child(3) > td",
         "support_cast": "#dv-center-features > div > div > table > tbody > tr:nth-child(4) > td",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "GYAO": {
@@ -93,7 +97,8 @@
         "genre": "",
         "director": "",
         "cast": "#infoMod > div > dl > div.top > dd:nth-child(4)",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "DTV": {
@@ -110,7 +115,8 @@
         "genre": "",
         "director": "body > div.wrapper > div > div.titleDetail_contents.titleDetailContents > div > div.js-titleDetailContentsTarget_content.titleDetailContents_content.titleDetailInfo > div:nth-child(1) > p > a:nth-child(4)",
         "cast": "body > div.wrapper > div > div.titleDetail_contents.titleDetailContents > div > div.js-titleDetailContentsTarget_content.titleDetailContents_content.titleDetailInfo > div:nth-child(1) > p",
-        "category": "titleDetailKeyword_outer"
+        "category": "titleDetailKeyword_outer",
+        "poster_image": ""
       }
     },
     "UNEXT": {
@@ -119,7 +125,8 @@
         "category_list": "body > div.app-container.js-app-container > header > div.lay-gnav__inner.js-lay-gnav__inner > div > nav > div",
         "show_list": "body > div.app-container.js-app-container > div > div > div:nth-child(3) > div > div > ul > li:nth-child(1) > div > div > div > a > div > div.ui-searchcategory__icon > div",
         "contents_list": "body > div.app-container.js-app-container > div > div > div.flexible-box.mt-32 > div.list-colllections.mt-16.js-list-colllection-wrap > div > ul",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       },
       "common": {
         "thumbnail": "body > div.app-container.js-app-container > div > div > div.ttl-keyart > div > div > img.ttl-keyart__thumbImg--hvgaw",
@@ -131,7 +138,8 @@
         "genre": "",
         "director": "",
         "cast": "body > div.app-container.js-app-container > div > div > div:nth-child(5) > div > ul",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     },
     "APPLE_ITUNES": {
@@ -149,7 +157,8 @@
         "director": "#content > div > div.center-stack > div.movie-description > div.credits > div:nth-child(3) > ul > li:nth-child(1) > div",
         "cast": "#content > div > div.center-stack > div.movie-description > div.credits > div:nth-child(2) > ul > li > div",
         "category": "none",
-        "amount": "#left-stack > div.lockup.product.movie.video > ul > li:nth-child(1) > span > span"
+        "amount": "#left-stack > div.lockup.product.movie.video > ul > li:nth-child(1) > span > span",
+        "poster_image": ""
       }
     },
     "MICROSOFT": {
@@ -169,7 +178,8 @@
         "category": "",
         "buy_amount": "#productBuyButton",
         "rental_amount": "#productRentButton",
-        "quality": "#Detail-60275-toggle-target"
+        "quality": "#Detail-60275-toggle-target",
+        "poster_image": ""
       }
     },
     "GOOGLEPLAY": {
@@ -195,7 +205,8 @@
         "category": "",
         "buy_amount": "#fcxH9b > div.WpDbMd > c-wiz > div > div.ZfcPIb > div > div.JNury.Ekdcne > div > c-wiz:nth-child(1) > div.oQ6oV > div.D0ZKYe > div > div.wE7q7b > div > div.hfWwZc > c-wiz > div > span:nth-child(2) > button",
         "rental_amount": "#fcxH9b > div.WpDbMd > c-wiz > div > div.ZfcPIb > div > div.JNury.Ekdcne > div > c-wiz:nth-child(1) > div.oQ6oV > div.D0ZKYe > div > div.wE7q7b > div > div.hfWwZc > c-wiz > div > span:nth-child(1) > button",
-        "quality": "#Detail-60275-toggle-target"
+        "quality": "#Detail-60275-toggle-target",
+        "poster_image": ""
 
       }
     },
@@ -213,7 +224,8 @@
         "genre": "",
         "director": "",
         "cast": "",
-        "category": ""
+        "category": "",
+        "poster_image": ""
       }
     }
   }

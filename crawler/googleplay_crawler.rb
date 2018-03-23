@@ -29,7 +29,7 @@ class GooglePlayCrawler < BaseCrawler
         category_name = driver.find_element(:css, selector['original']['category_name']).text
 
         # 無限スクロールを追加する
-        # ...
+        # infinit_scroll(driver, 3)
 
         # 映画リストの取得
         contents_url_arr = get_contents_list()

@@ -72,6 +72,8 @@ class ScrapingInfomation
       summary = ''
     end
 
+    # poster_image
+
     content_information = {
       'thumbnail' => thumbnail,
       'title' => title,
@@ -84,7 +86,7 @@ class ScrapingInfomation
   end
 
   def get_genre_information
-    genre_list =[]
+    genre_list = []
     genre_elements = driver.find_elements(:css, selector['common']['genre'])
     genre_elements.each do |genre|
       genre_list << genre
