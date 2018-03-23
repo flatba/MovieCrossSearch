@@ -174,10 +174,16 @@
     },
     "GOOGLEPLAY": {
       "original": {
+        "genre_button": "#action-dropdown-parent-ジャンル",
+        "genre_list": "#action-dropdown-children-ジャンル > div > ul",
+        "more_button": "see-more",
+        "category_name": "#body-content > div:nth-child(1) > div > div.main-content > div > div > div > div.cluster-heading > h2",
+        "contents_list": "#body-content > div > div > div.main-content > div > div > div > div.id-card-list.card-list.two-cards",
+        "target": "card-click-target"
 
       },
       "common": {
-        "thumbnail": "",
+        "thumbnail": "#fcxH9b > div.WpDbMd > c-wiz > div > div.ZfcPIb > div > div.JNury.Ekdcne > div > c-wiz:nth-child(1) > c-wiz > div > img.T75of.cX1En.lYfMqd",
         "title": "#fcxH9b > div.WpDbMd > c-wiz > div > div.ZfcPIb > div > div.JNury.Ekdcne > div > c-wiz:nth-child(1) > div.oQ6oV > div.D0ZKYe > div > div.sIskre > h1 > span",
         "original_title": "",
         "release_year": "#fcxH9b > div.WpDbMd > c-wiz > div > div.ZfcPIb > div > div.JNury.Ekdcne > div > c-wiz:nth-child(1) > div.oQ6oV > div.D0ZKYe > div > div.sIskre > div > div.ZVWMWc > span:nth-child(1)",

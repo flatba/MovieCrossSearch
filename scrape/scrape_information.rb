@@ -95,6 +95,7 @@ class ScrapingInfomation
   def get_cast_information
 
     # amazon primeは、[starring_cast]と[support_cast]に分けられている
+    # amazon videoは、[starring_cast]と[support_cast]に分けられている
 
     cast_list = []
     cast_elements = driver.find_elements(:css, selector['common']['cast'])
@@ -114,6 +115,7 @@ class ScrapingInfomation
   end
 
   private
+
   # 情報取得の項目があるかどうかのチェック（new_contentsメソッドで使用）
   def check_content_info(info)
     if info.empty? || info.nil?
@@ -126,14 +128,14 @@ end
 class MovieInfomation
   attr_accessor :thumbnail, :title, :original_title, :release_year, :running_time, :summary, :genre, :cast, :director
   def initialize(content_information, genre, cast, director)
-    @thumbnail      = content_information['thumbnail'],
-    @title          = content_information['title'],
-    @original_title = content_information['original_title'],
-    @release_year   = content_information['release_year'],
-    @running_time   = content_information['running_time'],
-    @summary        = content_information['summary'],
-    @genre          = genre,
-    @cast           = cast,
+    @thumbnail      = content_information['thumbnail']
+    @title          = content_information['title']
+    @original_title = content_information['original_title']
+    @release_year   = content_information['release_year']
+    @running_time   = content_information['running_time']
+    @summary        = content_information['summary']
+    @genre          = genre
+    @cast           = cast
     @director       = director
   end
 end
