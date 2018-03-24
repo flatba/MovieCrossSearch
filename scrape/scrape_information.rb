@@ -41,17 +41,20 @@ class ScrapingInfomation
     end
 
     # 原題を取得する
-    if check_content_info(driver.find_element(:css, selector['common']['original_title']))
-      original_title = driver.find_element(:css, selector['common']['original_title'])
-    else
+    # if check_content_info(driver.find_element(:css, selector['common']['original_title']))
+    #   original_title = driver.find_element(:css, selector['common']['original_title'])
+    # else
       original_title = ''
-    end
+    # end
 
     # 公開年を取得する # <= 年で取得できないサイトもあるかもなので要検討
     if check_content_info(driver.find_element(:css, selector['common']['release_year']))
-      release_year_tmp = driver.find_element(:css, selector['common']['release_year'])
-      tail_num = release_year_tmp.rindex('年')
-      release_year = release_year_tmp[tail_num-4..tail_num-1]
+      # release_year_tmp = driver.find_element(:css, selector['common']['release_year'])
+      # tail_num = release_year_tmp.rindex('年')
+      # release_year = release_year_tmp[tail_num-4..tail_num-1]
+
+      # 文字列調整中
+      release_year = driver.find_element(:css, selector['common']['release_year'])
     else
       release_year = ''
     end
@@ -72,7 +75,8 @@ class ScrapingInfomation
       summary = ''
     end
 
-    # poster_image
+    # poster_imageを取得する
+
 
     content_information = {
       'thumbnail' => thumbnail,

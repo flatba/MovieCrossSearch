@@ -21,12 +21,7 @@ class HuluCrawler < BaseCrawler
       # infinit_scroll(driver, 3)
 
       # コンテンツURLの取得
-      contents_url_arr = []
-      contents_list = driver.find_elements(:css, "body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div")
-      contents_list.each do |element|
-        contents_url_arr << get_a_tag_href_element(element)
-      end
-      puts contents_url_arr
+      contents_url_arr = get_contents_url_arr
 
       # コンテンツページ開く
       contents_url_arr.each do |content_url|
@@ -34,14 +29,23 @@ class HuluCrawler < BaseCrawler
         driver.get(content_url)
 
         # TODO(flatba): この構造体が取れるところまでがスクレイピング
-        # scrape = ScrapingInfomation.new(driver, selector)
-        # scraping_infomation = scrape.run # <= class構造体
+        scrape = ScrapingInfomation.new(driver, selector)
+        scraping_infomation = scrape.run # <= class構造体
 
         close_new_tab(driver)
         sleep 1
       end
       close_new_tab(driver)
     end
+  end
+
+  def get_contents_url_arr
+    contents_url_arr = []
+    contents_list = driver.find_elements(:css, selector['original']['contents_list'])
+    contents_list.each do |element|
+      contents_url_arr << get_a_tag_href_element(element)
+    end
+    contents_url_arr
   end
 
   def open_movie_list_page(url)
@@ -51,38 +55,34 @@ class HuluCrawler < BaseCrawler
     if url.include?('International')
       if url.include?('Series')
         # すべての海外ドラマ・TV
-        driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(8) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
-
+        driver.find_element(:css, selector['original']['all_International_Series']).click
+        sleep 5
       elsif url.include?('Movies')
-         # すべての洋画
-        driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(13) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
-
+        # すべての洋画
+        driver.find_element(:css, selector['original']['all_International_Movies']).click
+        sleep 5
       end
-    end
 
-    if url.include?('Japanese')
+    elsif url.include?('Japanese')
       if url.include?('Series')
         # すべての国内ドラマ・TV
-        driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(7) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
-
+        driver.find_element(:css, selector['original']['all_Japanese_Series']).click
+        sleep 5
       elsif url.include?('Movies')
         # すべての邦画
-        driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(10) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
-
+        driver.find_element(:css, selector['original']['all_Japanese_Movies']).click
+        sleep 5
       end
-    end
 
-    if url.include?('Anime')
+    elsif url.include?('Anime')
       # すべてのTVアニメシリーズ
-      driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(11) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
+      driver.find_element(:css, selector['original']['all_Anime']).click
+      # すべてのアニメ映画(切り替え処理必要)
+      # driver.find_element(:css, selector['original']['all_Anime_Movies']).click
 
-      # すべてのアニメ映画
-      driver.find_element(:css, "body > div.vod-frm--user01 > main > div > section:nth-child(12) > div > header > div.vod-mod-heading-box__heading > h2 > a").click
-    end
-
-    if url.include?('kids')
+    elsif url.include?('kids')
       # すべてのKids作品
-      driver.find_element(:css, "body > div.vod-frm--kids01 > main > div.vod-mod-content > section:nth-child(12) > div > header > div.vod-modk-heading-box__heading > h2 > a").click
+      driver.find_element(:css, selector['original']['all_kids']).click
     end
   end
 
@@ -94,4 +94,6 @@ class HuluCrawler < BaseCrawler
     end
     grobal_navi_url_arr
   end
+
+
 end
