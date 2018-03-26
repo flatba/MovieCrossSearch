@@ -63,16 +63,16 @@ class EntryCrawler
 
   def initialize_driver
     # 通常chrome起動
-    Selenium::WebDriver.for :chrome
+    # Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-    #   "chromeOptions" => {
-    #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-    #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-    #   }
-    # )
-    # Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+      "chromeOptions" => {
+        binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+        args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+      }
+    )
+    Selenium::WebDriver.for :chrome, desired_capabilities: caps
   end
 
   def initialize_selector
