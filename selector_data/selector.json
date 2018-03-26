@@ -11,7 +11,8 @@
         "all_Japanese_Movies": "body > div.vod-frm--user01 > main > div > section:nth-child(10) > div > header > div.vod-mod-heading-box__heading > h2 > a",
         "all_Anime": "body > div.vod-frm--user01 > main > div > section:nth-child(11) > div > header > div.vod-mod-heading-box__heading > h2 > a",
         "all_Anime_Movies": "body > div.vod-frm--user01 > main > div > section:nth-child(12) > div > header > div.vod-mod-heading-box__heading > h2 > a",
-        "all_kids": "body > div.vod-frm--kids01 > main > div.vod-mod-content > section:nth-child(12) > div > header > div.vod-modk-heading-box__heading > h2 > a"
+        "all_kids": "body > div.vod-frm--kids01 > main > div.vod-mod-content > section:nth-child(12) > div > header > div.vod-modk-heading-box__heading > h2 > a",
+        "detail_button": "body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-button-brief-toggle > div.vod-mod-button-brief-toggle__item.is-trigger-open.is-shown > button"
       },
       "common": {
         "thumbnail": "body > div.vod-frm--user01 > main > div.vod-mod-key-visual > div > img",
@@ -24,7 +25,8 @@
         "cast": "body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-detail-info02__summary.vod-utl-brief-target.is-brief-opened > div > div.vod-mod-detail-info02__credit > div:nth-child(1) > div:nth-child(1)",
         "director": "body > div.vod-frm--user01 > main > div.vod-mod-detail-info02 > div > div.vod-mod-detail-info02__description > div.vod-mod-detail-info02__summary.vod-utl-brief-target.is-brief-opened > div > div.vod-mod-detail-info02__credit > div:nth-child(1) > div:nth-child(2)",
         "category": "",
-        "poster_image": ""
+        "poster_image": "",
+        "classification": ""
       }
     },
     "NETFLIX": {

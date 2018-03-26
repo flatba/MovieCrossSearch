@@ -80,13 +80,6 @@ class EntryCrawler
     selector_hash_data = json_loader
     selector_list = selector_hash_data['website']
     selector = selector_list[site_name]
-
-    # TODO(flatba): 直したい。valueにサイト名が含まれているので、JSONの作りを変更する。
-    # selector_list.each do |key|
-    #   if key.equal?(site_name)
-    #     selector = value
-    #   end
-    # end
   end
 
   def initialize_crawler_instance

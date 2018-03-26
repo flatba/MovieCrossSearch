@@ -19,6 +19,11 @@ class HuluCrawler < BaseCrawler
       driver.get(grobal_navi_url)
       open_movie_list_page(grobal_navi_url)
 
+      # ここで？
+      # カテゴリ情報の取得
+      puts category_name = driver.find_element(:css, "body > div.vod-frm--user01 > main > header > h2").text
+      # category_name = check_category_name(driver.find_element(:css, "body > div.vod-frm--user01 > main > header > h2").text)
+
       # 無限スクロール
       # infinit_scroll(driver, 3)
 
@@ -34,14 +39,31 @@ class HuluCrawler < BaseCrawler
         # scrape = ScrapingInfomation.new(driver, selector)
         # scraping_infomation = scrape.run # <= class構造体
 
-        hulu = HuluScraper.new(driver, selector)
-        hulu.run_scrape
-
+        # infinit_scroll(driver, 3) # ページを全て舐める
+        begin
+          hulu = HuluScraper.new(driver, selector)
+          hulu.run_scrape
+        rescue => e
+          p e
+          puts 'Error: ' + content_url.to_s
+        end
+        puts classification_processor(category_name)
 
         close_new_tab(driver)
         sleep 1
       end
       close_new_tab(driver)
+    end
+  end
+
+  def classification_processor(category_name)
+    # true:映画/false:TV
+    if category_name.include?("洋画")
+      true
+    elsif category_name.include?("邦画")
+      true
+    elsif category_name.include?("TV")
+      false
     end
   end
 

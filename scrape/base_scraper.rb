@@ -51,28 +51,49 @@ class BaseScraper
     check_selector_value(selector['common']['director'])
   end
 
+  def get_classification
+    check_selector_value(selector['common']['classification'])
+  end
+
   private
 
   def check_selector_value(selector_value)
     if selector_value.nil?
       get_error_message(0)
+    elsif selector_value.empty?
+      get_error_message(1)
     else
-      driver.find_element(:css, selector_value)
+      # check_selector_element(driver.find_element(:css, selector_value))
+      begin
+        driver.find_element(:css, selector_value)
+      rescue => e
+        # p e
+        get_error_message(2)
+      end
     end
   end
 
+  # def check_selector_element(element)
+  #   begin
+  #     element
+  #   rescue => e
+  #     # p e
+  #     get_error_message(2)
+  #   end
+  # end
+
   def get_error_message(num)
+    # nil?とempty?はrubyのメソッド。blank?とpresent?はrailsで拡張されたメソッド（つまりrubyでは使えない）。
     case num
     when 0 then
       # nil? すべてのオブジェクトに定義されている。nilのときのみtrueを返す。
-      'Error Message: value is nil.'
+      'Error Message: selector value is nil.'
     when 1 then
       # empty? 文字列の長さが0のとき、または配列が空のときにTrueを返す。もちろん数値には定義されていない。
-      'Error Message: value is empty.'
+      'Error Message: selector value is empty.'
     when 2 then
-      # blank? railsの拡張。nil, "", " ", [], {} のいずれかでTrueを返す。
-      'Error Message: value is blank.'
+      # タグ情報が変わったりしてemlementが発見できない場合の例外処理時のエラー文
+      'Error Message: Uncaught exception. No such element.'
     end
   end
-
 end
