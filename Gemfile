@@ -16,3 +16,4 @@ gem 'dotenv'
 gem 'mechanize'
 
 gem 'webdriver-user-agent'
+gem "slack-notifier"
