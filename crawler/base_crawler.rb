@@ -1,12 +1,14 @@
 #
 # 全てのクローラーの親クラス
 #
-require './crawler/module/selector.rb'
-require './crawler/module/control_browser.rb'
-require './crawler/module/env_loader.rb'
-require './crawler/module/data_loader.rb'
+require './module/selector.rb'
+require './module/control_browser.rb'
+require './module/data_loader.rb'
 require './scrape/scrape.rb'
 require './scrape/scrape_information.rb'
+
+require './scrape/base_scraper.rb'
+require './scrape/scrape_delegator.rb'
 
 class BaseCrawler
   include ControlBrowser

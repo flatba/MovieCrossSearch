@@ -2,6 +2,8 @@
 # Hulu
 # https://www.happyon.jp/
 #
+require './scrape/hulu_scraper.rb'
+
 class HuluCrawler < BaseCrawler
   def start
     super
@@ -29,8 +31,10 @@ class HuluCrawler < BaseCrawler
         driver.get(content_url)
 
         # TODO(flatba): この構造体が取れるところまでがスクレイピング
-        scrape = ScrapingInfomation.new(driver, selector)
-        scraping_infomation = scrape.run # <= class構造体
+        # scrape = ScrapingInfomation.new(driver, selector)
+        # scraping_infomation = scrape.run # <= class構造体
+
+        HuluScraper.new
 
         close_new_tab(driver)
         sleep 1

@@ -1,7 +1,10 @@
 #
-#
+# scrapeの基底クラス（カプセル化）
+# cssセレクターのみ対応（xpathには現状対応していない。）
 #
 class BaseScraper
+  include Selector
+
   def get_thumbnail
     driver.find_element(:css, selector['common']['thumbnail'])
   end

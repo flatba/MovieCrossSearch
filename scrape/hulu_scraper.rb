@@ -26,18 +26,28 @@ class HuluScraper
   def original_title_processor
     original_title = base.get_original_title
     puts original_title
+
   end
 
   def release_year_processor
-    release_year = base.get_release_year
-    puts release_year
+    release_year_tmp = base.get_release_year
     # Selenium形式？文字列そのもの？で返ってくるので加工が必要
-    # ...
+    # ... 下記みたいな感じ
+
+    tail_num = release_year_tmp.rindex('年')
+    release_year = release_year_tmp[tail_num-4..tail_num-1]
+    return release_year
   end
 
   def running_time_processor
     running_time = base.get_running_time
     puts running_time
+    # Selenium形式？文字列そのもの？で返ってくるので加工が必要
+    # ... 下記みたいな感じ
+    running_time_tmp = driver.find_element(:css, selector['common']['running_time'])
+    tail_num = running_time_tmp.rindex('分')
+    running_time = running_time_tmp[tail_num-3..tail_num].strip
+    return running_time
   end
 
   def summary_processor
