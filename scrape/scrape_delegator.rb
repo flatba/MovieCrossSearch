@@ -19,7 +19,8 @@ class ScrapeDelegator
   end
 
   def get_original_title
-    base.get_original_title
+    # base.get_original_title
+    ''
   end
 
   def get_release_year

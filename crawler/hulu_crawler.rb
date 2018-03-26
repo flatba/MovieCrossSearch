@@ -34,7 +34,9 @@ class HuluCrawler < BaseCrawler
         # scrape = ScrapingInfomation.new(driver, selector)
         # scraping_infomation = scrape.run # <= class構造体
 
-        HuluScraper.new
+        hulu = HuluScraper.new(driver, selector)
+        hulu.run_scrape
+
 
         close_new_tab(driver)
         sleep 1

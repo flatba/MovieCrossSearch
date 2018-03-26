@@ -1,36 +1,51 @@
 #
 #
 #
+require './scrape/scrape_delegator.rb'
+require './scrape/base_scraper.rb'
+
 class HuluScraper
   attr_reader :base
 
-  def initialize
-    @base = ScrapeDelegator.new(BaseScraper.new)
+  def initialize(driver, selector)
+    @base = ScrapeDelegator.new(BaseScraper.new(driver, selector))
+  end
 
+  def run_scrape
+    thumbnail_processor
+    title_processor
+    original_title_processor
+    release_year_processor
+    running_time_processor
+    summary_processor
+    poster_image_processor
+    genre_processor
+    cast_processor
+    director_processor
   end
 
   def thumbnail_processor
+    # [DONE]
     thumbnail = base.get_thumbnail
-    puts thumbnail
-    # Selenium形式？文字列そのもの？で返ってくるので加工が必要
-    # ... こいつはURLなのでなのでS3に保存する処理とか？
+    puts thumbnail.attribute('src')
   end
 
   def title_processor
     title = base.get_title
-    puts title
+    puts title.text
     # Selenium形式？文字列そのもの？で返ってくるので加工が必要
     # ...
   end
 
   def original_title_processor
     original_title = base.get_original_title
-    puts original_title
+    puts original_title.text
 
   end
 
   def release_year_processor
     release_year_tmp = base.get_release_year
+    release_year_tmp = release_year_tmp.text
     # Selenium形式？文字列そのもの？で返ってくるので加工が必要
     # ... 下記みたいな感じ
 

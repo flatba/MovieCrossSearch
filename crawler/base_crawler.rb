@@ -1,20 +1,13 @@
 #
 # 全てのクローラーの親クラス
 #
-require './module/selector.rb'
 require './module/control_browser.rb'
 require './module/data_loader.rb'
-require './scrape/scrape.rb'
-require './scrape/scrape_information.rb'
-
-require './scrape/base_scraper.rb'
 require './scrape/scrape_delegator.rb'
 
 class BaseCrawler
   include ControlBrowser
   include DataLoader
-  include Selector
-  include Scrape
 
   # attr_reader :site_key, :site_name, :site_url, :crawl, :scrape, :driver, :selector, :movie_master
   attr_reader :site_url, :driver, :selector

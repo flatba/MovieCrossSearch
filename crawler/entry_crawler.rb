@@ -139,7 +139,7 @@ class EntryCrawler
     # input = gets.to_i # 標準入力
     input = 0
     site_name = site_list[input]
-    site_url = get_url(site_name)
+    site_url = get_env_info(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }
   end
 
