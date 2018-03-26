@@ -6,13 +6,13 @@ class NetflixCrawler < BaseCrawler
   attr_reader :crawl, :scrape, :driver, :selector, :movie_master
 
   # カテゴリURLを取得する
-  def get_category_url()
+  def get_category_url
     category_url_arr = []
     category = driver.find_element(:class, 'tabbed-primary-navigation')
-    category.find_elements(:class => 'navigation-tab').each do |element|
+    category.find_elements(:class, 'navigation-tab').each do |element|
       # puts a_tag.text.strip   # カテゴリ名称
       # puts a_tag.attr('href') # カテゴリURL
-      category_url_arr << element.find_element(:tag_name, 'a').attribute('href') # URLを取得する
+      category_url_arr << get_a_tag_href_element(element) # URLを取得する
     end
     category_url_arr
   end
@@ -20,10 +20,8 @@ class NetflixCrawler < BaseCrawler
   # ジャンルURLを取得する
   def get_genre_url
     genre_url_arr = []
-    puts "ここまで1"
-    genre_arr = driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div.sub-menu.theme-lakira').find_elements(:tag_name, 'a')
-    puts "ここまで2"
-    genre_arr.each do |genre|
+    genre_list = driver.find_element(:css, selector['original']['genre_list']).find_elements(:tag_name, 'a')
+    genre_list.each do |genre|
       puts genre.text
       genre_url_arr << genre.attribute('href')
     end
@@ -32,7 +30,9 @@ class NetflixCrawler < BaseCrawler
 
   # URLからジャンルIDを切り出す
   def get_genre_id(genre_url)
-    genre_url[genre_url.rindex('genre/')+('genre/'.length)..genre_url.length]
+    head = genre_url.rindex('genre/') + ('genre/'.length)
+    tail = genre_url.length
+    genre_url[head..tail]
   end
 
   # 読み込もうとしているジャンルidが読み込み済でないかチェックする
@@ -51,19 +51,22 @@ class NetflixCrawler < BaseCrawler
     # ただし、映画一本に複数のジャンルidが紐づくことは考慮する必要あり。
   end
 
+  def show_top_page
+    # ログインする
+    login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
+    # ログイン後に視聴ユーザーを選択する
+    driver.find_element(:xpath, selector['original']['select_user']).click
+  end
+
   #
   # main routine
   #
   def start
-    super # base_routineの呼び出し
-
-    # ログインする
-    login(driver, ENV['NETFLIX_LOGIN_ID'], ENV['NETFLIX_LOGIN_PASSWORD'])
-    # ログイン後に視聴ユーザーを選択する
-    driver.find_element(:xpath, selector['NETFLIX']['original_selector']['select_user']).click
+    super
+    show_top_page
     # カテゴリURLを取得する
-    category_url_arr = []
-    category_url_arr = get_category_url()
+    # category_url_arr = []
+    category_url_arr = get_category_url
 
     # カテゴリページを開く
     # begin
@@ -79,9 +82,7 @@ class NetflixCrawler < BaseCrawler
       driver.get(category_url)
 
       # ジャンルをクリックする（クリックしておかないと値を取得できない）
-      puts "ジャンルクリックする"
-      driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.subgenres > div > div').click
-      puts "ジャンルクリックした"
+      driver.find_element(:css, selector['original']['genre_button']).click
       # ジャンルにアクセスする
       genre_url_arr = get_genre_url()
       genre_url_arr.each do |genre_url|
@@ -96,19 +97,11 @@ class NetflixCrawler < BaseCrawler
         driver.get(genre_url)
 
         # 映画を一覧表示に切り替える
-        puts "一覧表示に切り替える"
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle > div.aro-grid > div').click
-        puts "一覧表示に切り替えた"
-
+        driver.find_element(:css, selector['original']['show_list']).click
         # 並び順を変えるボタンをクリックする
-        puts "並び順を変えるボタンをクリックする"
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div').click
-        puts "並び順を変えるボタンをクリックした"
-
+        driver.find_element(:css, selector['original']['sort_button']).click
         # 公開年でソートするソートするボタンをクリックする
-        puts "公開年でソートするソートするボタンをクリックする"
-        driver.find_element(:css, '#appMountPoint > div > div > div.pinning-header > div > div.sub-header > div:nth-child(2) > div > div > div.aro-genre-details > div.aro-toggle.grid-selected > div.aro-grid > div.sortGallery > div > div.sub-menu.theme-aro > ul > li:nth-child(2) > a').click
-        puts "公開年でソートするソートするボタンをクリックした"
+        driver.find_element(:css, selector['original']['sort_display_release_year']).click
 
 # flatba^ 20180116 コンテンツ情報取得のために一旦コメントアウト
         # infinite_scrollを追加して末端まで読み込む
@@ -123,7 +116,8 @@ class NetflixCrawler < BaseCrawler
           contents_list.each do |content|
             content_link = content.attribute('href')
             p content_link
-            head_num = content_link.index('watch/') + ('watch/'.length)
+            head_identifier = 'watch/'
+            head_num = content_link.index(head_identifier) + (head_identifier.length)
             # tail_num = content_link.index('?trackId') - 1 # 旧
             tail_num = content_link.length
             content_id = content_link[head_num..tail_num]
@@ -137,19 +131,19 @@ class NetflixCrawler < BaseCrawler
             # ここで処理をゴニョゴニョ書くよりも、
             # 映画の個別ページが開かれている状態なので、scrapeクラスを呼び出して処理はそっちに任せたほうが良いかも
             # クラスで返してやって、変数に入れておく
+            scrape = ScrapingInfomation.new(driver, selector)
+            scraping_infomation = scrape.run # <= class構造体
 
             # TODO(flatba): 取得した動画情報の保存
             # 情報を取得した変数を動画保存クラスを呼び出して渡してやる
+            # (仮)SaveInformation.new(scraping_infomation)
 
             sleep 1
             close_new_tab(driver)
             sleep 1
-
           end
         end
-
       end
-
       close_new_tab(driver)
       sleep 1
     end
@@ -163,5 +157,4 @@ class NetflixCrawler < BaseCrawler
     #   print e.message + "\n"
     # end
   end
-
 end

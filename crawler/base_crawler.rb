@@ -1,17 +1,13 @@
 #
 # 全てのクローラーの親クラス
 #
-require './crawler/module/selector.rb'
-require './crawler/module/control_browser.rb'
-require './crawler/module/env_loader.rb'
-require './crawler/module/data_loader.rb'
-require './scrape/scrape.rb'
+require './module/control_browser.rb'
+require './module/data_loader.rb'
+require './scrape/scrape_delegator.rb'
 
 class BaseCrawler
   include ControlBrowser
   include DataLoader
-  include Selector
-  include Scrape
 
   # attr_reader :site_key, :site_name, :site_url, :crawl, :scrape, :driver, :selector, :movie_master
   attr_reader :site_url, :driver, :selector
@@ -32,6 +28,7 @@ class BaseCrawler
   # サブクラスで必ず実装しておいて欲しい。
   # 各継承先でsuperで呼び出して実行する
   def start
+    puts '================ crawl start ================'
     driver.get(site_url)
   end
 
@@ -43,7 +40,7 @@ class BaseCrawler
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 
-  def save_content_item
+  def scrape_content_item_info
     # raise NotImplementedError.new("You must implement #{self.class}##{__method__}")
   end
 

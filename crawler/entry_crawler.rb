@@ -15,7 +15,7 @@ require './crawler/base_crawler.rb'
 require './crawler/hulu_crawler.rb'
 require './crawler/netflix_crawler.rb'
 require './crawler/amazon_prime_crawler.rb'
-require './crawler/amazon_crawler.rb'
+require './crawler/amazon_video_crawler.rb'
 require './crawler/gayo_crawler.rb'
 require './crawler/dtv_crawler.rb'
 require './crawler/apple_itunes_crawler.rb'
@@ -45,7 +45,6 @@ class EntryCrawler
   def run
     check_robot
     @crawler = initialize_crawler_instance
-
     # driver.get(site_url)
   end
 
@@ -53,13 +52,13 @@ class EntryCrawler
 
   # Webサイトのrobot.txtを参照してクロール可否のチェック
   def check_robot
-    site_url.nil? if puts '================ URL Error ================'
     robotex = Robotex.new
     if robotex.allowed?(site_url)
       puts 'クロールが許可されたサイト'
     else
       puts 'クロールが許可されていないサイト'
     end
+    puts site_url
   end
 
   def initialize_driver
@@ -80,13 +79,7 @@ class EntryCrawler
     # setup_selector(site_name)
     selector_hash_data = json_loader
     selector_list = selector_hash_data['website']
-
-    # TODO(flatba): 直したい。valueにサイト名が含まれているので、JSONの作りを変更する。
-    selector_list.each do | key, value |
-      if key.equal?(site_name)
-        selector = value
-      end
-    end
+    selector = selector_list[site_name]
   end
 
   def initialize_crawler_instance
@@ -98,8 +91,7 @@ class EntryCrawler
     when 2 then # AMAZON_PRIME
       AmazonPrimeCrawler.new(site_url, initialize_driver, initialize_selector)
     when 3 then # AMAZON_VIDEO
-      # AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)
-      puts '未実装です'
+      AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)
     when 4 then # GYAO
       GyaoCrawler.new(site_url, initialize_driver, initialize_selector)
     when 5 then # DTV
@@ -138,9 +130,9 @@ class EntryCrawler
     print_first_question
 
     # input = gets.to_i # 標準入力
-    input = 1
+    input = 0
     site_name = site_list[input]
-    site_url = get_url(site_name)
+    site_url = get_env_info(site_name)
     { site_key: input, site_name: site_name, site_url: site_url }
   end
 

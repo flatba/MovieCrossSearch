@@ -1,9 +1,10 @@
 #
 # Mubi
+# 海外サイトのためちょっとわからん。
 #
 class MubiCrawler < BaseCrawler
 
-  def start(url, site_name)
+  def start
     super
 
     # TODO(flatba): カテゴリURLの取得
