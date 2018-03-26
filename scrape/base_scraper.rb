@@ -12,42 +12,67 @@ class BaseScraper
   end
 
   def get_thumbnail
-    driver.find_element(:css, selector['common']['thumbnail'])
+    check_selector_value(selector['common']['thumbnail'])
   end
 
   def get_title
-    driver.find_element(:css, selector['common']['title'])
+    check_selector_value(selector['common']['title'])
   end
 
   def get_original_title
-    driver.find_element(:css, selector['common']['original_title'])
+    check_selector_value(selector['common']['original_title'])
   end
 
   def get_release_year
-    driver.find_element(:css, selector['common']['release_year'])
+    check_selector_value(selector['common']['release_year'])
   end
 
   def get_running_time
-    driver.find_element(:css, selector['common']['running_time'])
+    check_selector_value(selector['common']['running_time'])
   end
 
   def get_summary
-    driver.find_element(:css, selector['common']['summary'])
+    check_selector_value(selector['common']['summary'])
   end
 
   def get_poster_image
-    driver.find_element(:css, selector['common']['poster_image'])
+    check_selector_value(selector['common']['poster_image'])
   end
 
   def get_genre
-    driver.find_elements(:css, selector['common']['genre'])
+    check_selector_value(selector['common']['genre'])
   end
 
   def get_cast
-    driver.find_elements(:css, selector['common']['cast'])
+    check_selector_value(selector['common']['cast'])
   end
 
   def get_director
-    driver.find_elements(:css, selector['common']['director'])
+    check_selector_value(selector['common']['director'])
   end
+
+  private
+
+  def check_selector_value(selector_value)
+    if selector_value.nil?
+      get_error_message(0)
+    else
+      driver.find_element(:css, selector_value)
+    end
+  end
+
+  def get_error_message(num)
+    case num
+    when 0 then
+      # nil? すべてのオブジェクトに定義されている。nilのときのみtrueを返す。
+      'Error Message: value is nil.'
+    when 1 then
+      # empty? 文字列の長さが0のとき、または配列が空のときにTrueを返す。もちろん数値には定義されていない。
+      'Error Message: value is empty.'
+    when 2 then
+      # blank? railsの拡張。nil, "", " ", [], {} のいずれかでTrueを返す。
+      'Error Message: value is blank.'
+    end
+  end
+
 end

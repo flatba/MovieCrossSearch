@@ -100,6 +100,4 @@ class HuluCrawler < BaseCrawler
     end
     grobal_navi_url_arr
   end
-
-
 end
