@@ -8,11 +8,11 @@ class HuluScraper
   attr_reader :base
 
   def initialize(driver, selector)
-    do_click(driver)
+    do_click(driver, selector)
     @base = ScrapeDelegator.new(BaseScraper.new(driver, selector))
   end
 
-  def do_click(driver)
+  def do_click(driver, selector)
     driver.find_element(:css, selector['original']['detail_button']).click
   end
 
