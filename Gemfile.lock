@@ -33,6 +33,7 @@ GEM
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     ntlm-http (0.1.1)
+    pg (1.0.0)
     psych (3.0.2)
     rake (12.3.0)
     robotex (1.0.0)
@@ -42,7 +43,6 @@ GEM
     selenium-webdriver (3.7.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
-    slack-notifier (2.3.2)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
@@ -62,10 +62,10 @@ DEPENDENCIES
   environment
   mechanize
   nokogiri
+  pg
   robotex
   ruby-debug-ide
   selenium-webdriver
-  slack-notifier
   webdriver-user-agent
 
 BUNDLED WITH
