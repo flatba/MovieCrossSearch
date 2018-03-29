@@ -1,8 +1,8 @@
 #
 #
 #
-require './scrape/scrape_delegator.rb'
-require './scrape/base_scraper.rb'
+require './scraper/scrape_delegator.rb'
+require './scraper/base_scraper.rb'
 
 class UNextScraper
   attr_reader :base

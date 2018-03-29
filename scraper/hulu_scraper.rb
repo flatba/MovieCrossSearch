@@ -1,10 +1,10 @@
 #
 #
 #
-require './scrape/scrape_delegator.rb'
-require './scrape/base_scraper.rb'
+require './scraper/scrape_delegator.rb'
+require './scraper/base_scraper.rb'
 
-class AappleiTunesScraper
+class HuluScraper
   attr_reader :base
 
   def initialize(driver, selector)
@@ -17,17 +17,20 @@ class AappleiTunesScraper
   end
 
   def run_scrape
-    thumbnail = thumbnail_processor
-    title = title_processor
-    original_title = original_title_processor
-    release_year = release_year_processor
-    running_time = running_time_processor
-    summary = summary_processor
-    poster_image = poster_image_processor
-    genre_list = genre_processor
-    cast_list = cast_processor
-    director_list = director_processor
-    # classification_processor
+    # information_list = []
+    information_arr = []
+    information_arr << thumbnail_processor
+    information_arr << title_processor
+    information_arr << original_title_processor
+    information_arr << release_year_processor
+    information_arr << running_time_processor
+    information_arr << summary_processor
+    information_arr << poster_image_processor
+    information_arr << genre_processor
+    information_arr << cast_processor
+    information_arr << director_processor
+    # information_arr << classification_processor
+    # information_list << information_arr
   end
 
   def thumbnail_processor
@@ -35,7 +38,8 @@ class AappleiTunesScraper
 
     if check_type(thumbnail)
       #### ↓correction processing↓ ###
-      puts thumbnail.attribute('src')
+      puts thumbnail = thumbnail.attribute('src')
+      thumbnail
     end
   end
 
@@ -44,7 +48,8 @@ class AappleiTunesScraper
 
     if check_type(title)
       #### ↓correction processing↓ ###
-      puts title.text
+      puts title = title.text
+      title
     end
   end
 
@@ -55,6 +60,7 @@ class AappleiTunesScraper
     if check_type(original_title)
       #### ↓correction processing↓ ###
       puts original_title
+      original_title
     end
   end
 
@@ -66,7 +72,8 @@ class AappleiTunesScraper
       release_year = release_year.text
       tail = release_year.rindex('年') - 1
       head = tail - 3
-      puts release_year[head..tail]
+      puts release_year = release_year[head..tail]
+      release_year
     end
   end
 
@@ -78,7 +85,8 @@ class AappleiTunesScraper
       running_time = running_time.text
       tail = running_time.rindex('分') - 1
       head = tail - 1
-      puts running_time[head..tail]
+      puts running_time = running_time[head..tail]
+      running_time
     end
   end
 
@@ -88,6 +96,7 @@ class AappleiTunesScraper
     if check_type(summary)
       #### ↓correction processing↓ ###
       puts summary
+      summary
     end
   end
 
@@ -97,6 +106,7 @@ class AappleiTunesScraper
     if check_type(poster_image)
       #### ↓correction processing↓ ###
       puts poster_image
+      poster_image
     end
   end
 
@@ -110,6 +120,7 @@ class AappleiTunesScraper
         genre_list << genre_element.text
       end
       puts genre_list
+      genre_list
     end
   end
 
@@ -123,6 +134,7 @@ class AappleiTunesScraper
         cast_list << cast_element.text
       end
       puts cast_list
+      cast_list
     end
   end
 
@@ -135,7 +147,8 @@ class AappleiTunesScraper
       director.find_elements(:tag_name, 'a').each do |director_element|
         director_list << director_element.text
       end
-      puts director_list[0] # <= プロデューサーまで取得できてしまうので一個目の監督のみ返す
+      puts director = director_list[0] # <= プロデューサーまで取得できてしまうので一個目の監督のみ返す
+      director
     end
   end
 

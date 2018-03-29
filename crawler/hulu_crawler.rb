@@ -2,27 +2,23 @@
 # Hulu
 # https://www.happyon.jp/
 #
-require './scrape/hulu_scraper.rb'
+require './scraper/hulu_scraper.rb'
 
 class HuluCrawler < BaseCrawler
   def start
     super
 
     grobal_navi_url_arr = get_grobal_navi_url_arr
-
     grobal_navi_url_arr.each do |grobal_navi_url|
-      next if grobal_navi_url.include?('Ranking')   # ランキング
-      next if grobal_navi_url.include?('realtimes') # リアルタイム
-      next if grobal_navi_url.include?('features')  # 特集
+
+      next if check_grobal_navi_url(grobal_navi_url)
 
       open_new_tab(driver)
       driver.get(grobal_navi_url)
       open_movie_list_page(grobal_navi_url)
 
-      # ここで？
       # カテゴリ情報の取得
-      puts category_name = driver.find_element(:css, "body > div.vod-frm--user01 > main > header > h2").text
-      # category_name = check_category_name(driver.find_element(:css, "body > div.vod-frm--user01 > main > header > h2").text)
+      puts category_name = driver.find_element(:css, selector['original']['category_name']).text
 
       # 無限スクロール
       # infinit_scroll(driver, 3)
@@ -35,19 +31,26 @@ class HuluCrawler < BaseCrawler
         open_new_tab(driver)
         driver.get(content_url)
 
-        # TODO(flatba): この構造体が取れるところまでがスクレイピング
-        # scrape = ScrapingInfomation.new(driver, selector)
-        # scraping_infomation = scrape.run # <= class構造体
-
         # infinit_scroll(driver, 3) # ページを全て舐める
         begin
-          hulu = HuluScraper.new(driver, selector)
-          hulu.run_scrape
+          information_arr = []
+          scraper = HuluScraper.new(driver, selector)
+          information_arr = scraper.run_scrape
         rescue => e
           p e
           puts 'Error: ' + content_url.to_s
+          $LOG.debug('Error: ' + content_url.to_s)
         end
         puts classification_processor(category_name)
+
+        begin
+          # save
+        rescue => e
+          p e
+          puts 'Error: ' + e
+          $LOG.debug('Error: ' + e)
+        end
+
 
         close_new_tab(driver)
         sleep 1
@@ -56,13 +59,20 @@ class HuluCrawler < BaseCrawler
     end
   end
 
+  def check_grobal_navi_url(grobal_navi_url)
+    true if grobal_navi_url.include?('Ranking')   # ランキング
+    true if grobal_navi_url.include?('realtimes') # リアルタイム
+    true if grobal_navi_url.include?('features')  # 特集
+    false
+  end
+
   def classification_processor(category_name)
-    # true:映画/false:TV
-    if category_name.include?("洋画")
+    # true:映画/false:TV（booleanなことに懸念あったけど、どうせジャンル取得しているからどうとでもなりそう。）
+    if category_name.include?('洋画')
       true
-    elsif category_name.include?("邦画")
+    elsif category_name.include?('邦画')
       true
-    elsif category_name.include?("TV")
+    else
       false
     end
   end

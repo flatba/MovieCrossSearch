@@ -128,11 +128,13 @@ class NetflixCrawler < BaseCrawler
             driver.get(content_url)
 
             # TODO(flatba): 動画情報の取得
-            # ここで処理をゴニョゴニョ書くよりも、
-            # 映画の個別ページが開かれている状態なので、scrapeクラスを呼び出して処理はそっちに任せたほうが良いかも
-            # クラスで返してやって、変数に入れておく
-            scrape = ScrapingInfomation.new(driver, selector)
-            scraping_infomation = scrape.run # <= class構造体
+            begin
+              scraper = NetflixScraper.new(driver, selector)
+              scraper.run_scrape
+            rescue => e
+              p e
+              puts 'Error: ' + content_url.to_s
+            end
 
             # TODO(flatba): 取得した動画情報の保存
             # 情報を取得した変数を動画保存クラスを呼び出して渡してやる

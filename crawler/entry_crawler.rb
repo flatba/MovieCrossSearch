@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'robotex'
 require 'selenium-webdriver'
 require 'date'
+require 'logger'
 
 # require 'sqlite3'
 
@@ -27,7 +28,7 @@ require './crawler/unext_crawler.rb'
 class EntryCrawler
   include DataLoader
   # attr_reader :site_key, :site_name, :site_url, :crawl, :scrape, :driver, :selector
-  attr_reader :site_key, :site_name, :site_url, :crawler
+  attr_reader :site_key, :site_name, :site_url, :crawler, :log
 
   def initialize
     # サイト情報
@@ -35,17 +36,17 @@ class EntryCrawler
     @site_key   = site_info[:site_key]
     @site_name  = site_info[:site_name]
     @site_url   = site_info[:site_url]
+    $log = Logger.new('./log/logger.log')
 
     # @selector   = initialize_selector
-    @genre_master    = []
-    @director_master = []
-    @cast_master     = []
+    # @genre_master    = []
+    # @director_master = []
+    # @cast_master     = []
   end
 
   def run
     check_robot
     @crawler = initialize_crawler_instance
-    # driver.get(site_url)
   end
 
   private
@@ -54,18 +55,20 @@ class EntryCrawler
   def check_robot
     robotex = Robotex.new
     if robotex.allowed?(site_url)
-      puts 'クロールが許可されたサイト'
+      $log.debug('クロールが許可されたサイト')
     else
-      puts 'クロールが許可されていないサイト'
+      $log.debug('クロールが許可されていないサイト')
     end
     puts site_url
   end
 
   def initialize_driver
     # 通常chrome起動
+    # log.debug('chrome起動')
     # Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
+    $log.debug('HeadressChrome起動')
     caps = Selenium::WebDriver::Remote::Capabilities.chrome(
       "chromeOptions" => {
         binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
@@ -79,16 +82,19 @@ class EntryCrawler
     # setup_selector(site_name)
     selector_hash_data = json_loader
     selector_list = selector_hash_data['website']
-    selector = selector_list[site_name]
+    selector_list[site_name]
   end
 
   def initialize_crawler_instance
     case site_key
     when 0 then # HULU
+      $log.debug('Huluクローラーのインスタンス生成')
       HuluCrawler.new(site_url, initialize_driver, initialize_selector)
     when 1 then # NETFLIX
+      $log.debug('Netflixクローラーのインスタンス生成')
       NetflixCrawler.new(site_url, initialize_driver, initialize_selector)
     when 2 then # AMAZON_PRIME
+      $log.debug('AMAZON_PRIMEクローラーのインスタンス生成')
       AmazonPrimeCrawler.new(site_url, initialize_driver, initialize_selector)
     when 3 then # AMAZON_VIDEO
       AmazonVideoCrawler.new(site_url, initialize_driver, initialize_selector)

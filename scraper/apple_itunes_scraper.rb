@@ -1,10 +1,10 @@
 #
 #
 #
-require './scrape/scrape_delegator.rb'
-require './scrape/base_scraper.rb'
+require './scraper/scrape_delegator.rb'
+require './scraper/base_scraper.rb'
 
-class AmazonPrimeScraper
+class AappleiTunesScraper
   attr_reader :base
 
   def initialize(driver, selector)

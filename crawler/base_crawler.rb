@@ -3,7 +3,7 @@
 #
 require './module/control_browser.rb'
 require './module/data_loader.rb'
-require './scrape/scrape_delegator.rb'
+require './scraper/scrape_delegator.rb'
 
 class BaseCrawler
   include ControlBrowser

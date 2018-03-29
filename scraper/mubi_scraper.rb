@@ -1,10 +1,10 @@
 #
 #
 #
-require './scrape/scrape_delegator.rb'
-require './scrape/base_scraper.rb'
+require './scraper/scrape_delegator.rb'
+require './scraper/base_scraper.rb'
 
-class NetflixScraper
+class MubiScraper
   attr_reader :base
 
   def initialize(driver, selector)
@@ -35,7 +35,7 @@ class NetflixScraper
 
     if check_type(thumbnail)
       #### ↓correction processing↓ ###
-      puts thumbnail
+      puts thumbnail.attribute('src')
     end
   end
 

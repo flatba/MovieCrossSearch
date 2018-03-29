@@ -2,6 +2,7 @@
   "website": {
     "HULU": {
       "original": {
+        "category_name": "body > div.vod-frm--user01 > main > header > h2",
         "category_selector": "div.vod-frm--user01 > header > div > div > nav > ul > li > a",
         "content_click": "body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div > a",
         "contents_list": "body > div.vod-frm--user01 > main > div.vod-mod-content > div.vod-mod-tile > div",
