@@ -69,13 +69,17 @@ class EntryCrawler
 
     # HeadressChrome起動
     $LOG.debug('HeadressChrome起動')
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-      "chromeOptions" => {
-        binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-        args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
-      }
-    )
-    Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+    #   "chromeOptions" => {
+    #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+    #     args: ["--headless", "--disable-gpu",  "window-size=1280x800"]
+    #   }
+    # )
+    # Selenium::WebDriver.for :chrome, desired_capabilities: caps
+
+    #Heroku
+    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: "/app/.apt/usr/bin/google-chrome", args: ["--headless"]})
+    driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
   end
 
   def initialize_selector
