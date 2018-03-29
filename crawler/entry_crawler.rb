@@ -45,7 +45,7 @@ class EntryCrawler
   end
 
   def run
-    check_robot
+    # check_robot
     @crawler = initialize_crawler_instance
   end
 
