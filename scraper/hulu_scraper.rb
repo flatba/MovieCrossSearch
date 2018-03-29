@@ -18,19 +18,22 @@ class HuluScraper
 
   def run_scrape
     # information_list = []
-    information_arr = []
-    information_arr << thumbnail_processor
-    information_arr << title_processor
-    information_arr << original_title_processor
-    information_arr << release_year_processor
-    information_arr << running_time_processor
-    information_arr << summary_processor
-    information_arr << poster_image_processor
-    information_arr << genre_processor
-    information_arr << cast_processor
-    information_arr << director_processor
-    # information_arr << classification_processor
-    # information_list << information_arr
+    information_list = {
+      :thumbnail => thumbnail_processor,
+      :title => title_processor,
+      :original_title => original_title_processor,
+      :release_year => release_year_processor,
+      :running_time => running_time_processor,
+      :summary => summary_processor,
+      :poster_image => poster_image_processor,
+      :genre => genre_processor,
+      :cast => cast_processor,
+      :director => director_processor,
+      :url => driver.current_url
+    }
+    # :classification => classification_processor
+    $LOG.debug(information_arr)
+    information_list
   end
 
   def thumbnail_processor
@@ -95,8 +98,8 @@ class HuluScraper
 
     if check_type(summary)
       #### ↓correction processing↓ ###
-      puts summary
-      summary
+      puts summary.text
+      summary.text
     end
   end
 

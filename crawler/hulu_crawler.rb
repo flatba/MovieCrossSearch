@@ -11,22 +11,25 @@ class HuluCrawler < BaseCrawler
     grobal_navi_url_arr = get_grobal_navi_url_arr
     grobal_navi_url_arr.each do |grobal_navi_url|
 
-      next if check_grobal_navi_url(grobal_navi_url)
+      if check_grobal_navi_url(grobal_navi_url)
+        next
+      else
+        open_new_tab(driver)
+        driver.get(grobal_navi_url)
+        open_movie_list_page(grobal_navi_url)
+      end
 
-      open_new_tab(driver)
-      driver.get(grobal_navi_url)
-      open_movie_list_page(grobal_navi_url)
-
-      # カテゴリ情報の取得
+      $LOG.debug('カテゴリ情報の取得')
       puts category_name = driver.find_element(:css, selector['original']['category_name']).text
+      $LOG.debug(category_name)
 
-      # 無限スクロール
+      $LOG.debug('無限スクロール')
       # infinit_scroll(driver, 3)
 
-      # コンテンツURLの取得
+      $LOG.debug('コンテンツURLの取得')
       contents_url_arr = get_contents_url_arr
 
-      # コンテンツページ開く
+      $LOG.debug('コンテンツページ開く')
       contents_url_arr.each do |content_url|
         open_new_tab(driver)
         driver.get(content_url)
@@ -60,10 +63,11 @@ class HuluCrawler < BaseCrawler
   end
 
   def check_grobal_navi_url(grobal_navi_url)
-    true if grobal_navi_url.include?('Ranking')   # ランキング
-    true if grobal_navi_url.include?('realtimes') # リアルタイム
-    true if grobal_navi_url.include?('features')  # 特集
-    false
+    flg = false
+    flg = true if grobal_navi_url.include?('Ranking')   # ランキング
+    flg = true if grobal_navi_url.include?('realtimes') # リアルタイム
+    flg = true if grobal_navi_url.include?('features')  # 特集
+    flg
   end
 
   def classification_processor(category_name)
@@ -88,38 +92,39 @@ class HuluCrawler < BaseCrawler
 
   def open_movie_list_page(url)
 
-    sleep 5 # ロードが完全に完了するまで待つようにしたい
+    $LOG.debug('ロードが完全に完了するまで待つ')
+    sleep 5
 
     if url.include?('International')
       if url.include?('Series')
-        # すべての海外ドラマ・TV
+        $LOG.debug('すべての海外ドラマ・TV') # <a href="/tiles/422">▼すべての海外ドラマ･TV</a>
         driver.find_element(:css, selector['original']['all_International_Series']).click
         sleep 5
       elsif url.include?('Movies')
-        # すべての洋画
+        $LOG.debug('すべての洋画') # <a href="/tiles/1039">▼すべての洋画</a>
         driver.find_element(:css, selector['original']['all_International_Movies']).click
         sleep 5
       end
 
     elsif url.include?('Japanese')
       if url.include?('Series')
-        # すべての国内ドラマ・TV
+        $LOG.debug('すべての国内ドラマ・TV') # <a href="/tiles/424">▼すべての国内ドラマ･TV</a>
         driver.find_element(:css, selector['original']['all_Japanese_Series']).click
         sleep 5
       elsif url.include?('Movies')
-        # すべての邦画
+        $LOG.debug('すべての邦画') # <a href="/tiles/1041">▼すべての邦画</a>
         driver.find_element(:css, selector['original']['all_Japanese_Movies']).click
         sleep 5
       end
 
     elsif url.include?('Anime')
-      # すべてのTVアニメシリーズ
+      $LOG.debug('すべてのTVアニメシリーズ') # <a href="/tiles/398">▼すべてのTVアニメシリーズ</a>
       driver.find_element(:css, selector['original']['all_Anime']).click
       # すべてのアニメ映画(切り替え処理必要)
       # driver.find_element(:css, selector['original']['all_Anime_Movies']).click
 
     elsif url.include?('kids')
-      # すべてのKids作品
+      $LOG.debug('すべてのKids作品')
       driver.find_element(:css, selector['original']['all_kids']).click
     end
   end
