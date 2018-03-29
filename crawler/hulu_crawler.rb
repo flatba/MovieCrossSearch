@@ -36,11 +36,12 @@ class HuluCrawler < BaseCrawler
 
         # infinit_scroll(driver, 3) # ページを全て舐める
         begin
-          information_arr = []
           scraper = HuluScraper.new(driver, selector)
-          information_arr = scraper.run_scrape
+          scraper.run_scrape
+          # $LOG.debug(information_list)
         rescue => e
           p e
+          $LOG.debug('Error: ' + e.to_s)
           puts 'Error: ' + content_url.to_s
           $LOG.debug('Error: ' + content_url.to_s)
         end

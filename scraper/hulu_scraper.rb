@@ -5,34 +5,48 @@ require './scraper/scrape_delegator.rb'
 require './scraper/base_scraper.rb'
 
 class HuluScraper
-  attr_reader :base
+  attr_reader :base, :driver, :selector
 
   def initialize(driver, selector)
-    do_click(driver, selector)
+    do_click
     @base = ScrapeDelegator.new(BaseScraper.new(driver, selector))
+    @driver = driver
+    @selector = selector
   end
 
-  def do_click(driver, selector)
+  def do_click
     driver.find_element(:css, selector['original']['detail_button']).click
   end
 
   def run_scrape
     # information_list = []
-    information_list = {
-      :thumbnail => thumbnail_processor,
-      :title => title_processor,
-      :original_title => original_title_processor,
-      :release_year => release_year_processor,
-      :running_time => running_time_processor,
-      :summary => summary_processor,
-      :poster_image => poster_image_processor,
-      :genre => genre_processor,
-      :cast => cast_processor,
-      :director => director_processor,
-      :url => driver.current_url
-    }
+    # information_list = {
+    #   thumbnail: thumbnail_processor,
+    #   title: title_processor,
+    #   original_title: original_title_processor,
+    #   release_year: release_year_processor,
+    #   running_time: running_time_processor,
+    #   summary: summary_processor,
+    #   poster_image: poster_image_processor,
+    #   genre: genre_processor,
+    #   cast: cast_processor,
+    #   director: director_processor,
+    #   url: driver.current_url
+    # }
+    information_list = []
+    information_list << thumbnail_processor
+    information_list << title_processor
+    information_list << original_title_processor
+    information_list << release_year_processor
+    information_list << running_time_processor
+    information_list << summary_processor
+    information_list << poster_image_processor
+    information_list << genre_processor
+    information_list << cast_processor
+    information_list << director_processor
+    information_list << driver.current_url
+    $LOG.debug(information_list)
     # :classification => classification_processor
-    $LOG.debug(information_arr)
     information_list
   end
 

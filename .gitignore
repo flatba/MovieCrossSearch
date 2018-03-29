@@ -58,3 +58,4 @@ memo.txt
 crawler/.DS_Store
 .DS_Store
 crawler/selector_data/.DS_Store
+# ./log/logger.log
