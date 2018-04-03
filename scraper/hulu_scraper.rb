@@ -8,46 +8,33 @@ class HuluScraper
   attr_reader :base, :driver, :selector
 
   def initialize(driver, selector)
-    do_click
     @base = ScrapeDelegator.new(BaseScraper.new(driver, selector))
     @driver = driver
     @selector = selector
   end
 
-  def do_click
+  def do_more_detail_button_click
     driver.find_element(:css, selector['original']['detail_button']).click
   end
 
   def run_scrape
-    # information_list = []
-    # information_list = {
-    #   thumbnail: thumbnail_processor,
-    #   title: title_processor,
-    #   original_title: original_title_processor,
-    #   release_year: release_year_processor,
-    #   running_time: running_time_processor,
-    #   summary: summary_processor,
-    #   poster_image: poster_image_processor,
-    #   genre: genre_processor,
-    #   cast: cast_processor,
-    #   director: director_processor,
-    #   url: driver.current_url
-    # }
-    information_list = []
-    information_list << thumbnail_processor
-    information_list << title_processor
-    information_list << original_title_processor
-    information_list << release_year_processor
-    information_list << running_time_processor
-    information_list << summary_processor
-    information_list << poster_image_processor
-    information_list << genre_processor
-    information_list << cast_processor
-    information_list << director_processor
-    information_list << driver.current_url
-    $LOG.debug(information_list)
-    # :classification => classification_processor
-    information_list
+    do_more_detail_button_click
+
+    item_list = {
+      thumbnail: thumbnail_processor,
+      title: title_processor,
+      original_title: original_title_processor,
+      release_year: release_year_processor,
+      running_time: running_time_processor,
+      summary: summary_processor,
+      poster_image: poster_image_processor,
+      genre: genre_processor,
+      cast: cast_processor,
+      director: director_processor,
+      url: driver.current_url,
+      site_name: 'Hulu'
+    }
+    item_list
   end
 
   def thumbnail_processor
@@ -56,8 +43,8 @@ class HuluScraper
     if check_type(thumbnail)
       #### ↓correction processing↓ ###
       puts thumbnail = thumbnail.attribute('src')
-      thumbnail
     end
+    thumbnail
   end
 
   def title_processor
@@ -66,8 +53,8 @@ class HuluScraper
     if check_type(title)
       #### ↓correction processing↓ ###
       puts title = title.text
-      title
     end
+    title
   end
 
   def original_title_processor
@@ -77,8 +64,8 @@ class HuluScraper
     if check_type(original_title)
       #### ↓correction processing↓ ###
       puts original_title
-      original_title
     end
+    original_title
   end
 
   def release_year_processor
@@ -90,8 +77,8 @@ class HuluScraper
       tail = release_year.rindex('年') - 1
       head = tail - 3
       puts release_year = release_year[head..tail]
-      release_year
     end
+    release_year
   end
 
   def running_time_processor # 単位：分
@@ -103,8 +90,8 @@ class HuluScraper
       tail = running_time.rindex('分') - 1
       head = tail - 1
       puts running_time = running_time[head..tail]
-      running_time
     end
+    running_time
   end
 
   def summary_processor
@@ -112,9 +99,9 @@ class HuluScraper
 
     if check_type(summary)
       #### ↓correction processing↓ ###
-      puts summary.text
-      summary.text
+      puts summary = summary.text
     end
+    summary
   end
 
   def poster_image_processor
@@ -123,8 +110,8 @@ class HuluScraper
     if check_type(poster_image)
       #### ↓correction processing↓ ###
       puts poster_image
-      poster_image
     end
+    poster_image
   end
 
   def genre_processor
@@ -137,8 +124,8 @@ class HuluScraper
         genre_list << genre_element.text
       end
       puts genre_list
-      genre_list
     end
+    genre_list
   end
 
   def cast_processor
@@ -151,8 +138,8 @@ class HuluScraper
         cast_list << cast_element.text
       end
       puts cast_list
-      cast_list
     end
+    cast_list
   end
 
   def director_processor
@@ -165,8 +152,8 @@ class HuluScraper
         director_list << director_element.text
       end
       puts director = director_list[0] # <= プロデューサーまで取得できてしまうので一個目の監督のみ返す
-      director
     end
+    director
   end
 
   # def classification_processor

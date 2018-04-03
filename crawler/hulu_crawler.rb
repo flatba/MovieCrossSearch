@@ -3,6 +3,7 @@
 # https://www.happyon.jp/
 #
 require './scraper/hulu_scraper.rb'
+require './database/save_task_database.rb'
 
 class HuluCrawler < BaseCrawler
   def start
@@ -37,24 +38,28 @@ class HuluCrawler < BaseCrawler
         # infinit_scroll(driver, 3) # ページを全て舐める
         begin
           scraper = HuluScraper.new(driver, selector)
-          scraper.run_scrape
-          # $LOG.debug(information_list)
+          item_list = scraper.run_scrape
         rescue => e
           p e
           $LOG.debug('Error: ' + e.to_s)
           puts 'Error: ' + content_url.to_s
+          item_list = 'Error: ' + content_url.to_s
           $LOG.debug('Error: ' + content_url.to_s)
         end
         puts classification_processor(category_name)
+        item_list.store(:category_name, category_name)
+
+        $LOG.debug(item_list) # <= ここまで取得できた。
 
         begin
-          # save
+          task = SaveDatabaseTask.new(item_list)
+          task.check_existence_output_dir
+          task.create_movie_master_table
+          task.movie_master_table
         rescue => e
-          p e
-          puts 'Error: ' + e
-          $LOG.debug('Error: ' + e)
+          puts 'Error: ' + e.to_s
+          $LOG.debug('Error: ' + e.to_s)
         end
-
 
         close_new_tab(driver)
         sleep 1

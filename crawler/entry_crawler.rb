@@ -64,11 +64,11 @@ class EntryCrawler
 
   def initialize_driver
     # 通常chrome起動
-    # $LOG.debug('chrome起動')
-    # Selenium::WebDriver.for :chrome
+    $LOG.debug('chrome起動')
+    Selenium::WebDriver.for :chrome
 
     # HeadressChrome起動
-    $LOG.debug('HeadressChrome起動')
+    # $LOG.debug('HeadressChrome起動')
     # caps = Selenium::WebDriver::Remote::Capabilities.chrome(
     #   "chromeOptions" => {
     #     binary: '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
@@ -78,8 +78,8 @@ class EntryCrawler
     # Selenium::WebDriver.for :chrome, desired_capabilities: caps
 
     #Heroku
-    caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: "/app/.apt/usr/bin/google-chrome", args: ["--headless"]})
-    driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
+    # caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {binary: "/app/.apt/usr/bin/google-chrome", args: ["--headless"]})
+    # driver = Selenium::WebDriver.for :chrome, desired_capabilities: caps
   end
 
   def initialize_selector
