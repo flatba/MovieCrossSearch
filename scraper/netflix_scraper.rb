@@ -17,17 +17,21 @@ class NetflixScraper
   end
 
   def run_scrape
-    thumbnail = thumbnail_processor
-    title = title_processor
-    original_title = original_title_processor
-    release_year = release_year_processor
-    running_time = running_time_processor
-    summary = summary_processor
-    poster_image = poster_image_processor
-    genre_list = genre_processor
-    cast_list = cast_processor
-    director_list = director_processor
-    # classification_processor
+    item_list = {
+      thumbnail: thumbnail_processor,
+      title: title_processor,
+      original_title: original_title_processor,
+      release_year: release_year_processor,
+      running_time: running_time_processor,
+      summary: summary_processor,
+      poster_image: poster_image_processor,
+      genre: genre_processor,
+      cast: cast_processor,
+      director: director_processor,
+      url: driver.current_url,
+      site_name: 'Netflix'
+    }
+    item_list
   end
 
   def thumbnail_processor

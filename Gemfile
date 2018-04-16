@@ -17,7 +17,7 @@ gem 'selenium-webdriver'
 gem 'environment'
 gem 'dotenv'
 gem 'mechanize'
-
+gem 'annotate'
 
 gem 'webdriver-user-agent'
 # gem "slack-notifier"
